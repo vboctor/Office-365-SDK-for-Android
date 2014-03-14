@@ -24,9 +24,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
-  <groupId>com.microsoft.office365</groupId>
+  <groupId>com.microsoft.office</groupId>
   <artifactId>mail-calendar-contact</artifactId>
-  <version>0.11.1</version>
+  <version>0.11.1-SNAPSHOT</version>
   <name>Microsoft Office 365 Mail-Calendar-Contact SDK for Java</name>
   <description>Java SDK for Office 365 Mail-Calendar-Contact services</description>
 
@@ -53,12 +53,18 @@
       <name>Maxim Kostin</name>
       <email>dev@maxkostin.ru</email>
     </developer>
+  <developer>
+      <id>maxmironov</id>
+      <name>Maxim Mironov</name>
+      <email>maksim.mironov@akvelon.com</email>
+    </developer>
   </developers>
 
   <scm>
-    <url>https://github.com/OfficeDev/Office-365-SDK-for-Android.git</url>
-    <connection>scm:git:git@github.com:OfficeDev/Office-365-SDK-for-Android.git</connection>
-    <developerConnection>scm:git:git@github.com:OfficeDev/Office-365-SDK-for-Android.git</developerConnection>
+    <url>scm:git:https://github.com/nikita-shupletsov-akvelon/Office-Android-Exchange-SDK-Maven-Release.git</url>
+    <connection>scm:git:git://github.com/nikita-shupletsov-akvelon/Office-Android-Exchange-SDK-Maven-Release.git</connection>
+    <developerConnection>scm:git:https://github.com/nikita-shupletsov-akvelon/Office-Android-Exchange-SDK-Maven-Release.git</developerConnection>
+    <!--tag>office365-mail-calendar-contact-0.11.1</tag-->
     <tag>HEAD</tag>
   </scm>
 
@@ -85,13 +91,12 @@
 
     <serviceRootURL>https://outlook.office365.com/ews/odata</serviceRootURL>
     
-    <serviceUsername>Enter your username here</serviceUsername>
+<serviceUsername>Enter your username here</serviceUsername>
     <servicePassword>Enter your password here</servicePassword>
-
-    <odatajclient.version>0.10.2-SNAPSHOT</odatajclient.version>
 
     <skip.tests>true</skip.tests>
     
+<maven.javadoc.skip>true</maven.javadoc.skip>	
   </properties>
 
   <dependencyManagement>
@@ -103,7 +108,7 @@
         <version>${commons.lang3.version}</version>
       </dependency>
 
-      <dependency>
+<dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>${commons.codec.version}</version>
@@ -221,17 +226,17 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>2.5</version>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
-            <tagNameFormat>office365-mail-calendar-contact-@{project.version}</tagNameFormat>
+            <!--tagNameFormat>office365-mail-calendar-contact-@{project.version}</tagNameFormat-->
           </configuration>
         </plugin>
 
 	    <plugin>
 		  <groupId>org.apache.maven.plugins</groupId>
 		  <artifactId>maven-shade-plugin</artifactId>
-		  <version>1.4</version>
+		  <version>2.2</version>
 		  <configuration>
 			<shadedArtifactAttached>false</shadedArtifactAttached>
 			<createDependencyReducedPom>true</createDependencyReducedPom>
@@ -248,9 +253,7 @@
 			    <includes>
 			        <include>commons-beanutils:commons-beanutils-core</include>
 			    	<include>commons-io:commons-io</include>
-			        <include>com.msopentech.odatajclient:odatajclient-engine</include>
-			    	<include>com.msopentech.odatajclient:odatajclient-engine-xml</include>
-			    	<include>com.microsoft.office365:**</include>
+			        <include>com.microsoft.office:**</include>
 			    	<include>com.fasterxml.jackson.core:jackson-databind</include>
 			    	<include>com.fasterxml.jackson.core:jackson-annotations</include>
 			    	<include>com.fasterxml.jackson.core:jackson-core</include>
@@ -259,12 +262,12 @@
 			    	<include>org.slf4j:slf4j-api</include>
 			    </includes>
  				<excludes>
- 				    <exclude>com.microsoft.office365:mail-calendar-contact-maven-plugin</exclude>
+ 				    <exclude>com.microsoft.office:mail-calendar-contact-maven-plugin</exclude>
 				</excludes>
 			</artifactSet>
 		  </configuration>
 		</plugin>
-		<plugin>
+						<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-javadoc-plugin</artifactId>
 		</plugin>
@@ -272,6 +275,17 @@
     </pluginManagement>
 
 	<plugins>
+        <!-- Don't deploy all artifacts. Overridden in submodules. -->         
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <executions> 
+          <execution>
+            <id>default-deploy</id> 
+            <phase>none</phase> 
+          </execution>
+        </executions>
+      </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
@@ -306,7 +320,7 @@
 			<configuration>
 				<header>${main.basedir}/src/main/resources/header.txt</header>
 				<strictCheck>true</strictCheck>
-				<failIfMissing>true</failIfMissing>
+				<failIfMissing>false</failIfMissing>
 				<aggregate>true</aggregate>
 				<useDefaultExcludes>true</useDefaultExcludes>
 				<useDefaultMapping>true</useDefaultMapping>
@@ -373,73 +387,75 @@
 	</plugins>
   </build>
 
-  <reporting>
+      <reporting>
     <plugins>
-		<plugin>
+		<!--plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-site-plugin</artifactId>
 			<version>3.0</version>
-			<configuration>
+<configuration>
 				<stagingDirectory>${basedir}\target\stage</stagingDirectory>
-				<reportPlugins>
-					<plugin>
+				<skip>true</skip>
+				<skipDeploy>true</skipDeploy>				
+<reportPlugins>
+<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-project-info-reports-plugin</artifactId>
 						<version>2.4</version>
-					</plugin>
-					<plugin>
+</plugin>
+<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>2.8</version>
-						<reportSets>
-							<reportSet>
+<reportSets>
+<reportSet>
 								<id>non-aggregate</id>
-								<reports>
+<reports>
 									<report>javadoc</report>
-								</reports>
-							</reportSet>
-							<reportSet>
+</reports>
+</reportSet>
+<reportSet>
 								<id>aggregate</id>
 								<inherited>false</inherited>
-								<reports>
+<reports>
 									<report>aggregate</report>
-								</reports>
-							</reportSet>
-						</reportSets>
-					</plugin>
-					<plugin>
+</reports>
+</reportSet>
+</reportSets>
+</plugin>
+<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-report-plugin</artifactId>
 						<version>2.6</version>
-					</plugin>
-				</reportPlugins>
-			</configuration>
-		</plugin>
-		<plugin>
+</plugin>
+</reportPlugins>
+</configuration>
+		</plugin-->
+		<!--plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-pmd-plugin</artifactId>
 			<version>3.0.1</version>
-			<configuration>
+<configuration>
 				<linkXref>true</linkXref>
 				<sourceEncoding>utf-8</sourceEncoding>
 				<minimumTokens>100</minimumTokens>
 				<targetJdk>${targetJdk}</targetJdk>
-			</configuration>
-		</plugin>
-		<plugin>
+</configuration>
+		</plugin-->
+		<!--plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-jxr-plugin</artifactId>
 			<version>2.3</version>
-			<reportSets>
-				<reportSet>
+<reportSets>
+<reportSet>
 					<id>aggregate</id>
 					<inherited>false</inherited>
-					<reports>
+<reports>
 						<report>aggregate</report>
-					</reports>
-				</reportSet>
-        	</reportSets>
-		</plugin>
+</reports>
+</reportSet>
+</reportSets>
+		</plugin-->
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-javadoc-plugin</artifactId>
@@ -450,32 +466,38 @@
 					<reports>
 						<report>aggregate</report>
 					</reports>
-				</reportSet>
-        	</reportSets>
-		</plugin>
-        <plugin>
+				<configuration>
+        	<includeDependencySources>true</includeDependencySources>
+		<sourcepath>${project.build.directory}/generated-sources</sourcepath>
+        </configuration>
+            </reportSet>
+            </reportSets>
+            </plugin>
+            <!--plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>findbugs-maven-plugin</artifactId>
             <version>2.5.2</version>
-            <configuration>
-                <!-- Set to 'low' if you run out of memory -->
+<configuration>
                 <effort>Max</effort>
-                <!-- Reports all bugs (other values are medium and max) -->
                 <threshold>Low</threshold>
-                <!-- Produces XML report -->
                 <xmlOutput>true</xmlOutput>
-            </configuration>
-        </plugin>
+</configuration>
+        </plugin-->
 	</plugins>
   </reporting>
 
-  <distributionManagement>
-  	<!-- This is required to generate a site with valid links to module sub-sites -->
-	<site>
+  <!--distributionManagement>
+  	<repository>
+		<id>akvelon-maven-repo</id>
+		<url>http://192.168.9.120:8081/nexus/content/groups/public/</url>
+	</repository-->
+<!--
+<site>
 		<id>${project.artifactId}-site</id>
 		<url>${basedir}/</url>
-	</site>
-  </distributionManagement>
+</site>
+-->
+  <!--/distributionManagement-->
 
   <profiles>
     <profile>
@@ -611,8 +633,8 @@
               </configuration>
               <deployables>
                 <deployable>
-                  <groupId>com.msopentech.odatajclient</groupId>
-                  <artifactId>odatajclient-test-service</artifactId>
+                  <groupId>com.microsoft.office</groupId>
+                  <artifactId>mail-calendar-contact-proxy-test-service</artifactId>
                   <type>war</type>
                   <properties>
                     <context>/</context>
@@ -633,14 +655,14 @@
       <id>nexus-release-profile</id>
       <distributionManagement>
         <snapshotRepository>
-          <id>sonatype-nexus-snapshots</id>
+          <id>akvelon-maven-repo</id>
           <name>Sonatype Nexus Snapshots</name>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+          <url>http://192.168.9.120:8081/nexus/content/repositories/akvelon/</url>
         </snapshotRepository>
         <repository>
-          <id>sonatype-nexus-staging</id>
+          <id>akvelon-maven-repo</id>
           <name>Nexus Release Repository</name>
-          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+          <url>http://192.168.9.120:8081/nexus/content/repositories/akvelon/</url>
         </repository>
       </distributionManagement>
       <activation>
