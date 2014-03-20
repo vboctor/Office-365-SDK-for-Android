@@ -26,9 +26,9 @@
 
   <parent>
     <groupId>com.microsoft.office</groupId>
-    <artifactId>mail-calendar-contact</artifactId>
+    <artifactId>mail-calendar-contact-aggregator</artifactId>
     <version>0.11.1-SNAPSHOT</version>
-  <relativePath>../../pom.xml</relativePath>
+  <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
   <groupId>com.microsoft.office</groupId>

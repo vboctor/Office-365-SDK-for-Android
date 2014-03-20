@@ -32,7 +32,7 @@ public class Constants {
     public static final String USER_HINT = "";
     
    /**
-     * Url for common Oauth2 authorization page.
+     * Url for Oauth2 authorization page.
      */
     public static final String AUTHORITY_URL = "https://login.windows.net/common";
 
@@ -50,7 +50,21 @@ public class Constants {
      * Url application will be redirected after authentication.
      */
     public static final String REDIRECT_URL = "Enter your redirect URL here";
+
+    /**
+     * Key for ADAL storage encryption.
+     */
+    public static byte[] STORAGE_KEY;
     
+    static {
+        try {
+            STORAGE_KEY = "some secret key".getBytes("utf-16"); // key must have 32 bytes length
+        } catch (Exception e) {
+            STORAGE_KEY = new byte[32];
+        }
+    }    
+
+
     /**
     * Mail-calendar-contacts odata endpoint
     */

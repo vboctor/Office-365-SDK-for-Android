@@ -26,14 +26,14 @@
 
   <parent>
     <groupId>com.microsoft.office</groupId>
-    <artifactId>mail-calendar-contact</artifactId>
+    <artifactId>mail-calendar-contact-parent</artifactId>
     <version>0.11.1-SNAPSHOT</version>
   </parent>
 
-  <name>Microsoft Office 365 Mail-Calendar-Contact SDK for Java: Core</name>
-  <description>Java SDK for Office 365 Mail-Calendar-Contact services: Core</description>
+  <name>Microsoft Office 365 Mail-Calendar-Contact SDK for Java</name>
+  <description>Java SDK for Office 365 Mail-Calendar-Contact services</description>
   <groupId>com.microsoft.office</groupId>
-  <artifactId>mail-calendar-contact-core</artifactId>
+  <artifactId>mail-calendar-contact</artifactId>
   <packaging>jar</packaging>
 
   <properties>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>com.microsoft.office</groupId>
       <artifactId>mail-calendar-contact-odata-engine</artifactId>
-      <version>${project.version}</version>
+      <version>${backbone.version}</version>
     </dependency>
 
     <dependency>
@@ -61,13 +61,13 @@
     <dependency>
         <groupId>com.microsoft.office</groupId>
         <artifactId>mail-calendar-contact-proxy-office</artifactId>
-        <version>${project.version}</version>
+        <version>${backbone.version}</version>
     </dependency>
 
     <dependency>
         <groupId>com.microsoft.office</groupId>
         <artifactId>mail-calendar-contact-model-classes</artifactId>
-        <version>${project.version}</version>
+        <version>${backbone.version}</version>
     </dependency>
 
     <dependency>
@@ -92,14 +92,38 @@
 
   <build>
     <plugins>
-      <!-- Enable deploy for this submodule. -->
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
+        <artifactId>maven-javadoc-plugin</artifactId>
         <executions>
           <execution> 
-            <id>default-deploy</id>
-            <phase>deploy</phase> 
+            <id>javadoc-jar</id>
+            <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                    <additionalDependencies>
+                      <additionalDependency>
+                        <groupId>com.microsoft.office</groupId>
+                        <artifactId>mail-calendar-contact-model-interfaces</artifactId>
+                        <version>${backbone.version}</version>
+                      </additionalDependency>
+                      <additionalDependency>
+                        <groupId>com.microsoft.office</groupId>
+                        <artifactId>mail-calendar-contact-model-classes</artifactId>
+                        <version>${backbone.version}</version>
+                      </additionalDependency>
+                    </additionalDependencies>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                        <dependencySourceInclude>com.microsoft.office:mail-calendar-contact-model-interfaces</dependencySourceInclude>
+                        <dependencySourceInclude>com.microsoft.office:mail-calendar-contact-model-classes</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                </configuration>
           </execution>
         </executions>
       </plugin>
@@ -145,7 +169,7 @@
        <plugin>
             <groupId>com.microsoft.office</groupId>
             <artifactId>mail-calendar-contact-maven-plugin</artifactId>
-            <version>0.11.1-SNAPSHOT</version>
+            <version>0.11.1</version>
             <executions>
                 <execution>
                     <id>generate-sources</id>
@@ -167,7 +191,7 @@
             <executions>
               <execution>
                 <id>copy-generated-sources</id>
-                <phase>process-test-sources</phase>
+                <phase>compile</phase>
                 <goals>
                     <goal>copy-resources</goal>
                 </goals>
@@ -249,62 +273,6 @@
             </execution>
         </executions>
       </plugin>
-<!--
-		<plugin>
-	        <artifactId>maven-assembly-plugin</artifactId>
-	        <version>2.4</version>
-	        <configuration>
-	          <descriptorRefs>
-	            <descriptorRef>jar-with-dependencies</descriptorRef>
-	          </descriptorRefs>
-	        </configuration>
-	        <executions>
-	          <execution>
-	            <id>make-assembly</id>
-	            <phase>package</phase>
-	            <goals>
-	              <goal>single</goal>
-	            </goals>
-	          </execution>
-	        </executions>
-		</plugin>
- -->
- <!--
-		<plugin>
-			<groupId>com.github.wvengen</groupId>
-			<artifactId>proguard-maven-plugin</artifactId>
-			<version>2.0.5</version>
-			<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>proguard</goal>
-					</goals>
-				</execution>
-			</executions>
-			<configuration>
-				<proguardVersion>${proguard.version}</proguardVersion>
-				<injar>${project.artifactId}-${project.version}.jar</injar>
-				<outjar>${project.artifactId}-obfuscated-${project.version}.jar</outjar>
-				<options>
-					<option>-keep public class * { *; }</option>
-					<option>-ignorewarnings</option>
-				</options>
-				<libs>
-					<lib>${java.home}/lib/rt.jar</lib>
-				</libs>
-			</configuration>
-			<dependencies>
-				<dependency>
-					<groupId>net.sf.proguard</groupId>
-					<artifactId>proguard-base</artifactId>
-					<version>${proguard.version}</version>
-					<scope>runtime</scope>
-				</dependency>
-			</dependencies>
-		</plugin>
- -->
-
     </plugins>
 
     <resources>

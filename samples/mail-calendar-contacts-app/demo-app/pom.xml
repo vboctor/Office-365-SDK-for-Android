@@ -49,8 +49,8 @@
             </dependency>
 			
         <dependency>
-            <groupId>com.microsoft.office365</groupId>
-            <artifactId>mail-calendar-contact-core</artifactId>
+            <groupId>com.microsoft.office</groupId>
+            <artifactId>mail-calendar-contact</artifactId>
         </dependency>
         <dependency>
             <groupId>com.microsoft.adal</groupId>
