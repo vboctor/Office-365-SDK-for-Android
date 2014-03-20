@@ -26,7 +26,7 @@
   <packaging>pom</packaging>
   <groupId>com.microsoft.office</groupId>
   <artifactId>mail-calendar-contact-parent</artifactId>
-  <version>0.11.1-SNAPSHOT</version>
+  <version>0.11.1</version>
   <name>Microsoft Office 365 Mail-Calendar-Contact SDK for Java Parent Configuration</name>
   <description>Java SDK for Office 365 Mail-Calendar-Contact services: Parent</description>
 
@@ -64,7 +64,8 @@
     <url>https://github.com/OfficeDev/Office-365-SDK-for-Android/tree/maven_central/sdk/office365-mail-calendar-contact-sdk</url>
     <connection>scm:git:git://github.com/OfficeDev/Office-365-SDK-for-Android.git</connection>
     <developerConnection>scm:git:https://github.com/OfficeDev/Office-365-SDK-for-Android.git</developerConnection>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
   <prerequisites>
     <maven>[3.0.3,)</maven>
