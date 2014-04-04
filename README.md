@@ -25,7 +25,7 @@ The SDK is composed of three independent packages, so that you can import only t
 
 - office365-files-sdk [depends on office365-base-sdk]
 - office365-lists-sdk [depends on office365-base-sdk]
-- office365-mail-calendar-contact-sdk
+- office365-mail-calendar-contact-sdk ([see wiki](https://github.com/OfficeDev/Office-365-SDK-for-Android/wiki/User-guide-%28Exchange-SDK%29))
 
 The SDK is compatible with the following Android versions: 4.0.3 (API15),4.1.2 (API16),4.2.2 (API 17), 4.3 (API18)
 
