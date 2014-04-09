@@ -19,31 +19,29 @@
  */
 package com.microsoft.office.integration.test;
 
+import com.microsoft.exchange.services.odata.model.IMessages;
 import com.microsoft.exchange.services.odata.model.Me;
 import com.microsoft.exchange.services.odata.model.Messages;
+import com.microsoft.exchange.services.odata.model.types.IMessage;
 
-public class NavigationPropertiesTestCase extends AbstractTest {
+public class MiscellaneousTestCase extends AbstractTest {
 
-    public void testCreateEntityAndAccessNavigationPropertyFailure() {
-        Exception exc = null;
-        try {
-            Messages.newMessage().getAttachments();
-        } catch (Exception e) {
-            exc = e;
-        }
-
-        assertEquals(IllegalStateException.class, exc.getClass());
-    }
-    
-    public void testNavigationProperty() {
-        Exception e = null;
-        try {
-            // succeeded if no exception generated
-            Me.getDrafts().getMessages().getAll();
-        } catch (Exception ex) {
-            e = ex;
-        }
+    public void testFetch() {
+        IMessages messages = Me.getDrafts().getMessages();
+        // actual server request will be executed in this line by calling size; response will be cached
+        int size = messages.size();
         
-        assertNull(e);
+        IMessage message = Messages.newMessage();
+        message.setSubject("fetch test");
+        // flush() updates server side, not the client side
+        Me.flush();            
+
+        // verify that local cache has no changes after flush (size will return old value)
+        assertEquals(size, messages.size());   
+        messages.fetch();
+        assertEquals(size + 1, messages.size());
+        
+        Me.getMessages().delete(message.getId());
+        Me.flush();
     }
 }
