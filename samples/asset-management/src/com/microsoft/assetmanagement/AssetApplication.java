@@ -15,15 +15,22 @@ import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
-
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import com.microsoft.adal.AuthenticationCallback;
+import com.microsoft.adal.AuthenticationContext;
+import com.microsoft.adal.AuthenticationResult;
+import com.microsoft.adal.PromptBehavior;
 import com.microsoft.assetmanagement.files.SharepointListsClientWithFiles;
-import com.microsoft.office365.Action;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.LogLevel;
 import com.microsoft.office365.Logger;
-import com.microsoft.office365.OfficeFuture;
+import com.microsoft.office365.files.FileClient;
 import com.microsoft.office365.http.BasicAuthenticationCredentials;
 import com.microsoft.office365.http.CookieCredentials;
+import com.microsoft.office365.http.OAuthCredentials;
 import com.microsoft.office365.http.SharepointCookieCredentials;
 import com.microsoft.office365.lists.SharepointListsClient;
 
@@ -35,17 +42,22 @@ public class AssetApplication extends Application {
 
 	/** The app context. */
 	private static Context appContext;
-	
+
 	/** The m preferences. */
 	private AssetPreferences mPreferences;
-	
+
 	/** The m credentials. */
 	private Credentials mCredentials;
-	
+
 	/** The m sharepoint lists client. */
 	private SharepointListsClient mSharepointListsClient;
 
-	/* (non-Javadoc)
+	/** The m fileClient lists client. */
+	private FileClient mFileClient;
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Application#onCreate()
 	 */
 	@Override
@@ -55,13 +67,12 @@ public class AssetApplication extends Application {
 		super.onCreate();
 		AssetApplication.appContext = getApplicationContext();
 
-		mPreferences = new AssetPreferences(appContext,
-				PreferenceManager.getDefaultSharedPreferences(this));
+		mPreferences = new AssetPreferences(appContext, PreferenceManager.getDefaultSharedPreferences(this));
 	}
 
 	/**
 	 * Gets the credentials.
-	 *
+	 * 
 	 * @return the credentials
 	 */
 	public Credentials getCredentials() {
@@ -70,8 +81,9 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Sets the credentials.
-	 *
-	 * @param credentials the new credentials
+	 * 
+	 * @param credentials
+	 *            the new credentials
 	 */
 	public void setCredentials(Credentials credentials) {
 		mCredentials = credentials;
@@ -79,8 +91,9 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Handle error.
-	 *
-	 * @param throwable the throwable
+	 * 
+	 * @param throwable
+	 *            the throwable
 	 */
 	public void handleError(Throwable throwable) {
 		Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
@@ -89,39 +102,80 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Authenticate.
-	 *
-	 * @param activity the activity
+	 * 
+	 * @param activity
+	 *            the activity
 	 * @return the office future
 	 */
-	public OfficeFuture<Credentials> authenticate(Activity activity) {
-		final OfficeFuture<Credentials> result = new OfficeFuture<Credentials>();
+	public ListenableFuture<Credentials> authenticate(Activity activity) {
+		final SettableFuture<Credentials> result = SettableFuture.create();
 
 		String method = mPreferences.getAuthenticationMethod();
-		if (method.equals("COOKIES")) {
-			OfficeFuture<CookieCredentials> future = SharepointCookieCredentials
-					.requestCredentials(mPreferences.getSharepointServer(), activity);
+		if (method.equals(Constants.AUTHENTICATIONMETHOD_COOKIES)) {
+			ListenableFuture<CookieCredentials> future = SharepointCookieCredentials.requestCredentials(
+					mPreferences.getSharepointServer(), activity);
 
-			future.done(new Action<CookieCredentials>() {
+			Futures.addCallback(future, new FutureCallback<CookieCredentials>() {
+				@Override
+				public void onFailure(Throwable t) {
+					result.setException(t);
+				}
 
 				@Override
-				public void run(CookieCredentials credentials) throws Exception {
+				public void onSuccess(CookieCredentials credentials) {
 					mCredentials = credentials;
-					result.setResult(credentials);
+					result.set(credentials);
 				}
 			});
+		}else if (method.equals(Constants.AUTHENTICATIONMETHOD_AAD)) {
+			getAuthenticationContext(activity).acquireToken(
+					activity, mPreferences.getSharepointServer(),
+					mPreferences.getClientId(),mPreferences.getRedirectUrl(), PromptBehavior.Auto,
 
+					new AuthenticationCallback<AuthenticationResult>() {
+
+						@Override
+						public void onSuccess(AuthenticationResult authenticationResult) {
+							// once succeeded we create a credentials instance
+							// using the token from ADAL
+							mCredentials = new OAuthCredentials(authenticationResult.getAccessToken());
+							result.set(mCredentials);
+						}
+
+						@Override
+						public void onError(Exception exc) {
+							result.setException(exc);
+						}
+					});
 		} else {
 			String userName = mPreferences.getNTLMUser();
 			String password = mPreferences.getNTLMPassword();
 			mCredentials = new BasicAuthenticationCredentials(userName, password);
-			result.setResult(mCredentials);
+			result.set(mCredentials);
 		}
 		return result;
 	}
 
+	public AuthenticationContext context = null;
+
+	/**
+	 * Gets AuthenticationContext for AAD.
+	 * 
+	 * @return authenticationContext, if successful
+	 */
+	public AuthenticationContext getAuthenticationContext(Activity activity) {
+
+		try {
+			context = new AuthenticationContext(activity, Constants.AUTHORITY_URL, false);
+		} catch (Exception e) {
+		}
+
+		return context;
+	}
+
 	/**
 	 * Checks for configuration settings.
-	 *
+	 * 
 	 * @return true, if successful
 	 */
 	public boolean hasConfigurationSettings() {
@@ -132,21 +186,21 @@ public class AssetApplication extends Application {
 
 		if (isNullOrEmpty(mPreferences.getLibraryName()))
 			return false;
-		if (authenticationMethod.equals("NTLM")) {
+		if (authenticationMethod.equals(Constants.AUTHENTICATIONMETHOD_NTLM)) {
 			String server = mPreferences.getSharepointServer();
 			String username = mPreferences.getNTLMUser();
 			String password = mPreferences.getNTLMPassword();
 
-			boolean result = (!isNullOrEmpty(server)) && (!isNullOrEmpty(username))
-					&& (!isNullOrEmpty(password));
+			boolean result = (!isNullOrEmpty(server)) && (!isNullOrEmpty(username)) && (!isNullOrEmpty(password));
 			return result;
-		} else if (authenticationMethod.equals("COOKIES")) {
+		} else if (authenticationMethod.equals(Constants.AUTHENTICATIONMETHOD_COOKIES)
+				|| authenticationMethod.equals(Constants.AUTHENTICATIONMETHOD_AAD)) {
 			return (!isNullOrEmpty(mPreferences.getSharepointServer()) && (!isNullOrEmpty(mPreferences
 					.getSiteRelativeUrl())));
 		} else {
 			String authorityUrl = mPreferences.getAuthorityUrl();
 			String clientId = mPreferences.getClientId();
-			String resourceUrl = mPreferences.getResourceUrl();
+			String resourceUrl = mPreferences.getRedirectUrl();
 			String userHint = mPreferences.getUserHint();
 			boolean result = (!isNullOrEmpty(authorityUrl)) && (!isNullOrEmpty(clientId))
 					&& (!isNullOrEmpty(resourceUrl)) && (!isNullOrEmpty(userHint));
@@ -156,8 +210,9 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Checks if is null or empty.
-	 *
-	 * @param value the value
+	 * 
+	 * @param value
+	 *            the value
 	 * @return true, if is null or empty
 	 */
 	private boolean isNullOrEmpty(String value) {
@@ -167,8 +222,9 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Store site url.
-	 *
-	 * @param url the url
+	 * 
+	 * @param url
+	 *            the url
 	 * @return the boolean
 	 */
 	public Boolean storeSiteUrl(String url) {
@@ -178,7 +234,7 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Gets the stored lists.
-	 *
+	 * 
 	 * @return the stored lists
 	 */
 	public ArrayList<String> getStoredLists() {
@@ -187,7 +243,7 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Checks for default list.
-	 *
+	 * 
 	 * @return true, if successful
 	 */
 	public boolean hasDefaultList() {
@@ -196,7 +252,7 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Gets the preferences.
-	 *
+	 * 
 	 * @return the preferences
 	 */
 	public AssetPreferences getPreferences() {
@@ -217,27 +273,27 @@ public class AssetApplication extends Application {
 
 	/**
 	 * Gets the current list client.
-	 *
+	 * 
 	 * @return the current list client
 	 */
 	public SharepointListsClient getCurrentListClient() {
 		String serverUrl = mPreferences.getSharepointServer();
 		String siteRelativeUrl = mPreferences.getSiteRelativeUrl();
 		Credentials credentials = getCredentials();
-		mSharepointListsClient = new SharepointListsClientWithFiles(serverUrl, siteRelativeUrl,
-				credentials, new Logger() {
+		mSharepointListsClient = new SharepointListsClientWithFiles(serverUrl, siteRelativeUrl, credentials,
+				new Logger() {
 
-					@Override
-					public void log(String message, LogLevel level) {
-						Log.d("Asset", message);
-					}
-				});
+			@Override
+			public void log(String message, LogLevel level) {
+				Log.d("Asset", message);
+			}
+		});
 		return mSharepointListsClient;
 	}
 
 	/**
 	 * Gets the account info.
-	 *
+	 * 
 	 * @return the account info
 	 */
 	public String getAccountInfo() {
@@ -248,5 +304,24 @@ public class AssetApplication extends Application {
 			Log.d("Asset", t.getMessage());
 		}
 		return "";
+	}
+
+	/**
+	 * Gets the current list client.
+	 * 
+	 * @return the current list client
+	 */
+	public FileClient getCurrentFileClient() {
+		String serverUrl = mPreferences.getSharepointServer();
+		String siteRelativeUrl = mPreferences.getSiteRelativeUrl();
+		Credentials credentials = getCredentials();
+		mFileClient = new FileClient(serverUrl, siteRelativeUrl, credentials, new Logger() {
+
+			@Override
+			public void log(String message, LogLevel level) {
+				Log.d("Asset", message);
+			}
+		});
+		return mFileClient;
 	}
 }

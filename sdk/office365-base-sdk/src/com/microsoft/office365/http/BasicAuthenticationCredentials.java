@@ -5,10 +5,10 @@
  ******************************************************************************/
 package com.microsoft.office365.http;
 
+import android.util.Base64;
+
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Platform;
-
-import android.util.Base64;
 
 /**
  * Credentials implementation for HTTP Basic Authentication

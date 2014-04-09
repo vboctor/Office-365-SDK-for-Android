@@ -8,17 +8,19 @@ package com.microsoft.assetmanagement.files;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.microsoft.office365.Action;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.ErrorCallback;
 import com.microsoft.office365.Logger;
-import com.microsoft.office365.OfficeFuture;
 import com.microsoft.office365.OfficeEntity;
+import com.microsoft.office365.files.FileClient;
 import com.microsoft.office365.lists.SharepointListsClient;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class will be replaced when the new Files API is released to production.
  */
@@ -27,26 +29,32 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 
 	/**
 	 * Instantiates a new sharepoint lists client with files.
-	 *
-	 * @param serverUrl the server url
-	 * @param siteRelativeUrl the site relative url
-	 * @param credentials the credentials
+	 * 
+	 * @param serverUrl
+	 *            the server url
+	 * @param siteRelativeUrl
+	 *            the site relative url
+	 * @param credentials
+	 *            the credentials
 	 */
-	public SharepointListsClientWithFiles(String serverUrl, String siteRelativeUrl,
-			Credentials credentials) {
+	public SharepointListsClientWithFiles(String serverUrl, String siteRelativeUrl, Credentials credentials) {
 		super(serverUrl, siteRelativeUrl, credentials);
 	}
 
 	/**
 	 * Instantiates a new sharepoint lists client with files.
-	 *
-	 * @param serverUrl the server url
-	 * @param siteRelativeUrl the site relative url
-	 * @param credentials the credentials
-	 * @param logger the logger
+	 * 
+	 * @param serverUrl
+	 *            the server url
+	 * @param siteRelativeUrl
+	 *            the site relative url
+	 * @param credentials
+	 *            the credentials
+	 * @param logger
+	 *            the logger
 	 */
-	public SharepointListsClientWithFiles(String serverUrl, String siteRelativeUrl,
-			Credentials credentials, Logger logger) {
+	public SharepointListsClientWithFiles(String serverUrl, String siteRelativeUrl, Credentials credentials,
+			Logger logger) {
 		super(serverUrl, siteRelativeUrl, credentials, logger);
 	}
 
@@ -64,66 +72,40 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 	 *            the list name
 	 * @param itemId
 	 *            the item id
+	 * @param fileClient
+	 *            the file Client
 	 * @return the file
 	 */
-	public OfficeFuture<DocumentLibraryItem> getFileFromDocumentLibrary(String listName,
-			final String itemId) {
-		return getFileFromDocumentLibrary(listName, itemId, false);
-	}
+	public ListenableFuture<DocumentLibraryItem> getFileFromDocumentLibrary(final String listName, final String itemId,
+			final FileClient fileClient) {
 
-	/**
-	 * Gets the file.
-	 * 
-	 * @param listName
-	 *            the list name
-	 * @param itemId
-	 *            the item id
-	 * @param thumbnail
-	 *            if true, the method will retrieve a thumbnail
-	 * @return the file
-	 */
-	public OfficeFuture<DocumentLibraryItem> getFileFromDocumentLibrary(String listName,
-			final String itemId, final boolean thumbnail) {
+		final SettableFuture<DocumentLibraryItem> result = SettableFuture.create();
+		ListenableFuture<SPFile> picture = getSPFileFromPictureLibrary(listName, itemId);
 
-		final OfficeFuture<DocumentLibraryItem> result = new OfficeFuture<DocumentLibraryItem>();
-		String queryPath = String.format(
-				"_api/web/lists/GetByTitle('%s')/items('%s')/File?$select=ServerRelativeUrl",
-				urlEncode(listName), itemId);
-		String filePathUrl = getSiteUrl() + queryPath;
-		OfficeFuture<JSONObject> request = executeRequestJson(filePathUrl, "GET");
-
-		request.done(new Action<JSONObject>() {
+		Futures.addCallback(picture, new FutureCallback<SPFile>() {
 			@Override
-			public void run(JSONObject json) throws Exception {
+			public void onFailure(Throwable t) {
+				result.setException(t);
+			}
 
-				String filePath = json.getJSONObject("d").getString("ServerRelativeUrl");
-
-				if (filePath == null) {
-					throw new IllegalStateException("File path missing");
-				}
-
-				if (filePath.startsWith("/")) {
-					filePath = filePath.substring(1);
-				}
-
-				String path = filePath.replaceAll("\\s", "%20");
-
-				if (thumbnail) {
-					path = path.substring(0, path.lastIndexOf("/") + 1) + "_t"
-							+ path.substring(path.lastIndexOf("/")).replace(".", "_") + ".jpg";
-				}
-
-				final String completePath = getServerUrl() + path;
-				OfficeFuture<byte[]> file = executeRequest(completePath, "GET");
-
-				file.done(new Action<byte[]>() {
+			@Override
+			public void onSuccess(SPFile spFile) {
+				// TODO:Review if we can use chaining.
+				ListenableFuture<byte[]> file = fileClient.getFile(spFile.getData("Name").toString(), listName);
+				Futures.addCallback(file, new FutureCallback<byte[]>() {
 					@Override
-					public void run(byte[] payload) throws Exception {
-						result.setResult(new DocumentLibraryItem(payload, itemId));
+					public void onFailure(Throwable t) {
+						result.setException(t);
+					};
+
+					@Override
+					public void onSuccess(byte[] payload) {
+						result.set(new DocumentLibraryItem(payload, itemId));
 					}
 				});
 			}
 		});
+
 		return result;
 	}
 
@@ -131,18 +113,20 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 	 * The Class DocumentLibraryItem.
 	 */
 	public class DocumentLibraryItem {
-		
+
 		/** The m content. */
 		private byte[] mContent;
-		
+
 		/** The m item id. */
 		private String mItemId;
 
 		/**
 		 * Instantiates a new document library item.
-		 *
-		 * @param content the content
-		 * @param itemId the item id
+		 * 
+		 * @param content
+		 *            the content
+		 * @param itemId
+		 *            the item id
 		 */
 		public DocumentLibraryItem(byte[] content, String itemId) {
 			setContent(content);
@@ -151,7 +135,7 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 
 		/**
 		 * Gets the content.
-		 *
+		 * 
 		 * @return the content
 		 */
 		public byte[] getContent() {
@@ -160,8 +144,9 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 
 		/**
 		 * Sets the content.
-		 *
-		 * @param content the new content
+		 * 
+		 * @param content
+		 *            the new content
 		 */
 		public void setContent(byte[] content) {
 			this.mContent = content;
@@ -169,7 +154,7 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 
 		/**
 		 * Gets the item id.
-		 *
+		 * 
 		 * @return the item id
 		 */
 		public String getItemId() {
@@ -178,8 +163,9 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 
 		/**
 		 * Sets the item id.
-		 *
-		 * @param itemId the new item id
+		 * 
+		 * @param itemId
+		 *            the new item id
 		 */
 		public void setItemId(String itemId) {
 			this.mItemId = itemId;
@@ -188,129 +174,141 @@ public class SharepointListsClientWithFiles extends SharepointListsClient {
 
 	/**
 	 * Gets the SP file from picture library.
-	 *
-	 * @param library the library
-	 * @param id the id
+	 * 
+	 * @param library
+	 *            the library
+	 * @param id
+	 *            the id
 	 * @return the SP file from picture library
 	 */
-	public OfficeFuture<SPFile> getSPFileFromPictureLibrary(final String library, final String id) {
+	public ListenableFuture<SPFile> getSPFileFromPictureLibrary(final String library, final String id) {
 
-		final OfficeFuture<SPFile> result = new OfficeFuture<SPFile>();
+		final SettableFuture<SPFile> result = SettableFuture.create();
 		String getListUrl = getSiteUrl() + "_api/web/lists/GetByTitle('%s')/items('%s')/File";
 		getListUrl = String.format(getListUrl, urlEncode(library), id);
 
 		try {
-			OfficeFuture<JSONObject> request = executeRequestJson(getListUrl, "GET");
-
-			request.done(new Action<JSONObject>() {
+			ListenableFuture<JSONObject> request = executeRequestJson(getListUrl, "GET");
+			Futures.addCallback(request, new FutureCallback<JSONObject>() {
+				@Override
+				public void onFailure(Throwable t) {
+					result.setException(t);
+				}
 
 				@Override
-				public void run(JSONObject json) throws Exception {
+				public void onSuccess(JSONObject json) {
 					SPFile file = new SPFile();
 					file.loadFromJson(json);
-					result.setResult(file);
+					result.set(file);
 				}
 			});
 
-			copyFutureHandlers(request, result);
 		} catch (Throwable t) {
-			result.triggerError(t);
+			result.setException(t);
 		}
-
 		return result;
 	}
 
 	/**
 	 * Upload file.
-	 *
-	 * @param documentLibraryName the document library name
-	 * @param fileName the file name
-	 * @param fileContent the file content
+	 * 
+	 * @param documentLibraryName
+	 *            the document library name
+	 * @param fileName
+	 *            the file name
+	 * @param fileContent
+	 *            the file content
 	 * @return the office future
 	 */
-	public OfficeFuture<SPFile> uploadFile(final String documentLibraryName, final String fileName,
+	public ListenableFuture<SPFile> uploadFile(final String documentLibraryName, final String fileName,
 			final byte[] fileContent) {
-		final OfficeFuture<SPFile> result = new OfficeFuture<SPFile>();
+		final SettableFuture<SPFile> result = SettableFuture.create();
 
-		//The name of the library not always matches the title, here is how we get the real path
-		String getRootFolderUrl = getSiteUrl() + String.format("_api/web/lists/GetByTitle('%s')/RootFolder", urlEncode(documentLibraryName));
-		
-		executeRequestJson(getRootFolderUrl, "GET")
-			.done(new Action<JSONObject>() {
-				
-				@Override
-				public void run(JSONObject json) throws Exception {
-					try {
+		// The name of the library not always matches the title, here is how we
+		// get the real path
+		String getRootFolderUrl = getSiteUrl()
+				+ String.format("_api/web/lists/GetByTitle('%s')/RootFolder", urlEncode(documentLibraryName));
 
-						String libraryServerRelativeUrl = json.getJSONObject("d").getString("ServerRelativeUrl");
+		ListenableFuture<JSONObject> request = executeRequestJson(getRootFolderUrl, "GET");
 
-						String getListUrl = getSiteUrl()
-								+ "_api/web/GetFolderByServerRelativeUrl('%s')/Files/add(url='%s',overwrite=true)";
-						getListUrl = String.format(getListUrl,  urlEncode(libraryServerRelativeUrl), urlEncode(fileName));
+		Futures.addCallback(request, new FutureCallback<JSONObject>() {
 
-						Map<String, String> headers = new HashMap<String, String>();
-						headers.put("Content-Type", "application/json;odata=verbose");
-						OfficeFuture<JSONObject> request = executeRequestJsonWithDigest(getListUrl, "POST",
-								headers, fileContent);
+			@Override
+			public void onFailure(Throwable t) {
+				result.setException(t);
+			}
 
-						request.done(new Action<JSONObject>() {
+			@Override
+			public void onSuccess(JSONObject json) {
+				try {
 
-							@Override
-							public void run(JSONObject json) throws Exception {
-								SPFile file = new SPFile();
-								file.loadFromJson(json);
-								result.setResult(file);
-							}
-						});
+					String libraryServerRelativeUrl = json.getJSONObject("d").getString("ServerRelativeUrl");
+					String getListUrl = getSiteUrl()
+							+ "_api/web/GetFolderByServerRelativeUrl('%s')/Files/add(url='%s',overwrite=true)";
+					getListUrl = String.format(getListUrl, urlEncode(libraryServerRelativeUrl), urlEncode(fileName));
 
-						copyFutureHandlers(request, result);
-					} catch (Throwable t) {
-						result.triggerError(t);
-					}
+					Map<String, String> headers = new HashMap<String, String>();
+					headers.put("Content-Type", "application/json;odata=verbose");
+					ListenableFuture<JSONObject> request = executeRequestJsonWithDigest(getListUrl, "POST", headers,
+							fileContent);
+
+					Futures.addCallback(request, new FutureCallback<JSONObject>() {
+						@Override
+						public void onFailure(Throwable t) {
+							result.setException(t);
+						}
+
+						@Override
+						public void onSuccess(JSONObject json) {
+							SPFile file = new SPFile();
+							file.loadFromJson(json);
+							result.set(file);
+						}
+					});
+				} catch (Throwable t) {
+					result.setException(t);
 				}
-			})
-			.onError(new ErrorCallback() {
-				
-				@Override
-				public void onError(Throwable error) {
-					result.triggerError(error);
-				}
-			});
-		
-		
+			}
+		});
 
 		return result;
 	}
 
 	/**
 	 * Gets the list item id for file by server relative url.
-	 *
-	 * @param serverRelativeUrl the server relative url
+	 * 
+	 * @param serverRelativeUrl
+	 *            the server relative url
 	 * @return the list item id for file by server relative url
 	 */
-	public OfficeFuture<String> getListItemIdForFileByServerRelativeUrl(String serverRelativeUrl) {
-		final OfficeFuture<String> result = new OfficeFuture<String>();
+	public ListenableFuture<String> getListItemIdForFileByServerRelativeUrl(String serverRelativeUrl) {
+		final SettableFuture<String> result = SettableFuture.create();
 
-		String getListUrl = getSiteUrl()
-				+ "_api/Web/GetFileByServerRelativeUrl('%s')/ListItemAllFields?$select=id";
+		String getListUrl = getSiteUrl() + "_api/Web/GetFileByServerRelativeUrl('%s')/ListItemAllFields?$select=id";
 		getListUrl = String.format(getListUrl, serverRelativeUrl);
 
 		try {
-			OfficeFuture<JSONObject> request = executeRequestJson(getListUrl, "GET");
+			ListenableFuture<JSONObject> request = executeRequestJson(getListUrl, "GET");
 
-			request.done(new Action<JSONObject>() {
+			Futures.addCallback(request, new FutureCallback<JSONObject>() {
+				@Override
+				public void onFailure(Throwable t) {
+					result.setException(t);
+				}
 
 				@Override
-				public void run(JSONObject json) throws Exception {
-					result.setResult(json.getJSONObject("d").getString("ID"));
+				public void onSuccess(JSONObject json) {
+					try {
+						result.set(json.getJSONObject("d").getString("ID"));
+					} catch (JSONException e) {
+						result.setException(e);
+					}
 				}
 			});
 
-			copyFutureHandlers(request, result);
 		} catch (Throwable t) {
-			result.triggerError(t);
+			result.setException(t);
 		}
-
 		return result;
 	}
 }

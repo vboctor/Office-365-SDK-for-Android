@@ -34,8 +34,8 @@
             android:label="@string/title_activity_app_settings" >
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.OAuthSettingActivity"
-            android:label="@string/title_activity_oauth_settings" >
+            android:name="com.microsoft.assetmanagement.AADSettingsActivity"
+            android:label="@string/title_activity_aad_settings" >
         </activity>
         <activity
             android:name="com.microsoft.assetmanagement.NTLMSettingsActivity"
@@ -62,6 +62,10 @@
         <activity
             android:name="com.microsoft.assetmanagement.SharepointListItemActivity"
             android:label="@string/title_activity_sharepoint_list_item" >
+        </activity>
+        <activity
+            android:name="com.microsoft.adal.AuthenticationActivity"
+            android:label="Authenticate to Azure AD" >
         </activity>
     </application>
 

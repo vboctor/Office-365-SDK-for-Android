@@ -17,7 +17,7 @@ import com.microsoft.office365.OfficeEntity;
  * The Class SPList.
  */
 public class SPList extends OfficeEntity {
-	
+
 	/**
 	 * List from json.
 	 * 
@@ -30,17 +30,17 @@ public class SPList extends OfficeEntity {
 	public static List<SPList> listFromJson(JSONObject json) throws JSONException {
 		return OfficeEntity.listFromJson(json, SPList.class);
 	}
-	
+
 	/**
 	 * Instantiates a new SP list.
 	 * 
 	 * @throws JSONException
 	 *             the JSON exception
 	 */
-	public SPList() throws JSONException {
+	public SPList() {
 		super();
 	}
-	
+
 	/**
 	 * Gets the id.
 	 * 
