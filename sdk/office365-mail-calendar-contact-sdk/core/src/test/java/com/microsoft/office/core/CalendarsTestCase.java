@@ -35,11 +35,8 @@ public class CalendarsTestCase extends AbstractTest {
     @Test
     @Ignore(value = "Calendar can not be created on server for now")
     public void createTest() {
-        try {
-            createAndCheck();
-        } finally {
-            removeCalendar();
-        }
+        createAndCheck();
+        removeCalendar();
     }
 
     @Test
@@ -48,11 +45,8 @@ public class CalendarsTestCase extends AbstractTest {
         // create first
         prepareCalendar();
         Me.flush();
-        try {
-            readAndCheck();
-        } finally {
-            removeCalendar();
-        }
+        readAndCheck();
+        removeCalendar();
     }
 
     @Test
@@ -62,11 +56,8 @@ public class CalendarsTestCase extends AbstractTest {
         prepareCalendar();
         Me.flush();
 
-        try {
-            updateAndCheck();
-        } finally {
-            removeCalendar();
-        }
+        updateAndCheck();
+        removeCalendar();
     }
 
     @Test
@@ -102,7 +93,8 @@ public class CalendarsTestCase extends AbstractTest {
 
     @Test
     public void sizeTest() {
-        Me.getCalendars().size();
+        Me.getCalendars().fetch();
+        assertTrue(Me.getCalendars().size() > 0);
     }
 
     private void createAndCheck() {

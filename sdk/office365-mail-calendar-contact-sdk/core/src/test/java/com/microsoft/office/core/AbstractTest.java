@@ -44,9 +44,9 @@ public abstract class AbstractTest extends Assert {
 
     protected static ODataV4Client v4Client;
 
-    protected static final String endpoint = "https://outlook.office365.com/ews/odata";
+    protected static final String endpoint = "https://outlook.office365.com/EWS/OData/";
 
-    protected static final String username = "Enter your username here";
+    protected static final String username = "Enter your login here";
 
     protected static final String password = "Enter your password here";
 
@@ -100,5 +100,11 @@ public abstract class AbstractTest extends Assert {
         final InputStream input = getClass().getResourceAsStream(resourceFileName);
         return getClient().getBinder().getODataEntity(
                 getClient().getDeserializer().toEntry(input, getClient().getResourceFactory().entryClassForFormat(ODataPubFormat.JSON)));
+    }
+    
+    protected void wait(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (Exception e) {}
     }
 }

@@ -31,17 +31,22 @@ import java.net.URLEncoder;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.microsoft.office.proxy.OfficeEntitySet;
+import com.msopentech.odatajclient.engine.communication.ODataClientErrorException;
 import com.msopentech.odatajclient.engine.communication.request.retrieve.ODataValueRequest;
 import com.msopentech.odatajclient.engine.communication.response.ODataRetrieveResponse;
 import com.msopentech.odatajclient.engine.data.ODataEntity;
@@ -95,6 +100,24 @@ class EntitySetInvocationHandler<
      * Represents this set as collection.
      */
     private EntityCollectionInvocationHandler<T> setAsCollection = null;
+
+    /**
+     * An instance of iterator to be returned when iterator() method called before entities collected from service.
+     */
+    private final Iterator<T> mEmptyIterator = new Iterator<T>() {
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+        @Override
+        public T next() {
+            throw new NoSuchElementException("You must retrieve data from service before accessing iterator.");
+        }
+        @Override
+        public void remove() {
+            throw new IllegalStateException("You must retrieve data from service before accessing iterator.");
+        }
+    };
 
     /**
      * Gets an instance of {@link EntitySetInvocationHandler}.
@@ -267,10 +290,20 @@ class EntitySetInvocationHandler<
 
     @Override
     public Long count() {
-        final ODataValueRequest req = client.getRetrieveRequestFactory().
-                getValueRequest(client.getURIBuilder(this.uri.toASCIIString()).appendCountSegment().build());
+        final ODataValueRequest req = client.getRetrieveRequestFactory().getValueRequest(
+                client.getURIBuilder(uri.toASCIIString()).appendCountSegment().build());
         req.setFormat(ODataValueFormat.TEXT);
         return Long.valueOf(req.execute().getBody().asPrimitive().toString());
+    }
+    
+    @Override
+    public ListenableFuture<Long> countAsync() {
+        return containerHandler.getExecutorService().submit(new Callable<Long>() {
+            @Override
+            public Long call() {
+                return count();
+            }
+        });
     }
 
     @Override
@@ -280,10 +313,20 @@ class EntitySetInvocationHandler<
         try {
             result = get(key) != null;
         } catch (Exception e) {
-            LOG.error("Could not check existence of {}({})", this.entitySetName, key, e);
+            LOG.error("Could not check existence of {}({})", entitySetName, key, e);
         }
 
         return result;
+    }
+    
+    @Override
+    public ListenableFuture<Boolean> existsAsync(final KEY key) {
+        return containerHandler.getExecutorService().submit(new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return exists(key);
+            }
+        });
     }
 
     private LinkedHashMap<String, Object> getCompoundKey(final Object key) {
@@ -314,6 +357,16 @@ class EntitySetInvocationHandler<
     public T get(KEY key) throws IllegalArgumentException {
         return get(key, typeRef);
     }
+    
+    @Override
+    public ListenableFuture<T> getAsync(final KEY key) {
+        return containerHandler.getExecutorService().submit(new Callable<T>() {
+            @Override
+            public T call() {
+                return get(key);
+            }
+        });
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -322,23 +375,18 @@ class EntitySetInvocationHandler<
             throw new IllegalArgumentException("Null key");
         }
 
-        final EntityUUID uuid = new EntityUUID(
-                ClassUtils.getNamespace(typeRef),
-                containerHandler.getEntityContainerName(),
-                entitySetName,
-                ClassUtils.getNamespace(typeRef) + "." + ClassUtils.getEntityTypeName(typeRef),
-                key);
+        final EntityUUID uuid = new EntityUUID(ClassUtils.getNamespace(typeRef), containerHandler.getEntityContainerName(), entitySetName,
+                ClassUtils.getNamespace(typeRef) + "." + ClassUtils.getEntityTypeName(typeRef), key);
 
         LOG.debug("Ask for '{}({})'", typeRef.getSimpleName(), key);
 
-        EntityTypeInvocationHandler handler =
-                EntityContainerFactory.getContext().entityContext().getEntity(uuid);
+        EntityTypeInvocationHandler handler = EntityContainerFactory.getContext().entityContext().getEntity(uuid);
 
         if (handler == null) {
             // not yet attached: search against the service
             try {
                 LOG.debug("Search for '{}({})' into the service", typeRef.getSimpleName(), key);
-                final URIBuilder uriBuilder = client.getURIBuilder(this.uri.toASCIIString());
+                final URIBuilder uriBuilder = client.getURIBuilder(uri.toASCIIString());
 
                 if (key.getClass().getAnnotation(CompoundKey.class) == null) {
                     LOG.debug("Append key segment '{}'", key);
@@ -353,11 +401,17 @@ class EntitySetInvocationHandler<
                 final ODataRetrieveResponse<ODataEntity> res =
                         client.getRetrieveRequestFactory().getEntityRequest(uriBuilder.build()).execute();
 
-                handler = EntityTypeInvocationHandler.getInstance(res.getBody(), containerHandler.getEntityContainerName(), this.entitySetName,
+                handler = EntityTypeInvocationHandler.getInstance(res.getBody(), containerHandler.getEntityContainerName(), entitySetName,
                         typeRef, containerHandler);
                 handler.setETag(res.getEtag());
-            } catch (Exception e) {
-                LOG.info("Entity '" + uuid + "' not found", e);
+            } catch (ODataClientErrorException e) {
+                // return null only if server responded with 404 status code;
+                //all other exceptions will be thrown for further handling
+                if (e.getStatusLine().getStatusCode() == 404) {
+                    LOG.info("Entity '" + uuid + "' not found", e);
+                } else {
+                    throw new RuntimeException(e);
+                }
             }
         } else if (isDeleted(handler)) {
             // object deleted
@@ -371,6 +425,16 @@ class EntitySetInvocationHandler<
                 handler);
     }
 
+    @Override
+    public <S extends T> ListenableFuture<S> getAsync(final KEY key, final Class<S> reference) {
+        return containerHandler.getExecutorService().submit(new Callable<S>() {
+            @Override
+            public S call() {
+                return get(key, reference);
+            }
+        });
+    }
+    
     @SuppressWarnings("unchecked")
     public <S extends T> Map.Entry<List<S>, URI> fetchPartialEntitySet(final URI uri, final Class<S> typeRef) {
         final ODataRetrieveResponse<ODataEntitySet> res =
@@ -418,6 +482,16 @@ class EntitySetInvocationHandler<
     public EC getAll() {
         return getAll(collTypeRef);
     }
+    
+    @Override
+    public ListenableFuture<EC> getAllAsync() {
+        return containerHandler.getExecutorService().submit(new Callable<EC>() {
+            @Override
+            public EC call() {
+                return getAll();
+            }
+        });
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -425,9 +499,19 @@ class EntitySetInvocationHandler<
         final Class<S> typeRef = (Class<S>) ClassUtils.extractTypeArg(collTypeRef);
 
         // TODO append entity type in v3
-        final URI entitySetURI = client.getURIBuilder(this.uri.toASCIIString()).build();
+        final URI entitySetURI = client.getURIBuilder(uri.toASCIIString()).build();
 
         return fetchWholeEntitySet(entitySetURI, typeRef, collTypeRef);
+    }
+    
+    @Override
+    public <S extends T, SEC extends AbstractEntityCollection<S>> ListenableFuture<SEC> getAllAsync(final Class<SEC> reference) {
+        return containerHandler.getExecutorService().submit(new Callable<SEC>() {
+            @Override
+            public SEC call() {
+                return getAll(reference);
+            }
+        });
     }
 
     @Override
@@ -482,33 +566,56 @@ class EntitySetInvocationHandler<
     }
 
     @Override
-    public EntitySetIterator<T, KEY, EC> iterator() {
-        return new EntitySetIterator<T, KEY, EC>(
-                // TODO add entity type to path in v3
-                client.getURIBuilder(this.uri.toASCIIString()).build(),
-                this);
+    public Iterator<T> iterator() {
+        if (setAsCollection != null) {
+            return setAsCollection.iterator();
+        } else {
+            return mEmptyIterator;
+        }
     }
 
     @Override
     public boolean add(T e) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
         return setAsCollection.add(e);
     }
 
-    private void initCollection() {
-        setAsCollection =  new EntityCollectionInvocationHandler<T>(
-                           containerHandler,
-                           getAll(),
-                           typeRef,
-                           containerHandler.getEntityContainerName());
+    @Override
+    public void fetch() {
+        try {
+            setAsCollection = new EntityCollectionInvocationHandler<T>(
+                    containerHandler,
+                    getAll(),
+                    typeRef,
+                    containerHandler.getEntityContainerName());
+        } catch (Exception e) {/* keep it null? */}
+    }
+    
+    @Override
+    public ListenableFuture<Void> fetchAsync() {
+        return containerHandler.getExecutorService().submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                fetch();
+                return ClassUtils.returnVoid();
+            }
+        });
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
         return setAsCollection.addAll(c);
     }
@@ -516,7 +623,11 @@ class EntitySetInvocationHandler<
     @Override
     public void clear() {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         setAsCollection.clear();
@@ -525,7 +636,11 @@ class EntitySetInvocationHandler<
     @Override
     public boolean contains(Object o) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.contains(o);
@@ -534,7 +649,11 @@ class EntitySetInvocationHandler<
     @Override
     public boolean containsAll(Collection<?> c) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.containsAll(c);
@@ -543,7 +662,11 @@ class EntitySetInvocationHandler<
     @Override
     public boolean isEmpty() {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.isEmpty();
@@ -552,7 +675,11 @@ class EntitySetInvocationHandler<
     @Override
     public boolean remove(Object o) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.remove(o);
@@ -561,7 +688,11 @@ class EntitySetInvocationHandler<
     @Override
     public boolean removeAll(Collection<?> c) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.removeAll(c);
@@ -570,7 +701,11 @@ class EntitySetInvocationHandler<
     @Override
     public boolean retainAll(Collection<?> c) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.retainAll(c);
@@ -579,7 +714,11 @@ class EntitySetInvocationHandler<
     @Override
     public int size() {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.size();
@@ -588,7 +727,11 @@ class EntitySetInvocationHandler<
     @Override
     public Object[] toArray() {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.toArray();
@@ -597,7 +740,11 @@ class EntitySetInvocationHandler<
     @Override
     public <T> T[] toArray(T[] a) {
         if (setAsCollection == null) {
-            initCollection();
+            try {
+                fetch();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         return setAsCollection.toArray(a);

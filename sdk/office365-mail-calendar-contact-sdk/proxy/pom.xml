@@ -20,13 +20,16 @@
     governing permissions and limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.microsoft.office365</groupId>
-		<artifactId>mail-calendar-contact</artifactId>
-		<version>0.11.1</version>
+		<groupId>com.microsoft.office</groupId>
+		<artifactId>mail-calendar-contact-aggregator</artifactId>
+		<version>1.0</version>
 	</parent>
+
 	<artifactId>mail-calendar-contact-proxy</artifactId>
 	<packaging>pom</packaging>
 	<name>Microsoft Office 365 Mail-Calendar-Contact SDK for Java: Proxy</name>
@@ -35,14 +38,6 @@
 	<properties>
 		<main.basedir>${project.parent.basedir}</main.basedir>
 	</properties>
-
-	<distributionManagement>
-		<!-- This is required to generate a site with valid links to module sub-sites -->
-		<site>
-			<id>${project.artifactId}-site</id>
-			<url>${basedir}/</url>
-		</site>
-	</distributionManagement>
 
 	<modules>
 		<module>proxy-office</module>

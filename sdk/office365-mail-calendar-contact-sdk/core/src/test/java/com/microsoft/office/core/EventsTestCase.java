@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.microsoft.exchange.services.odata.model.Events;
+import com.microsoft.exchange.services.odata.model.ICalendars;
 import com.microsoft.exchange.services.odata.model.Me;
 import com.microsoft.exchange.services.odata.model.types.ICalendar;
 import com.microsoft.exchange.services.odata.model.types.IEvent;
@@ -45,7 +46,10 @@ public class EventsTestCase extends AbstractTest {
 
     @BeforeClass
     public static void retrieveCalendar() {
-        Iterator<ICalendar> iterator = Me.getCalendars().iterator();
+        ICalendars cals = Me.getCalendars();
+        // an empty iterator will be returned for any entity set unless you call fetch()
+        cals.fetch();
+        Iterator<ICalendar> iterator = cals.iterator();
         if (iterator.hasNext()) {
             calendar = iterator.next();
         } else {
@@ -55,33 +59,24 @@ public class EventsTestCase extends AbstractTest {
 
     @Test
     public void createTest() {
-        try {
-            createAndCheck();
-        } finally {
-            removeEvent();
-        }
+        createAndCheck();
+        removeEvent();
     }
 
     @Test
     public void readTest() {
         prepareEvent();
         Me.flush();
-        try {
-            readAndCheck();
-        } finally {
-            removeEvent();
-        }
+        readAndCheck();
+        removeEvent();
     }
 
     @Test
     public void updateTest() {
         prepareEvent();
         Me.flush();
-        try {
-            updateAndCheck();
-        } finally {
-            removeEvent();
-        }
+        updateAndCheck();
+        removeEvent();
     }
 
     @Test
@@ -107,17 +102,14 @@ public class EventsTestCase extends AbstractTest {
     @Test
     public void dateTimeTest() {
         prepareEvent();
-        final ODataTimestamp start = ODataTimestamp.parse(EdmSimpleType.DateTimeOffset, "2015-01-01T00:00:00Z"),
+        final ODataTimestamp start = ODataTimestamp.parse(EdmSimpleType.DateTimeOffset, "2015-01-01T00:00:00.000000+00:00"),
                              end   = ODataTimestamp.parse(EdmSimpleType.DateTimeOffset, "2016-01-01T00:00:00Z");
         event.setStart(start);
         event.setEnd(end);
         Me.flush();
-        try {
-            assertEquals(start, event.getStart());
-            assertEquals(end, event.getEnd());
-        } finally {
-            removeEvent();
-        }
+        assertEquals(start, event.getStart());
+        assertEquals(end, event.getEnd());
+        removeEvent();
     }
 
     private void deleteAndCheck() {
