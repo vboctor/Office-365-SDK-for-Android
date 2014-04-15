@@ -10,7 +10,7 @@ import java.util.List;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.ContactItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.mail.MailClient;
+import com.microsoft.office365.exchange.ContactClient;
 import com.microsoft.office365.mail.entities.Contact;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -86,9 +86,9 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	protected List<Contact> doInBackground(final String... args) {
 		List<Contact> contacts = new ArrayList<Contact>();
 		try {
-			MailClient mc = new MailClient(mCredentials);
+			ContactClient client = new ContactClient(mCredentials);
 
-			contacts = mc.getContacts().get();		
+			contacts = client.getContacts().get();		
 			
 		} catch (Exception e) {
 		}

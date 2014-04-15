@@ -8,7 +8,7 @@ package com.microsoft.mailservice.tasks;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.SendMailActivity;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.mail.MailClient;
+import com.microsoft.office365.exchange.MailClient;
 import com.microsoft.office365.mail.entities.Message;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -35,9 +35,9 @@ public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
-	
+
 	static Credentials mCredentials;
-	
+
 	public SendEmailTask(SendMailActivity activity, Credentials crendential) {
 		mActivity = activity;
 		mContext = activity;
@@ -88,12 +88,10 @@ public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 	protected Message doInBackground(final Message... args) {
 		Message messageSend = new Message();
 		try {
-			MailClient mc = new MailClient(mCredentials);
+			MailClient client = new MailClient(mCredentials);
 
-			String messageId= mc.createMessage(args[0]).get();
-			mc.sendMessage(messageId).get();//sendMessage(args[0]).get();
-			//messageSend = mc.sendMessage(args[0]).get();
-
+			String messageId= client.createMessage(args[0]).get();
+			client.sendMessage(messageId).get();
 		} catch (Exception e) {
 		}
 

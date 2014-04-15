@@ -5,6 +5,7 @@
  ******************************************************************************/
 package com.microsoft.mailservice;
 
+import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 import android.webkit.CookieManager;
@@ -13,7 +14,7 @@ import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AssetApplication.
+ * The Class ExchangeAPIApplication.
  */
 public class ExchangeAPIApplication extends Application {
 
@@ -44,12 +45,13 @@ public class ExchangeAPIApplication extends Application {
 	/**
 	 * Clear preferences.
 	 */
-	public void clearPreferences() {
-		// mPreferences.clear();
+	public void clearPreferences(Activity activity) {
 		CookieSyncManager syncManager = CookieSyncManager.createInstance(this);
 		if (syncManager != null) {
 			CookieManager cookieManager = CookieManager.getInstance();
 			cookieManager.removeAllCookie();
+			CookieSyncManager.getInstance().sync();
+			Authentication.ResetToken(activity);
 		}
 	}
 }

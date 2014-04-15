@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.mail.MailClient;
+import com.microsoft.office365.exchange.FolderClient;
 import com.microsoft.office365.mail.entities.Folder;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -74,9 +73,9 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 	protected Map<String,List<Folder>> doInBackground(final String... args) {
 		Map<String,List<Folder>> folders = new HashMap<String,List<Folder>>();
 		try {
-			MailClient mc = new MailClient(mCredentials);
+			FolderClient client = new FolderClient(mCredentials);
 
-			List<Folder> auxFolders = mc.getFolders().get();	
+			List<Folder> auxFolders = client.getFolders().get();	
 			
 			Folder inbox = null, draft = null, sentItems = null, deletedItems = null;
 			

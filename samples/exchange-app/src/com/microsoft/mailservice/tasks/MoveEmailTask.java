@@ -8,6 +8,7 @@ package com.microsoft.mailservice.tasks;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.exchange.MailClient;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -17,9 +18,9 @@ import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class DeleteEmailTask.
+ * The Class MoveEmailTask.
  */
-public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
+public class MoveEmailTask extends AsyncTask<String, Void, String[]> {
 
 	/** The m dialog. */
 	private ProgressDialog mDialog;
@@ -32,14 +33,17 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
+	
+	private String mMessageDisplay;
 
 	static Credentials mCredentials;
 
-	public DeleteEmailTask(MainActivity activity, Credentials crendential) {
+	public MoveEmailTask(MainActivity activity, Credentials crendential, String messageDisplay) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
+		mMessageDisplay = messageDisplay;
 	}
 
 	/* (non-Javadoc)
@@ -50,7 +54,7 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 		mStoredRotation = mActivity.getRequestedOrientation();
 		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		mDialog.setTitle("Deleting Message...");
+		mDialog.setTitle(mMessageDisplay);
 		mDialog.setMessage("Please wait.");
 		mDialog.setCancelable(false);
 		mDialog.setIndeterminate(true);
@@ -67,18 +71,22 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 			mActivity.setRequestedOrientation(mStoredRotation);
 		}
 
-		Toast.makeText(mContext, "Message Deleted", Toast.LENGTH_LONG).show();
+		Toast.makeText(mContext, args[3], Toast.LENGTH_LONG).show();
 		mActivity.deleteMessage(args[0], args[1]);
 	}
 
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 * args[0] = current message folder id
+	 * args[1] = message Id
+	 * args[2] = folder to move
+	 * args[3] = message to display on onPostExecute
 	 */
 	protected String[] doInBackground(final String... args) {
 		try {
 			MailClient mc = new MailClient(mCredentials);
 
-			mc.deleteMessage(args[1]).get();
+			mc.moveMessage(args[1], args[2]).get();
 
 		} catch (Exception e) {
 			Log.d(e.getMessage(), e.getStackTrace().toString());

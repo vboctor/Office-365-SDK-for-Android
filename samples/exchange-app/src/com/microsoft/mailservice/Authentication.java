@@ -35,7 +35,6 @@ public class Authentication {
 	public static SettableFuture<Credentials> authenticate(final Activity activity, final String resourceId) {
 		final SettableFuture<Credentials> result = SettableFuture.create();
 
-		//AuthenticationContext context = getAuthenticationContext(activity);
 		getAuthenticationContext(activity).acquireToken(activity, resourceId, Constants.CLIENT_ID,
 				Constants.REDIRECT_URL, PromptBehavior.Auto, "", new AuthenticationCallback<AuthenticationResult>() {
 
@@ -44,7 +43,6 @@ public class Authentication {
 				// once succeeded we create a credentials instance
 				// using
 				// the token from ADAL
-
 
 				mCredentials = new OAuthCredentials(authenticationResult.getAccessToken());
 				UserInfo ui = authenticationResult.getUserInfo();

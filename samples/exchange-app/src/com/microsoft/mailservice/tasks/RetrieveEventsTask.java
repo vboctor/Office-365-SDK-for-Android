@@ -10,7 +10,7 @@ import java.util.List;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.mail.MailClient;
+import com.microsoft.office365.exchange.EventClient;
 import com.microsoft.office365.mail.entities.Event;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -86,9 +86,9 @@ public class RetrieveEventsTask extends AsyncTask<String, Void, List<Event>> {
 	protected List<Event> doInBackground(final String... args) {
 		List<Event> events = new ArrayList<Event>();
 		try {
-			MailClient mc = new MailClient(mCredentials);
+			EventClient client = new EventClient(mCredentials);
 
-			events = mc.getEvents().get();		
+			events = client.getEvents().get();		
 			
 		} catch (Exception e) {
 		}

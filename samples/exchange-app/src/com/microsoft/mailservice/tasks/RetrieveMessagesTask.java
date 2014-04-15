@@ -10,10 +10,8 @@ import java.util.List;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.mail.MailClient;
-import com.microsoft.office365.mail.entities.Folder;
+import com.microsoft.office365.exchange.MailClient;
 import com.microsoft.office365.mail.entities.Message;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -40,7 +38,7 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 	
 	static Credentials mCredentials;
 	
-	String mFolderName;
+	String mFolderId;
 	
 	public RetrieveMessagesTask(MainActivity activity, Credentials crendential) {
 		mActivity = activity;
@@ -75,7 +73,7 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 		}
 
 		if (messages != null) {
-			mActivity.setMessages(mFolderName,messages);
+			mActivity.setMessages(mFolderId,messages);
 			MessageItemAdapter adapter = new MessageItemAdapter(mActivity, messages);
 			mActivity.setListAdapter(adapter);
 			adapter.notifyDataSetChanged();
@@ -90,11 +88,11 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 	 */
 	protected List<Message> doInBackground(final String... args) {
 		List<Message> messages = new ArrayList<Message>();
-		mFolderName = args[0];
+		mFolderId = args[0];
 		try {
-			MailClient mc = new MailClient(mCredentials);
+			MailClient client = new MailClient(mCredentials);
 			
-			messages = mc.getMessages(mFolderName).get();
+			messages = client.getMessages(mFolderId).get();
 			
 		} catch (Exception e) {
 		}

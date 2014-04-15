@@ -5,15 +5,14 @@
  ******************************************************************************/
 package com.microsoft.mailservice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.json.JSONObject;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -23,8 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -38,7 +35,6 @@ import com.microsoft.mailservice.adapters.ContactItemAdapter;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
-import com.microsoft.mailservice.tasks.DeleteEmailTask;
 import com.microsoft.mailservice.tasks.RetrieveContactsTask;
 import com.microsoft.mailservice.tasks.RetrieveEventsTask;
 import com.microsoft.mailservice.tasks.RetrieveFoldersTask;
@@ -56,21 +52,15 @@ public class MainActivity extends Activity {
 	ListView mListView;
 	ListView mListPrimaryFolderView;
 	ListView mListSecondaryFolderView;
-	TextView mLastSelectedItem;
+
+	Folder mLastSelectedFolder;
+	TextView mFolderTextView;
 
 	static Map<String,List<Message>> mMessages = new HashMap<String,List<Message>>();
 	static Map<String,List<Folder>> mFolders;
 
-	private DrawerLayout mDrawerLayout;
-	private ActionBarDrawerToggle mDrawerToggle;
-
-	public void setMessages(String folderName,List<Message> messages){
-		mMessages.put(folderName, messages);
-	}
-
-	public void setFolders(Map<String,List<Folder>> folders){
-		mFolders = folders;
-	}
+	DrawerLayout mDrawerLayout;
+	ActionBarDrawerToggle mDrawerToggle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +76,6 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View arg1, int position, long arg3) {
-
-//				MenuItem item = (MenuItem) findViewById(R.id.menu_delete_message);
-//				item.setEnabled(true);
-				
 				Intent intent = new Intent(MainActivity.this, MailActivity.class);
 				arg1.setBackgroundResource(R.color.cyan);
 				JSONObject payload = new JSONObject();
@@ -107,48 +93,26 @@ public class MainActivity extends Activity {
 				}				
 			}
 		});
-		
+
 		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-		    @Override
-		    public boolean onItemLongClick(AdapterView<?> parent,
-		            final View view, final int position, long id) {
-		        removeRow(view, position);
-		        return true;
-		    }
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
 
-			private void removeRow(final View view, final int position) {
-				
-				View view2 = new View(MainActivity.this);
-		
-				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				builder.setMessage("Delete Mail?")
-				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						Object obj = mListView.getItemAtPosition(position);
-						new DeleteEmailTask(MainActivity.this, Authentication.getCurrentCredentials()).execute(
-								((Message)obj).getId());
-						
-						mListView.removeView(view);
-					}
-				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				}).show();
-				
+				view.setBackgroundResource(R.color.cyan);
+				startActionMode(new ActionModeCallback(MainActivity.this,view,position,mLastSelectedFolder));
+				return true;
 			}
 		});
 
 		mListPrimaryFolderView.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 
-				setSelectedItemStyle(arg1);
-
-				Folder folder =(Folder) mListPrimaryFolderView.getItemAtPosition(position);
-
-				retrieveMesages(folder.getDisplayName());
+				setSelectedItemStyle(view);
+				mLastSelectedFolder =(Folder) mListPrimaryFolderView.getItemAtPosition(position);
+				retrieveMesages(mLastSelectedFolder.getId());
 			}				
 		});
 
@@ -158,10 +122,9 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
 				setSelectedItemStyle(arg1);
+				mLastSelectedFolder =(Folder) mListSecondaryFolderView.getItemAtPosition(position);
+				retrieveMesages(mLastSelectedFolder.getId());
 
-				Folder folder =(Folder) mListSecondaryFolderView.getItemAtPosition(position);
-
-				retrieveMesages(folder.getDisplayName());
 			}
 		});
 
@@ -170,11 +133,132 @@ public class MainActivity extends Activity {
 		setDrawerIconEvent();
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState){
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		Authentication.context.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		try {
+			switch (item.getItemId() ) {
+			case R.id.menu_clear_credentials:
+				((ExchangeAPIApplication)getApplication()).clearPreferences(this);
+				break;
+			case R.id.menu_refresh_messages:
+				String folder = mLastSelectedFolder != null ? mLastSelectedFolder.getDisplayName() : "Inbox";
+				getMessagesListActivity(folder);
+				break;
+			case R.id.menu_get_contacts:
+				getContactListActivity();
+				break;
+			case R.id.menu_get_events:
+				getEventListActivity();
+				break;
+			case R.id.menu_new_mail:
+				newMailActivity();
+				break;
+			case R.id.menu_delete_message:
+				break;
+
+			default:
+				if (mDrawerToggle.onOptionsItemSelected(item)) {
+					return true;
+				}else{
+					return super.onOptionsItemSelected(item);
+				}
+			}
+
+		} catch (Throwable t) {
+			Log.e("Asset", t.getMessage());
+		}
+		return true;
+	}
+
+	public void setMessages(String folderId,List<Message> messages){
+		mMessages.put(folderId, messages);
+	}
+
+	public void setFolders(Map<String,List<Folder>> folders){
+		mFolders = folders;
+	}
+
+	public void deleteMessage(String folderId, String messageId){
+
+		Map<String,List<Message>> messages = new HashMap<String,List<Message>>();
+
+		for(String f : mMessages.keySet()){
+			messages.put(f, new ArrayList<Message>());
+			List<Message> currentMessages = mMessages.get(f);
+			for(Message message : currentMessages){
+				if(!message.getId().equals(messageId)){
+					messages.get(f).add(message);
+				}
+			}
+		}
+
+		mMessages = messages;
+
+		retrieveMesages(folderId);
+	}
+
+	public void setListAdapter(MessageItemAdapter adapter) {		
+		mListView.setAdapter(adapter);		
+	}
+
+	public void setListAdapter(ContactItemAdapter adapter) {		
+		mListView.setAdapter(adapter);		
+	}
+
+	public void setListAdapter(EventItemAdapter adapter) {
+		mListView.setAdapter(adapter);			
+	}
+
+	public void setListAdapter(FolderItemAdapter adapter, FolderItemAdapter secondAdapter) {
+		mListPrimaryFolderView.setAdapter(adapter);		
+		mListSecondaryFolderView.setAdapter(secondAdapter);	
+	}
+
+	void getContactListActivity() {
+		new RetrieveContactsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
+	}
+
+	void getEventListActivity() {
+		new RetrieveEventsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
+	}
+
+	void newMailActivity() {
+		Intent intent = new Intent(MainActivity.this, SendMailActivity.class);
+		startActivity(intent);		
+	}
+
 	void setSelectedItemStyle(View arg1) {
-		if(mLastSelectedItem != null)
+
+		if(mFolderTextView != null)
 		{
-			mLastSelectedItem.setBackgroundResource(R.color.white);
-			mLastSelectedItem.setTextColor(Color.parseColor("#282828"));
+			mFolderTextView.setBackgroundResource(R.color.white);
+			mFolderTextView.setTextColor(Color.parseColor("#282828"));
 		}
 		else{
 			TextView inbox =(TextView)mListPrimaryFolderView.getChildAt(0);
@@ -182,12 +266,13 @@ public class MainActivity extends Activity {
 			inbox.setTextColor(Color.parseColor("#282828"));
 		}
 
-		mLastSelectedItem = (TextView)arg1;
-		mLastSelectedItem.setBackgroundResource(R.color.cyan);
-		mLastSelectedItem.setTextColor(Color.parseColor("#FFFFFF"));
+		mFolderTextView = (TextView)arg1;
+		mFolderTextView.setBackgroundResource(R.color.cyan);
+		mFolderTextView.setTextColor(Color.parseColor("#FFFFFF"));
 	}	
 
 	void retrieveMesages(String folder) {
+		
 		if(!mMessages.containsKey(folder))
 			getMessagesListActivity(folder);
 		else{
@@ -200,12 +285,16 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				setSelectedItemStyle(v);
 				getEventListActivity();
-
 			}
 		});
+
+		if(mDrawerToggle != null){
+			mDrawerLayout.closeDrawers();
+			mDrawerToggle.syncState();			
+		}
 	}
 
-	private void setDrawerIconEvent() {
+	void setDrawerIconEvent() {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
@@ -218,11 +307,9 @@ public class MainActivity extends Activity {
 				super.onDrawerClosed(view);
 				invalidateOptionsMenu();
 
-				if(mLastSelectedItem == null){
-					mLastSelectedItem = (TextView)mListPrimaryFolderView.getChildAt(0);
+				if(mLastSelectedFolder != null){
+					getActionBar().setTitle(mLastSelectedFolder.getDisplayName());
 				}
-
-				getActionBar().setTitle(mLastSelectedItem.getText());
 			}
 
 			public void onDrawerOpened(View drawerView) {
@@ -234,7 +321,7 @@ public class MainActivity extends Activity {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);		
 	}
 
-	private void getFolderListActivity() {
+	void getFolderListActivity() {
 		ListenableFuture<Credentials> future = Authentication.authenticate(this, Constants.RESOURCE_ID);
 
 		Futures.addCallback(future, new FutureCallback<Credentials>() {
@@ -251,9 +338,10 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	private void setListMenu() {
+	void setListMenu() {
 		mListPrimaryFolderView = (ListView)findViewById(R.id.list_primary_foders);
 		mListSecondaryFolderView = (ListView)findViewById(R.id.list_secondary_foders);
+
 		if(mFolders == null)
 			getFolderListActivity();
 		else{
@@ -261,54 +349,6 @@ public class MainActivity extends Activity {
 			mListSecondaryFolderView.setAdapter(new FolderItemAdapter(this,mFolders.get("Secondary")));
 		}
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		try {
-			switch (item.getItemId() ) {
-			case R.id.menu_clear_credentials:
-				ClearCredentials();
-				break;
-			case R.id.menu_refresh_messages:
-				getMessagesListActivity("");
-				break;
-			case R.id.menu_get_contacts:
-				getContactListActivity();
-				break;
-			case R.id.menu_get_events:
-				getEventListActivity();
-				break;
-			case R.id.menu_new_mail:
-				newMailActivity();
-				break;
-			case R.id.menu_delete_message:
-			
-			default:
-				return super.onOptionsItemSelected(item);
-			}
-
-		} catch (Throwable t) {
-			Log.e("Asset", t.getMessage());
-		}
-		return true;
-	}
-
-	private void ClearCredentials() {
-		CookieSyncManager syncManager = CookieSyncManager.createInstance(getApplicationContext());;
-		if (syncManager != null) {
-			CookieManager cookieManager = CookieManager.getInstance();
-			cookieManager.removeAllCookie();
-			CookieSyncManager.getInstance().sync();
-			Authentication.ResetToken(this);
-		}		
-	}	
 
 	void getMessagesListActivity(final String folder){
 
@@ -322,61 +362,8 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onSuccess(Credentials credentials) {
-
 				new RetrieveMessagesTask(MainActivity.this, credentials).execute(folder);
 			}
 		});
-	}
-
-	void authenticate(){
-
-		ListenableFuture<Credentials> future = Authentication.authenticate(this, Constants.RESOURCE_ID);
-
-		Futures.addCallback(future, new FutureCallback<Credentials>() {
-			@Override
-			public void onFailure(Throwable t) {
-				Log.e("Asset", t.getMessage());
-			}
-
-			@Override
-			public void onSuccess(Credentials credentials) {
-			}
-		});
-	}
-
-	void getContactListActivity() {
-		new RetrieveContactsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
-	}
-
-	void getEventListActivity() {
-		new RetrieveEventsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
-	}
-
-	void newMailActivity() {
-		Intent intent = new Intent(MainActivity.this, SendMailActivity.class);
-		startActivity(intent);		
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		Authentication.context.onActivityResult(requestCode, resultCode, data);
-	}
-
-	public void setListAdapter(MessageItemAdapter adapter) {		
-		mListView.setAdapter(adapter);		
-	}
-
-	public void setListAdapter(ContactItemAdapter adapter) {		
-		mListView.setAdapter(adapter);		
-	}
-
-	public void setListAdapter(EventItemAdapter adapter) {
-		mListView.setAdapter(adapter);			
-	}
-	public void setListAdapter(FolderItemAdapter adapter, FolderItemAdapter secondAdapter) {
-		mListPrimaryFolderView.setAdapter(adapter);		
-		mListSecondaryFolderView.setAdapter(secondAdapter);	
 	}
 }

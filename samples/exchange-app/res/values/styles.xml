@@ -17,11 +17,8 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
-
-    
     <style name="MyCustomTheme" parent="AppBaseTheme">
         <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
-        <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
