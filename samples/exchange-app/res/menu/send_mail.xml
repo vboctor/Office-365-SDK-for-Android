@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/menu_send_mail" 
+        android:orderInCategory="101" 
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_action_send"
+        android:title="SendMail"></item>
+
+    <item
+        android:id="@+id/menu_cancel_mail"
+        android:orderInCategory="102"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_action_discard"
+        android:title="Cancel"
+    />
+
+</menu>

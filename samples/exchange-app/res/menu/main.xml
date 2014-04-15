@@ -1,0 +1,38 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_new_mail"
+        android:icon="@drawable/ic_action_new_email"
+        android:orderInCategory="101"
+        android:showAsAction="ifRoom|withText"
+        android:title="Refresh Emails"/>
+    <item
+        android:id="@+id/menu_refresh_messages"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="102"
+        android:showAsAction="ifRoom|withText"
+        android:title="Refresh Emails"/>
+    <item
+        android:id="@+id/menu_delete_message"
+        android:icon="@drawable/ic_action_delete"
+        android:orderInCategory="103"
+        android:showAsAction="ifRoom|withText"
+        android:title="Delete mail"
+        android:enabled="false"/>
+    <item
+        android:id="@+id/menu_get_contacts"
+        android:orderInCategory="104"
+        android:showAsAction="ifRoom|withText"
+        android:title="Get Contacts"/>
+    <item
+        android:id="@+id/menu_get_events"
+        android:orderInCategory="105"
+        android:showAsAction="ifRoom|withText"
+        android:title="Get Events"/>
+    <item
+        android:id="@+id/menu_clear_credentials"
+        android:orderInCategory="106"
+        android:showAsAction="never"
+        android:title="Clear Credentials"/>
+
+</menu>
