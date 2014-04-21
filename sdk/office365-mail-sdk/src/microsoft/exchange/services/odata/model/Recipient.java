@@ -1,13 +1,13 @@
-package com.microsoft.office365.mail.entities;
+package  microsoft.exchange.services.odata.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MailAddress {
+public class Recipient {
 	@SerializedName("Name")
 	@Expose
 	private String name;
-	
+
 	@SerializedName("Address")
 	@Expose
 	private String address;

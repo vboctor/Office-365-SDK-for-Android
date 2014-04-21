@@ -1,14 +1,14 @@
-package com.microsoft.office365.mail.entities;
+package  microsoft.exchange.services.odata.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Body {
+public class ItemBody {
 
 	@SerializedName("ContentType")
 	@Expose
 	private String contentType;
-	
+
 	@SerializedName("Content")
 	@Expose
 	private String content;

@@ -1,7 +1,7 @@
 package com.microsoft.office365.exchange;
 
 public class Constants {
-	
+
 	public static final String BASE_URL = "https://outlook.office365.com/EWS/OData/Me";
 
 	public static final String FOLDER_URL = "/Folders('%s')";
@@ -14,13 +14,43 @@ public class Constants {
 
 	public static final String CONTACTS_URL = "/Contacts";
 
+	public static final String CONTACT_BY_ID = "/Contacts('%s')";
+	
 	public static final String EVENTS_URL = "/Calendar/Events";
 
 	public static final String CREATE_MESSAGE_URL = "/Drafts/Messages";
 
-	public static final String SEND_MESSAGE_WITH_ID = "/Messages('%s')/Send";
+	public static final String MESSAGE_BY_ID = "/Messages('%s')";
 
-	public static final String MOVE_MESSAGE = "/Messages('%s')/Move";
+	public static final String EVENT_BY_ID = "/Events('%s')";
 	
 	public static final String SEND_MESSAGE = "/SentItems/Messages?MessageDisposition=SendAndSaveCopy";
+
+	public static final String ACTION_MOVE = "/Move";
+
+	public static final String ACTION_COPY = "/Copy";
+	
+	public static final String ACTION_SEND = "/Send";
+	
+	public static final String ACTION_REPLY = "/Reply";
+	
+	public static final String ACTION_CREATE_REPLY = "/CreateReply";
+	
+	public static final String ACTION_CREATE_FORWARD = "/CreateForward";
+	
+	public static final String ACTION_REPLY_ALL = "/ReplyAll";
+	
+	public static final String ACTION_ACCEPT = "/Accept?MessageDisposition=SendAndSaveCopy";
+	
+	public static final String ACTION_DECLINE = "/Decline?MessageDisposition=SendAndSaveCopy";
+	
+	public static final String ACTION_TENTATIVE = "/Tentative?MessageDisposition=SendAndSaveCopy";
+	
+	public static final String METHOD_DELETE =  "DELETE";
+	
+	public static final String METHOD_POST = "POST";
+	
+	public static final String METHOD_GET = "GET";
+	
+	public static final String METHOD_PATCH = "PATCH";
 }

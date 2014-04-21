@@ -1,4 +1,4 @@
-package com.microsoft.office365.mail.entities;
+package  microsoft.exchange.services.odata.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -8,31 +8,31 @@ public class Folder {
 	@SerializedName("Id")
 	@Expose
 	private String id;
-	
+
 	@SerializedName("ParentFolderId")
 	@Expose
 	private String parentFolderId;
-	
+
 	@SerializedName("DisplayName")
 	@Expose
 	private String displayName;
-	
+
 	@SerializedName("ClassName")
 	@Expose
 	private String className;
-	
+
 	@SerializedName("TotalCount")
 	@Expose
 	private Integer totalCount;
-	
+
 	@SerializedName("ChildFolderCount")
 	@Expose
 	private Integer childFolderCount;
-	
+
 	@SerializedName("UnreadItemCount")
 	@Expose
 	private Integer unreadItemCount;
-	
+
 	public String getId() {
 		return id;
 	}

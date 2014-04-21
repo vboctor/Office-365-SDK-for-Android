@@ -1,8 +1,7 @@
-package com.microsoft.office365.mail.entities;
+package  microsoft.exchange.services.odata.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -30,7 +29,7 @@ public class Message {
 
 	@SerializedName("Body")
 	@Expose
-	private Body body;
+	private ItemBody body;
 
 	@SerializedName("Importance")
 	@Expose
@@ -48,22 +47,22 @@ public class Message {
 	private String parentFolderId;
 	@SerializedName("From")
 	@Expose
-	private MailAddress from;
+	private Recipient from;
 	@SerializedName("Sender")
 	@Expose
-	private MailAddress sender;
+	private Recipient sender;
 	@SerializedName("ToRecipients")
 	@Expose
-	private List<MailAddress> toRecipients = new ArrayList<MailAddress>();
+	private List<Recipient> toRecipients = new ArrayList<Recipient>();
 	@SerializedName("CcRecipients")
 	@Expose
-	private List<MailAddress> ccRecipients = new ArrayList<MailAddress>();
+	private List<Recipient> ccRecipients = new ArrayList<Recipient>();
 	@SerializedName("BccRecipients")
 	@Expose
-	private List<MailAddress> bccRecipients = new ArrayList<MailAddress>();
+	private List<Recipient> bccRecipients = new ArrayList<Recipient>();
 	@SerializedName("ReplyTo")
 	@Expose
-	private List<MailAddress> replyTo = new ArrayList<MailAddress>();
+	private List<Recipient> replyTo = new ArrayList<Recipient>();
 	@SerializedName("ConversationId")
 	@Expose
 	private String conversationId;
@@ -140,11 +139,11 @@ public class Message {
 		this.bodyPreview = bodyPreview;
 	}
 
-	public Body getBody() {
+	public ItemBody getBody() {
 		return body;
 	}
 
-	public void setBody(Body body) {
+	public void setBody(ItemBody body) {
 		this.body = body;
 	}
 
@@ -180,51 +179,51 @@ public class Message {
 		this.parentFolderId = parentFolderId;
 	}
 
-	public MailAddress getFrom() {
+	public Recipient getFrom() {
 		return from;
 	}
 
-	public void setFrom(MailAddress from) {
+	public void setFrom(Recipient from) {
 		this.from = from;
 	}
 
-	public MailAddress getSender() {
+	public Recipient getSender() {
 		return sender;
 	}
 
-	public void setSender(MailAddress sender) {
+	public void setSender(Recipient sender) {
 		this.sender = sender;
 	}
 
-	public List<MailAddress> getToRecipients() {
+	public List<Recipient> getToRecipients() {
 		return toRecipients;
 	}
 
-	public void setToRecipients(List<MailAddress> toRecipients) {
+	public void setToRecipients(List<Recipient> toRecipients) {
 		this.toRecipients = toRecipients;
 	}
 
-	public List<MailAddress> getCcRecipients() {
+	public List<Recipient> getCcRecipients() {
 		return ccRecipients;
 	}
 
-	public void setCcRecipients(List<MailAddress> ccRecipients) {
+	public void setCcRecipients(List<Recipient> ccRecipients) {
 		this.ccRecipients = ccRecipients;
 	}
 
-	public List<MailAddress> getBccRecipients() {
+	public List<Recipient> getBccRecipients() {
 		return bccRecipients;
 	}
 
-	public void setBccRecipients(List<MailAddress> bccRecipients) {
+	public void setBccRecipients(List<Recipient> bccRecipients) {
 		this.bccRecipients = bccRecipients;
 	}
 
-	public List<MailAddress> getReplyTo() {
+	public List<Recipient> getReplyTo() {
 		return replyTo;
 	}
 
-	public void setReplyTo(List<MailAddress> replyTo) {
+	public void setReplyTo(List<Recipient> replyTo) {
 		this.replyTo = replyTo;
 	}
 

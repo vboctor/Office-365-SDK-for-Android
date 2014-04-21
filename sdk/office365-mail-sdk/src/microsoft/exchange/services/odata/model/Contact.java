@@ -1,4 +1,4 @@
-package com.microsoft.office365.mail.entities;
+package  microsoft.exchange.services.odata.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,163 +10,163 @@ public class Contact {
 	@SerializedName("Id")
 	@Expose
 	private String id;
-	
+
 	@SerializedName("ChangeKey")
 	@Expose
 	private String changeKey;
-	
+
 	@SerializedName("ClassName")
 	@Expose
 	private String className;
-	
+
 	@SerializedName("Subject")
 	@Expose
 	private String subject;
-	
+
 	@SerializedName("BodyPreview")
 	@Expose
 	private String bodyPreview;
-	
+
 	@SerializedName("Body")
 	@Expose
-	private Body body;
-	
+	private ItemBody body;
+
 	@SerializedName("Importance")
 	@Expose
 	private String importance;
-	
+
 	@SerializedName("Categories")
 	@Expose
 	private List<Object> categories = new ArrayList<Object>();
-	
+
 	@SerializedName("HasAttachments")
 	@Expose
 	private boolean hasAttachments;
-	
+
 	@SerializedName("ParentFolderId")
 	@Expose
 	private String parentFolderId;
-	
+
 	@SerializedName("Birthday")
 	@Expose
 	private String birthday;
-	
+
 	@SerializedName("FileAs")
 	@Expose
 	private String fileAs;
-	
+
 	@SerializedName("DisplayName")
 	@Expose
 	private String displayName;
-	
+
 	@SerializedName("GivenName")
 	@Expose
 	private String givenName;
-	
+
 	@SerializedName("Initials")
 	@Expose
 	private String initials;
-	
+
 	@SerializedName("MiddleName")
 	@Expose
 	private String middleName;
-	
+
 	@SerializedName("NickName")
 	@Expose
 	private String nickName;
-	
+
 	@SerializedName("Surname")
 	@Expose
 	private String surname;
-	
+
 	@SerializedName("Title")
 	@Expose
 	private String title;
-	
+
 	@SerializedName("Generation")
 	@Expose
 	private Object generation;
-	
+
 	@SerializedName("EmailAddress1")
 	@Expose
 	private String emailAddress1;
-	
+
 	@SerializedName("EmailAddress2")
 	@Expose
 	private String emailAddress2;
-	
+
 	@SerializedName("ImAddress1")
 	@Expose
 	private String imAddress1;
-	
+
 	@SerializedName("ImAddress2")
 	@Expose
 	private String imAddress2;
-	
+
 	@SerializedName("ImAddress3")
 	@Expose
 	private String imAddress3;
-	
+
 	@SerializedName("JobTitle")
 	@Expose
 	private String jobTitle;
-	
+
 	@SerializedName("CompanyName")
 	@Expose
 	private String companyName;
-	
+
 	@SerializedName("Department")
 	@Expose
 	private String department;
-	
+
 	@SerializedName("OfficeLocation")
 	@Expose
 	private String officeLocation;
-	
+
 	@SerializedName("Profession")
 	@Expose
 	private String profession;
-	
+
 	@SerializedName("BusinessHomePage")
 	@Expose
 	private String businessHomePage;
-	
+
 	@SerializedName("AssistantName")
 	@Expose
 	private String assistantName;
-	
+
 	@SerializedName("Manager")
 	@Expose
 	private String manager;
-	
+
 	@SerializedName("HomePhone1")
 	@Expose
 	private String homePhone1;
-	
+
 	@SerializedName("HomePhone2")
 	@Expose
 	private String homePhone2;
-	
+
 	@SerializedName("BusinessPhone1")
 	@Expose
 	private String businessPhone1;
-	
+
 	@SerializedName("BusinessPhone2")
 	@Expose
 	private String businessPhone2;
-	
+
 	@SerializedName("MobilePhone1")
 	@Expose
 	private String mobilePhone1;
-	
+
 	@SerializedName("OtherPhone")
 	@Expose
 	private String otherPhone;
-	
+
 	@SerializedName("DateTimeCreated")
 	@Expose
 	private String dateTimeCreated;
-	
+
 	@SerializedName("LastModifiedTime")
 	@Expose
 	private String lastModifiedTime;
@@ -211,11 +211,11 @@ public class Contact {
 		this.bodyPreview = bodyPreview;
 	}
 
-	public Body getBody() {
+	public ItemBody getBody() {
 		return body;
 	}
 
-	public void setBody(Body body) {
+	public void setBody(ItemBody body) {
 		this.body = body;
 	}
 

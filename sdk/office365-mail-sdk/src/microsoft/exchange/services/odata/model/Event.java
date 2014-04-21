@@ -1,4 +1,4 @@
-package com.microsoft.office365.mail.entities;
+package  microsoft.exchange.services.odata.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,79 +61,79 @@ public class Event {
 	@SerializedName("Id")
 	@Expose
 	private String id;
-	
+
 	@SerializedName("ChangeKey")
 	@Expose
 	private String changeKey;
-	
+
 	@SerializedName("Subject")
 	@Expose
 	private String subject;
-	
+
 	@SerializedName("BodyPreview")
 	@Expose
 	private Object bodyPreview;
-	
+
 	@SerializedName("Body")
 	@Expose
-	private Body body;
-	
+	private ItemBody body;
+
 	@SerializedName("Importance")
 	@Expose
 	private String importance;
-	
+
 	@SerializedName("Categories")
 	@Expose
 	private List<Object> categories = new ArrayList<Object>();
-	
+
 	@SerializedName("HasAttachments")
 	@Expose
 	private Boolean hasAttachments;
-	
+
 	@SerializedName("Start")
 	@Expose
 	private String start;
-	
+
 	@SerializedName("End")
 	@Expose
 	private String end;
-	
+
 	@SerializedName("Location")
 	@Expose
 	private Object location;
-	
+
 	@SerializedName("ShowAs")
 	@Expose
 	private String showAs;
-	
+
 	@SerializedName("IsAllDay")
 	@Expose
 	private Boolean isAllDay;
-	
+
 	@SerializedName("IsCancelled")
 	@Expose
 	private Boolean isCancelled;
-	
+
 	@SerializedName("IsOrganizer")
 	@Expose
 	private Boolean isOrganizer;
-	
+
 	@SerializedName("ResponseRequested")
 	@Expose
 	private Boolean responseRequested;
-	
+
 	@SerializedName("Type")
 	@Expose
 	private String type;
-	
+
 	@SerializedName("SeriesId")
 	@Expose
 	private String seriesId;
-	
+
 	@SerializedName("Attendees")
 	@Expose
 	private List<Attendee> attendees = new ArrayList<Attendee>();
-	
+
 	@SerializedName("Recurrence")
 	@Expose
 	private String recurrence;
@@ -170,11 +170,11 @@ public class Event {
 		this.bodyPreview = bodyPreview;
 	}
 
-	public Body getBody() {
+	public ItemBody getBody() {
 		return body;
 	}
 
-	public void setBody(Body body) {
+	public void setBody(ItemBody body) {
 		this.body = body;
 	}
 
