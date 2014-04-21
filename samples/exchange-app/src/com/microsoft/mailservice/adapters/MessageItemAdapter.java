@@ -1,6 +1,8 @@
 package com.microsoft.mailservice.adapters;
 
 import java.util.List;
+import microsoft.exchange.services.odata.model.Message;
+import microsoft.exchange.services.odata.model.Recipient;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.MainActivity;
-import com.microsoft.office365.mail.entities.MailAddress;
-import com.microsoft.office365.mail.entities.Message;
 
 public class MessageItemAdapter extends BaseAdapter{
 
@@ -47,7 +47,7 @@ public class MessageItemAdapter extends BaseAdapter{
 		if (convertView == null)
 			view = inflater.inflate(R.layout.activity_mail_list_item, null);
 		Message message = mMessages.get(position);
-		MailAddress sender = message.getSender();
+		Recipient sender = message.getSender();
 		
 		String subject = message.getSubject();
 		((TextView) view.findViewById(R.id.sender)).setText(sender == null ? "" : sender.getName());

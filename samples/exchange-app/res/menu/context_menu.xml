@@ -6,5 +6,28 @@
         android:orderInCategory="101"
         android:showAsAction="ifRoom|withText"
         android:title="Delete"/>
+    <item
+        android:id="@+id/menu_reply"
+        android:icon="@drawable/ic_action_reply"
+        android:orderInCategory="102"
+        android:showAsAction="ifRoom|withText"
+        android:title="Reply"/>
+    <item
+        android:id="@+id/menu_reply_all"
+        android:icon="@drawable/ic_action_reply_all"
+        android:orderInCategory="103"
+        android:showAsAction="ifRoom|withText"
+        android:title="ReplyAll"/>
+    <item
+        android:id="@+id/menu_foward"
+        android:icon="@drawable/ic_action_forward"
+        android:orderInCategory="104"
+        android:showAsAction="ifRoom|withText"
+        android:title="Foward"/>
+    <item
+        android:id="@+id/menu_move_to"
+        android:orderInCategory="105"
+        android:showAsAction="ifRoom|withText"
+        android:title="Move To"/>
 
 </menu>

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import microsoft.exchange.services.odata.model.Folder;
+import microsoft.exchange.services.odata.model.Message;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
@@ -40,8 +42,6 @@ import com.microsoft.mailservice.tasks.RetrieveEventsTask;
 import com.microsoft.mailservice.tasks.RetrieveFoldersTask;
 import com.microsoft.mailservice.tasks.RetrieveMessagesTask;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.mail.entities.Folder;
-import com.microsoft.office365.mail.entities.Message;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
 	ListView mListView;
 	ListView mListPrimaryFolderView;
 	ListView mListSecondaryFolderView;
-
 	Folder mLastSelectedFolder;
 	TextView mFolderTextView;
 
@@ -272,14 +271,14 @@ public class MainActivity extends Activity {
 	}	
 
 	void retrieveMesages(String folder) {
-		
+
 		if(!mMessages.containsKey(folder))
 			getMessagesListActivity(folder);
 		else{
 			mListView.setAdapter(new MessageItemAdapter(this,mMessages.get(folder)));
 		}
 
-		((TextView) findViewById(R.id.Events)).setOnClickListener(new OnClickListener() {
+		((TextView) findViewById(R.id.Calendar)).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -333,7 +332,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onSuccess(Credentials credentials) {
 				((TextView)findViewById(R.id.user)).setText(Authentication.getLogedUser());
-				new RetrieveFoldersTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
+				new RetrieveFoldersTask(MainActivity.this, credentials).execute();
 			}
 		});
 	}

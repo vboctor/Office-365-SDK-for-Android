@@ -5,25 +5,26 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import microsoft.exchange.services.odata.model.Contact;
+import microsoft.exchange.services.odata.model.Message;
 import com.microsoft.mailservice.MainActivity;
-import com.microsoft.mailservice.adapters.ContactItemAdapter;
+import com.microsoft.mailservice.SendMailActivity;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.exchange.ContactClient;
+import com.microsoft.office365.exchange.MessageClient;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
+import android.support.v4.app.NavUtils;
 import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RetrieveContactsTask.
+ * The Class ReplyEmailTask.
  */
-public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>> {
+public class ReplyEmailTask extends AsyncTask<Message, Void, Message> {
 
+	private String mComments;
 	/** The m dialog. */
 	private ProgressDialog mDialog;
 
@@ -31,18 +32,19 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	private Context mContext;
 
 	/** The m activity. */
-	private MainActivity mActivity;
+	private SendMailActivity mActivity;
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
-	
+
 	static Credentials mCredentials;
-	
-	public RetrieveContactsTask(MainActivity activity, Credentials crendential) {
+
+	public ReplyEmailTask(SendMailActivity activity, Credentials crendential, String comments) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
+		mComments = comments;
 	}
 
 	/* (non-Javadoc)
@@ -64,17 +66,19 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
-	protected void onPostExecute(List<Contact> contacts) {
+	protected void onPostExecute(Message message) {
 		if (mDialog.isShowing()) {
 			mDialog.dismiss();
 			mActivity.setRequestedOrientation(mStoredRotation);
 		}
 
-		if (contacts != null) {
-			ContactItemAdapter adapter = new ContactItemAdapter(mActivity, contacts);
-			mActivity.setListAdapter(adapter);
-			adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished loading contacts", Toast.LENGTH_LONG).show();
+		if (message != null) {
+			//MessageItemAdapter adapter = new MessageItemAdapter(mActivity, message);
+			//mActivity.setListAdapter(adapter);
+			//adapter.notifyDataSetChanged();
+			Toast.makeText(mContext, "Finished Sending Mail", Toast.LENGTH_LONG).show();
+
+			NavUtils.navigateUpTo(mActivity,new Intent(mActivity, MainActivity.class));
 		} else {
 			//mApplication.handleError(mThrowable);
 		}
@@ -83,16 +87,16 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
-	protected List<Contact> doInBackground(final String... args) {
-		List<Contact> contacts = new ArrayList<Contact>();
+	protected Message doInBackground(final Message... args) {
+		Message messageSend = new Message();
 		try {
-			ContactClient client = new ContactClient(mCredentials);
+			MessageClient client = new MessageClient(mCredentials);
 
-			contacts = client.getContacts().get();		
-			
+			client.reply(args[0]).get();
+			//client.send(messageId).get();
 		} catch (Exception e) {
 		}
 
-		return contacts;
+		return messageSend;
 	}
 }

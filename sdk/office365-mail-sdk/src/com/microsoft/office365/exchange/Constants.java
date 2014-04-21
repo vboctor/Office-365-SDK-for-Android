@@ -6,6 +6,16 @@ public class Constants {
 
 	public static final String FOLDER_URL = "/Folders('%s')";
 
+	public static final String FOLDER_INBOX = "/Inbox";
+	
+	public static final String FOLDER_DRAFTS = "/Drafts";
+	
+	public static final String FOLDER_ROOT_FOLDER = "/RootFolder";
+	
+	public static final String FOLDER_DELETED_ITEMS = "/DeletedItems";
+	
+	public static final String FOLDER_SEND_ITEMS = "/SentItems";
+	
 	public static final String ROOTFOLDER_URL = "/RootFolder";
 
 	public static final String CHILDFOLDERS_URL = "/ChildFolders";

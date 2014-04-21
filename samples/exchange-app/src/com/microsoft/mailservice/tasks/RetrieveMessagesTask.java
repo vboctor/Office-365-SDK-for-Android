@@ -7,11 +7,11 @@ package com.microsoft.mailservice.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import microsoft.exchange.services.odata.model.Message;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.exchange.MailClient;
-import com.microsoft.office365.mail.entities.Message;
+import com.microsoft.office365.exchange.MessageClient;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -90,9 +90,9 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 		List<Message> messages = new ArrayList<Message>();
 		mFolderId = args[0];
 		try {
-			MailClient client = new MailClient(mCredentials);
+			MessageClient client = new MessageClient(mCredentials);
 			
-			messages = client.getMessages(mFolderId).get();
+			messages = client.get(mFolderId).get();
 			
 		} catch (Exception e) {
 		}

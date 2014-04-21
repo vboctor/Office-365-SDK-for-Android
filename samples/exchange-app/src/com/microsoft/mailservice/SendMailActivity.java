@@ -2,12 +2,14 @@ package com.microsoft.mailservice;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import microsoft.exchange.services.odata.model.ItemBody;
+import microsoft.exchange.services.odata.model.Message;
+import microsoft.exchange.services.odata.model.Recipient;
+import com.google.gson.Gson;
+import com.microsoft.mailservice.tasks.ReplyEmailTask;
 import com.microsoft.mailservice.tasks.SendEmailTask;
-import com.microsoft.office365.mail.entities.Body;
-import com.microsoft.office365.mail.entities.MailAddress;
-import com.microsoft.office365.mail.entities.Message;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +21,8 @@ import android.widget.EditText;
 
 public class SendMailActivity  extends FragmentActivity{
 
+	private String mType;
+	private Message mMessage;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -29,8 +33,45 @@ public class SendMailActivity  extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_send_mail);
+		mType = "";
+
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			String data = bundle.getString("data");
+			if (data != null) {
+				try {
+					JSONObject payload = new JSONObject(data);
+					Gson gson = new Gson();
+					mMessage = gson.fromJson(payload.getString("message"), Message.class);
+					mType = payload.getString("action");
+
+					((EditText)findViewById(R.id.textBody)).setText(mMessage.getBody().getContent());
+
+					List<Recipient> listRecipient = mMessage.getToRecipients();
+					String toRecipients = "";
+
+					for(int i = 0; i < listRecipient.size(); i++){
+						toRecipients += listRecipient.get(i).getAddress() + "; ";
+					}
+
+					((EditText)findViewById(R.id.textTo)).setText(toRecipients);
+
+					listRecipient = mMessage.getCcRecipients();
+					String ccRecipients = "";
+
+					for(int i = 0; i < listRecipient.size(); i++){
+						ccRecipients += listRecipient.get(i).getAddress() + "; ";
+					}
+
+					((EditText)findViewById(R.id.textCC)).setText(ccRecipients);
+				} 
+				catch (JSONException e) {
+					Log.e("Asset", e.getMessage());
+				}
+			}
+		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -41,7 +82,7 @@ public class SendMailActivity  extends FragmentActivity{
 		getMenuInflater().inflate(R.menu.send_mail, menu);
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,7 +94,11 @@ public class SendMailActivity  extends FragmentActivity{
 		try {
 			switch (item.getItemId() ) {
 			case R.id.menu_send_mail:
-				sentEmail();
+				if(mType.equals("replay")){
+					replay();
+				}
+				else
+					sentEmail();
 				break;
 			case R.id.menu_cancel_mail:
 				NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
@@ -67,42 +112,73 @@ public class SendMailActivity  extends FragmentActivity{
 		}
 		return true;
 	}	
-	
+
 	void sentEmail(){
 		Message message= new Message();
-		
-		Body body = new Body();
-		body.setContentType("HTML");
+
+		ItemBody body = new ItemBody();
+		body.setContentType("HTML");//BodyType.HTML);
 		body.setContent((((EditText)findViewById(R.id.textBody)).getText().toString()));
-		
-		List<MailAddress> toRecipients = new ArrayList<MailAddress>();
-		
+
+		List<Recipient> toRecipients = new ArrayList<Recipient>();
+
 		String [] mails = ((EditText)findViewById(R.id.textTo)).getText().toString().split(";");
-		
+
 		for(String m : mails){
-			MailAddress mail = new MailAddress();
+			if(m.trim().length()>0){
+				Recipient mail = new Recipient();
+				mail.setAddress(m);
+				toRecipients.add(mail);
+			}
+		}
+
+		message.setToRecipients(toRecipients);
+
+		List<Recipient> ccRecipients = new ArrayList<Recipient>();
+
+		String [] mailsCc = ((EditText)findViewById(R.id.textCC)).getText().toString().split(";");
+
+		for(String m : mailsCc){
+			if(m.trim().length()>0){
+				Recipient mail = new Recipient();
+				mail.setAddress(m);
+				ccRecipients.add(mail);
+			}
+		}
+
+		message.setCcRecipients(ccRecipients);
+
+		message.setSubject(((EditText)findViewById(R.id.textSubject)).getText().toString());
+		message.setSubject(((EditText)findViewById(R.id.textSubject)).getText().toString());
+		message.setBody(body);
+
+		new SendEmailTask(this, Authentication.getCurrentCredentials()).execute(message);
+	}
+
+	void replay(){
+		List<Recipient> toRecipients = new ArrayList<Recipient>();
+
+		String [] mails = ((EditText)findViewById(R.id.textTo)).getText().toString().split(";");
+
+		for(String m : mails){
+			Recipient mail = new Recipient();
 			mail.setAddress(m);
 			toRecipients.add(mail);
 		}
 
-		message.setToRecipients(toRecipients);
-		
-		List<MailAddress> ccRecipients = new ArrayList<MailAddress>();
-		
+		mMessage.setToRecipients(toRecipients);
+
+		List<Recipient> ccRecipients = new ArrayList<Recipient>();
+
 		String [] mailsCc = ((EditText)findViewById(R.id.textCC)).getText().toString().split(";");
-		
+
 		for(String m : mailsCc){
-			MailAddress mail = new MailAddress();
+			Recipient mail = new Recipient();
 			mail.setAddress(m);
 			ccRecipients.add(mail);
 		}
-	
-		message.setCcRecipients(ccRecipients);
-		
-		message.setSubject(((EditText)findViewById(R.id.textSubject)).getText().toString());
-		message.setSubject(((EditText)findViewById(R.id.textSubject)).getText().toString());
-		message.setBody(body);
-		
-		new SendEmailTask(this, Authentication.getCurrentCredentials()).execute(message);
+
+		mMessage.setCcRecipients(ccRecipients);
+		new ReplyEmailTask(this, Authentication.getCurrentCredentials(), "testing").execute(mMessage);
 	}
 }

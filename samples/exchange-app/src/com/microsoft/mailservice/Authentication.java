@@ -13,7 +13,6 @@ import com.microsoft.adal.AuthenticationCallback;
 import com.microsoft.adal.AuthenticationContext;
 import com.microsoft.adal.AuthenticationResult;
 import com.microsoft.adal.AuthenticationSettings;
-import com.microsoft.adal.PromptBehavior;
 import com.microsoft.adal.UserInfo;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.http.OAuthCredentials;
@@ -36,7 +35,7 @@ public class Authentication {
 		final SettableFuture<Credentials> result = SettableFuture.create();
 
 		getAuthenticationContext(activity).acquireToken(activity, resourceId, Constants.CLIENT_ID,
-				Constants.REDIRECT_URL, PromptBehavior.Auto, "", new AuthenticationCallback<AuthenticationResult>() {
+				Constants.REDIRECT_URL, "", new AuthenticationCallback<AuthenticationResult>() {
 
 			@Override
 			public void onSuccess(AuthenticationResult authenticationResult) {

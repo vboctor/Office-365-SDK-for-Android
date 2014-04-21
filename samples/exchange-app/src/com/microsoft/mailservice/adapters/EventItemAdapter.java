@@ -1,6 +1,7 @@
 package com.microsoft.mailservice.adapters;
 
 import java.util.List;
+import microsoft.exchange.services.odata.model.Event;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.R;
-import com.microsoft.office365.mail.entities.Event;
 
 public class EventItemAdapter extends BaseAdapter{
 

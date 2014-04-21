@@ -7,11 +7,11 @@ package com.microsoft.mailservice.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import microsoft.exchange.services.odata.model.Event;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.exchange.EventClient;
-import com.microsoft.office365.mail.entities.Event;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;

@@ -1,16 +1,20 @@
 package com.microsoft.mailservice;
 
+import org.json.JSONObject;
+import microsoft.exchange.services.odata.model.Folder;
+import microsoft.exchange.services.odata.model.Message;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import com.google.gson.Gson;
 import com.microsoft.mailservice.tasks.DeleteEmailTask;
 import com.microsoft.mailservice.tasks.MoveEmailTask;
-import com.microsoft.office365.mail.entities.Folder;
-import com.microsoft.office365.mail.entities.Message;
 
 public class ActionModeCallback implements ActionMode.Callback {
 	
@@ -51,10 +55,26 @@ public class ActionModeCallback implements ActionMode.Callback {
 			removeRow();
 			mode.finish();
 			return true;
+		case R.id.menu_reply:
+			reply();
+			return true;
 		default:
 			return false;
 		}
-
+	}
+	
+	void reply(){
+			Intent intent = new Intent(mActivity, SendMailActivity.class);
+			JSONObject payload = new JSONObject();
+			try {
+				Message message = (Message)mListView.getItemAtPosition(mPosition);
+				payload.put("message", new Gson().toJson(message));
+				payload.put("action", "replay");
+				intent.putExtra("data", payload.toString());
+				mActivity.startActivity(intent);
+			} catch (Throwable t) {
+				Log.d(t.getMessage(), t.getStackTrace().toString());
+			}				
 	}
 
 	void removeRow() {

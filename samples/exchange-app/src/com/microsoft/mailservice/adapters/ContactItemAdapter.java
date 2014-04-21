@@ -1,6 +1,8 @@
 package com.microsoft.mailservice.adapters;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Contact;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.MainActivity;
-import com.microsoft.office365.mail.entities.Contact;
 
 public class ContactItemAdapter extends BaseAdapter{
 

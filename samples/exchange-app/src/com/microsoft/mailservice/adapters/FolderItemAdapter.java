@@ -1,6 +1,7 @@
 package com.microsoft.mailservice.adapters;
 
 import java.util.List;
+import microsoft.exchange.services.odata.model.Folder;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.MainActivity;
-import com.microsoft.office365.mail.entities.Folder;
 
 public class FolderItemAdapter extends BaseAdapter{
 

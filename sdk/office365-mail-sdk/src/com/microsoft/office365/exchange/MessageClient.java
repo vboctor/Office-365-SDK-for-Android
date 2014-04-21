@@ -17,14 +17,44 @@ import com.microsoft.office365.Credentials;
 /**
  * The Class MailClient.
  */
-public class MailClient extends BaseClient<Message>{
+public class MessageClient extends BaseClient<Message>{
 
-	public MailClient(Credentials credentials){
+	public MessageClient(Credentials credentials){
 		super(credentials);
 	}
+	
+	public ListenableFuture<List<Message>> getInboxMessages() {
+		String url = Constants.BASE_URL + Constants.FOLDER_INBOX + Constants.MESSAGES_URL;
 
+		return getList(url, null, Message[].class);
+	}
+	
+	public ListenableFuture<List<Message>> getDraftsMessages() {
+		String url = Constants.BASE_URL + Constants.FOLDER_DRAFTS + Constants.MESSAGES_URL;
+
+		return getList(url, null, Message[].class);
+	}
+	
+	public ListenableFuture<List<Message>> getSendItemsMessages() {
+		String url = Constants.BASE_URL + Constants.FOLDER_SEND_ITEMS + Constants.MESSAGES_URL;
+
+		return getList(url, null, Message[].class);
+	}
+	
+	public ListenableFuture<List<Message>> getDeletedMessages() {
+		String url = Constants.BASE_URL + Constants.FOLDER_DELETED_ITEMS + Constants.MESSAGES_URL;
+
+		return getList(url, null, Message[].class);
+	}
+	
 	public ListenableFuture<List<Message>> get(Folder folder) {
 		return get(folder.getId());
+	}
+	
+	public ListenableFuture<Message> getMessage(String messageId) {
+		String url = Constants.BASE_URL + String.format(Constants.MESSAGE_BY_ID, messageId);
+
+		return execute(url, null, Message.class, Constants.METHOD_GET);
 	}
 
 	public ListenableFuture<List<Message>> get(String folderNameOrId) {
@@ -115,7 +145,7 @@ public class MailClient extends BaseClient<Message>{
 		return send(resultMessage);
 	}
 
-	public ListenableFuture<Message> foward(Message message, String comment, List<Recipient> toRecipients){
+	public ListenableFuture<Message> forward(Message message, String comment, List<Recipient> toRecipients){
 		String url = Constants.BASE_URL + String.format(Constants.MESSAGE_BY_ID, message.getId());
 		Message resultMessage = null;
 		try {

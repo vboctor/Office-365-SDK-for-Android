@@ -5,11 +5,11 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
+import microsoft.exchange.services.odata.model.Message;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.SendMailActivity;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.exchange.MailClient;
-import com.microsoft.office365.mail.entities.Message;
+import com.microsoft.office365.exchange.MessageClient;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RetrieveMessagesTask.
+ * The Class SendEmailTask.
  */
 public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 
@@ -88,10 +88,10 @@ public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 	protected Message doInBackground(final Message... args) {
 		Message messageSend = new Message();
 		try {
-			MailClient client = new MailClient(mCredentials);
+			MessageClient client = new MessageClient(mCredentials);
 
-			String messageId= client.createMessage(args[0]).get();
-			client.sendMessage(messageId).get();
+			//String messageId= client.create(args[0]).get();
+			client.send(args[0]).get();
 		} catch (Exception e) {
 		}
 

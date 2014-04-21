@@ -1,9 +1,7 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
-
 import microsoft.exchange.services.odata.model.Folder;
-
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -11,6 +9,36 @@ import com.microsoft.office365.Credentials;
 
 public class FolderClient extends BaseClient<Folder>{
 
+	public ListenableFuture<Folder> getRootFolder() {
+		String url = Constants.BASE_URL + Constants.FOLDER_ROOT_FOLDER;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET);
+	}
+	
+	public ListenableFuture<Folder> getInbox() {
+		String url = Constants.BASE_URL + Constants.FOLDER_INBOX;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET);
+	}
+	
+	public ListenableFuture<Folder> getDraftsFolder() {
+		String url = Constants.BASE_URL + Constants.FOLDER_DRAFTS;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET);
+	}
+	
+	public ListenableFuture<Folder> getSentItemsFolder() {
+		String url = Constants.BASE_URL + Constants.FOLDER_SEND_ITEMS;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET);
+	}
+	
+	public ListenableFuture<Folder> getDeletedItemsFolder() {
+		String url = Constants.BASE_URL + Constants.FOLDER_DELETED_ITEMS;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET);
+	}
+	
 	public FolderClient(Credentials credentials) {
 		super(credentials);
 	}
