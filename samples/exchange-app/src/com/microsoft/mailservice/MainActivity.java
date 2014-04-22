@@ -41,6 +41,7 @@ import com.microsoft.mailservice.tasks.RetrieveEventsTask;
 import com.microsoft.mailservice.tasks.RetrieveFoldersTask;
 import com.microsoft.mailservice.tasks.RetrieveMessagesTask;
 import com.microsoft.office365.Credentials;
+import com.microsoft.office365.Query;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -67,7 +68,6 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		Authentication.createEncryptionKey(getApplicationContext());
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
 		setListMenu();
 		mListView = (ListView)findViewById(R.id.mail_list);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -356,7 +356,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onSuccess(Credentials credentials) {
-				new RetrieveMessagesTask(MainActivity.this, credentials).execute(folder);
+				Query query = new Query();
+				
+				query = query.top(40).select(new String[]{"Id","Subject","Sender","ToRecipients", "CcRecipients", "DateTimeSent"});
+				new RetrieveMessagesTask(MainActivity.this, credentials,query).execute(folder);
 			}
 		});
 	}

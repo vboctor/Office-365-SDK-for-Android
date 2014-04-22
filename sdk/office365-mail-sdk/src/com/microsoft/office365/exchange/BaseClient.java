@@ -1,21 +1,27 @@
 package com.microsoft.office365.exchange;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Pair;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.microsoft.office365.Constants;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.OfficeClient;
 import com.microsoft.office365.Query;
+import com.microsoft.office365.QueryOrder;
 
 public abstract class BaseClient<V> extends OfficeClient {
 
@@ -63,7 +69,7 @@ public abstract class BaseClient<V> extends OfficeClient {
 	public ListenableFuture<List<V>> getList(String url, final Class<V[]> type, Query query) {
 		final SettableFuture<List<V>> future = SettableFuture.create();
 
-		if(query != null) url += query.getQueryText();
+		if(query != null) url += generateODataQueryString(query);
 
 		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, "GET");
 
@@ -140,7 +146,7 @@ public abstract class BaseClient<V> extends OfficeClient {
 	public ListenableFuture<V> execute(String url, String json, final Class<V> type, String method, Query query) {
 		final SettableFuture<V> future = SettableFuture.create();
 
-		if(query != null) url += query.getQueryText();
+		if(query != null) url += generateODataQueryString(query);
 		
 		Map<String, String> headers = new HashMap<String, String>();
 
@@ -182,4 +188,16 @@ public abstract class BaseClient<V> extends OfficeClient {
 			return s.getBytes();
 		}
 	}	
+	
+	//TODO: Review the base query
+	protected String generateODataQueryString(Query query) {
+		StringBuilder sb = new StringBuilder();
+		if (query != null) {
+
+			String rowSetModifiers = "?" + query.getRowSetModifiers().trim().substring(1);
+			sb.append(rowSetModifiers);
+		}
+
+		return sb.toString();
+	}
 }
