@@ -42,7 +42,6 @@ public class Authentication {
 				// once succeeded we create a credentials instance
 				// using
 				// the token from ADAL
-
 				mCredentials = new OAuthCredentials(authenticationResult.getAccessToken());
 				UserInfo ui = authenticationResult.getUserInfo();
 				SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);

@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.OfficeClient;
+import com.microsoft.office365.Query;
 
 public abstract class BaseClient<V> extends OfficeClient {
 
@@ -59,10 +60,10 @@ public abstract class BaseClient<V> extends OfficeClient {
 		return future;
 	}*/
 	
-	public ListenableFuture<List<V>> getList(String url,String filter, final Class<V[]> type) {
+	public ListenableFuture<List<V>> getList(String url, final Class<V[]> type, Query query) {
 		final SettableFuture<List<V>> future = SettableFuture.create();
 
-		if(filter != null) url += filter;
+		if(query != null) url += query.getQueryText();
 
 		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, "GET");
 
@@ -136,9 +137,11 @@ public abstract class BaseClient<V> extends OfficeClient {
 		return future;
 	}
 	
-	public ListenableFuture<V> execute(String url, String json, final Class<V> type, String method) {
+	public ListenableFuture<V> execute(String url, String json, final Class<V> type, String method, Query query) {
 		final SettableFuture<V> future = SettableFuture.create();
 
+		if(query != null) url += query.getQueryText();
+		
 		Map<String, String> headers = new HashMap<String, String>();
 
 		headers.put("Accept", "application/json;odata.metadata=full");

@@ -33,7 +33,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.microsoft.mailservice.R;
-import com.microsoft.mailservice.adapters.ContactItemAdapter;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
@@ -170,7 +169,7 @@ public class MainActivity extends Activity {
 				getMessagesListActivity(folder);
 				break;
 			case R.id.menu_get_contacts:
-				getContactListActivity();
+				//getContactListActivity();
 				break;
 			case R.id.menu_get_events:
 				getEventListActivity();
@@ -226,10 +225,6 @@ public class MainActivity extends Activity {
 		mListView.setAdapter(adapter);		
 	}
 
-	public void setListAdapter(ContactItemAdapter adapter) {		
-		mListView.setAdapter(adapter);		
-	}
-
 	public void setListAdapter(EventItemAdapter adapter) {
 		mListView.setAdapter(adapter);			
 	}
@@ -239,9 +234,9 @@ public class MainActivity extends Activity {
 		mListSecondaryFolderView.setAdapter(secondAdapter);	
 	}
 
-	void getContactListActivity() {
-		new RetrieveContactsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
-	}
+//	void getContactListActivity() {
+//		new RetrieveContactsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
+//	}
 
 	void getEventListActivity() {
 		new RetrieveEventsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();

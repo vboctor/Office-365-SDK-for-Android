@@ -27,7 +27,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:listSelector="@drawable/listview"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        android:background="#FFFFFF">
 
         <TableRow>
 
@@ -60,7 +61,7 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/Contacts"
+                android:id="@+id/contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FFFFFF"

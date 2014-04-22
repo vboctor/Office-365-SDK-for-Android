@@ -8,8 +8,8 @@ package com.microsoft.mailservice.tasks;
 import java.util.ArrayList;
 import java.util.List;
 import microsoft.exchange.services.odata.model.Contact;
-import com.microsoft.mailservice.MainActivity;
-import com.microsoft.mailservice.adapters.ContactItemAdapter;
+import com.microsoft.mailservice.ContactsActivity;
+//import com.microsoft.mailservice.adapters.ContactItemAdapter;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.exchange.ContactClient;
 import android.app.ProgressDialog;
@@ -31,14 +31,14 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	private Context mContext;
 
 	/** The m activity. */
-	private MainActivity mActivity;
+	private ContactsActivity mActivity;
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
 	
 	static Credentials mCredentials;
 	
-	public RetrieveContactsTask(MainActivity activity, Credentials crendential) {
+	public RetrieveContactsTask(ContactsActivity activity, Credentials crendential) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
@@ -65,19 +65,19 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	 */
 	@Override
 	protected void onPostExecute(List<Contact> contacts) {
-		if (mDialog.isShowing()) {
-			mDialog.dismiss();
-			mActivity.setRequestedOrientation(mStoredRotation);
-		}
-
-		if (contacts != null) {
-			ContactItemAdapter adapter = new ContactItemAdapter(mActivity, contacts);
-			mActivity.setListAdapter(adapter);
-			adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished loading contacts", Toast.LENGTH_LONG).show();
-		} else {
-			//mApplication.handleError(mThrowable);
-		}
+//		if (mDialog.isShowing()) {
+//			mDialog.dismiss();
+//			mActivity.setRequestedOrientation(mStoredRotation);
+//		}
+//
+//		if (contacts != null) {
+//			ContactItemAdapter adapter = new ContactItemAdapter(mActivity, contacts);
+//			mActivity.setListAdapter(adapter);
+//			adapter.notifyDataSetChanged();
+//			Toast.makeText(mContext, "Finished loading contacts", Toast.LENGTH_LONG).show();
+//		} else {
+//			//mApplication.handleError(mThrowable);
+//		}
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +88,7 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 		try {
 			ContactClient client = new ContactClient(mCredentials);
 
-			contacts = client.getContacts().get();		
+//			contacts = client.getContacts().get();		
 			
 		} catch (Exception e) {
 		}

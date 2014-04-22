@@ -9,7 +9,7 @@ import microsoft.exchange.services.odata.model.Message;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.SendMailActivity;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.exchange.MessageClient;
+import com.microsoft.office365.exchange.MailClient;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -88,7 +88,7 @@ public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 	protected Message doInBackground(final Message... args) {
 		Message messageSend = new Message();
 		try {
-			MessageClient client = new MessageClient(mCredentials);
+			MailClient client = new MailClient(mCredentials);
 
 			//String messageId= client.create(args[0]).get();
 			client.send(args[0]).get();

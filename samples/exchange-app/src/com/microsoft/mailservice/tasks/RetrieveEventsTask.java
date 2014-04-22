@@ -88,7 +88,7 @@ public class RetrieveEventsTask extends AsyncTask<String, Void, List<Event>> {
 		try {
 			EventClient client = new EventClient(mCredentials);
 
-			events = client.getEvents().get();		
+			events = client.getEvents(null).get();		
 			
 		} catch (Exception e) {
 		}

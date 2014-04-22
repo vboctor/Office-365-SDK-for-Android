@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
+import com.microsoft.office365.Query;
 
 public class EventClient extends BaseClient<Event>{
 
@@ -13,34 +14,31 @@ public class EventClient extends BaseClient<Event>{
 		super(credentials);
 	}
 
-	public ListenableFuture<List<Event>> getEvents() {
-		return getEvents(null);
-	}
-
-	public ListenableFuture<List<Event>> getEvents(String filter) {
+	public ListenableFuture<List<Event>> getEvents(Query query) {
 
 		String url = Constants.BASE_URL + Constants.EVENTS_URL;
 
-		return getList(url, filter, Event[].class);
+		return getList(url, Event[].class, query);
 	}
 
-	public ListenableFuture<List<Event>> create(String filter) {
+	public ListenableFuture<Event> create(Event event) {
 
 		String url = Constants.BASE_URL + Constants.EVENTS_URL;
 
-		return getList(url, filter, Event[].class);
+		return execute(url,new Gson().toJson(event), Event.class, Constants.METHOD_POST, null);
 	}
 
 	public ListenableFuture<Event> update(Event event) {
 
 		String url = Constants.BASE_URL + Constants.EVENTS_URL;
 
-		return execute(url,new Gson().toJson(event), Event.class, Constants.METHOD_PATCH);
+		return execute(url,new Gson().toJson(event), Event.class, Constants.METHOD_PATCH, null);
 	}
 
 	public ListenableFuture<Event> delete(String eventId){
 		String url = Constants.BASE_URL + "Events('" + eventId + "')";
-		return execute(url, null, null, "DELETE");
+		
+		return execute(url, null, null, Constants.METHOD_DELETE, null);
 	}
 	
 	public ListenableFuture<Event> accept(String eventId, String comments) {
@@ -50,7 +48,7 @@ public class EventClient extends BaseClient<Event>{
 		JsonObject jObject = new JsonObject();
 		jObject.addProperty("Comment", comments);	
 
-		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST);
+		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST, null);
 	}
 
 	public ListenableFuture<Event> decline(String eventId, String comments)  {
@@ -60,7 +58,7 @@ public class EventClient extends BaseClient<Event>{
 		JsonObject jObject = new JsonObject();
 		jObject.addProperty("Comment", comments);	
 
-		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST);
+		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST, null);
 	}
 
 	public ListenableFuture<Event> tentative(String eventId, String comments) {
@@ -70,6 +68,6 @@ public class EventClient extends BaseClient<Event>{
 		JsonObject jObject = new JsonObject();
 		jObject.addProperty("Comment", comments);	
 
-		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST);
+		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST, null);
 	}
 }

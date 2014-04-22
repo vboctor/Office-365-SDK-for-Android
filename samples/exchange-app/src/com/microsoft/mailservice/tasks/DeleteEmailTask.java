@@ -7,7 +7,7 @@ package com.microsoft.mailservice.tasks;
 
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.exchange.MessageClient;
+import com.microsoft.office365.exchange.MailClient;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -76,7 +76,7 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 	 */
 	protected String[] doInBackground(final String... args) {
 		try {
-			MessageClient client = new MessageClient(mCredentials);
+			MailClient client = new MailClient(mCredentials);
 
 			client.delete(args[1]).get();
 

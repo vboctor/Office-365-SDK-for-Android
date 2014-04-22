@@ -6,48 +6,63 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
+import com.microsoft.office365.Query;
 
 public class FolderClient extends BaseClient<Folder>{
-
-	public ListenableFuture<Folder> getRootFolder() {
-		String url = Constants.BASE_URL + Constants.FOLDER_ROOT_FOLDER;
-
-		return execute(url, null, Folder.class, Constants.METHOD_GET);
-	}
-	
-	public ListenableFuture<Folder> getInbox() {
-		String url = Constants.BASE_URL + Constants.FOLDER_INBOX;
-
-		return execute(url, null, Folder.class, Constants.METHOD_GET);
-	}
-	
-	public ListenableFuture<Folder> getDraftsFolder() {
-		String url = Constants.BASE_URL + Constants.FOLDER_DRAFTS;
-
-		return execute(url, null, Folder.class, Constants.METHOD_GET);
-	}
-	
-	public ListenableFuture<Folder> getSentItemsFolder() {
-		String url = Constants.BASE_URL + Constants.FOLDER_SEND_ITEMS;
-
-		return execute(url, null, Folder.class, Constants.METHOD_GET);
-	}
-	
-	public ListenableFuture<Folder> getDeletedItemsFolder() {
-		String url = Constants.BASE_URL + Constants.FOLDER_DELETED_ITEMS;
-
-		return execute(url, null, Folder.class, Constants.METHOD_GET);
-	}
 	
 	public FolderClient(Credentials credentials) {
 		super(credentials);
 	}
+	
+	public ListenableFuture<Folder> getRootFolder(Query query) {
+		String url = Constants.BASE_URL + Constants.FOLDER_ROOT_FOLDER;
 
-	public ListenableFuture<List<Folder>> getFolders() {
+		return execute(url, null, Folder.class, Constants.METHOD_GET, query);
+	}
+	
+	public ListenableFuture<Folder> getInbox(Query query)  {
+		String url = Constants.BASE_URL + Constants.FOLDER_INBOX;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET, query);
+	}
+	
+	public ListenableFuture<Folder> getDraftsFolder(Query query)  {
+		String url = Constants.BASE_URL + Constants.FOLDER_DRAFTS;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET, query);
+	}
+	
+	public ListenableFuture<Folder> getSentItemsFolder(Query query) {
+		String url = Constants.BASE_URL + Constants.FOLDER_SEND_ITEMS;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET, query);
+	}
+	
+	public ListenableFuture<Folder> getDeletedItemsFolder(Query query) {
+		String url = Constants.BASE_URL + Constants.FOLDER_DELETED_ITEMS;
+
+		return execute(url, null, Folder.class, Constants.METHOD_GET, query);
+	}
+
+	public ListenableFuture<List<Folder>> getFolder(String folderId ,Query query) {
+
+		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folderId);
+
+		return getList(url, Folder[].class, query);
+	}
+	
+	public ListenableFuture<List<Folder>> getChildFolders(Folder folder ,Query query) {
+
+		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folder.getId()) + Constants.CHILDFOLDERS_URL;
+
+		return getList(url, Folder[].class, query);
+	}
+	
+	public ListenableFuture<List<Folder>> getFolders(Query query) {
 
 		String url = Constants.BASE_URL + Constants.ROOTFOLDER_URL + Constants.CHILDFOLDERS_URL;
 
-		return getList(url, null, Folder[].class);
+		return getList(url, Folder[].class, query);
 	}
 
 	public ListenableFuture<Folder> create(String parentFolderId, String displayName){
@@ -55,7 +70,7 @@ public class FolderClient extends BaseClient<Folder>{
 		JsonObject jObject = new JsonObject();
 		jObject.addProperty("DisplayName", displayName);
 
-		return execute(url, new Gson().toJson(jObject), Folder.class, "POST");
+		return execute(url, new Gson().toJson(jObject), Folder.class, "POST", null);
 	}
 	
 	public ListenableFuture<Folder> move(String folderId, String toFolderId){
@@ -63,7 +78,7 @@ public class FolderClient extends BaseClient<Folder>{
 		JsonObject jObject = new JsonObject();
 		jObject.addProperty("DestinationId", toFolderId);
 
-		return execute(url, new Gson().toJson(jObject), Folder.class, "POST");
+		return execute(url, new Gson().toJson(jObject), Folder.class, "POST", null);
 	}
 	
 	public ListenableFuture<Folder> copy(String folderId, String toFolderId){
@@ -71,18 +86,18 @@ public class FolderClient extends BaseClient<Folder>{
 		JsonObject jObject = new JsonObject();
 		jObject.addProperty("DestinationId", toFolderId);
 
-		return execute(url, new Gson().toJson(jObject), Folder.class, "POST");
+		return execute(url, new Gson().toJson(jObject), Folder.class, "POST", null);
 	}
 
 	public ListenableFuture<Folder> update(Folder folder){
 		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folder.getId());
 
-		return execute(url, new Gson().toJson(folder), Folder.class, "PATCH");
+		return execute(url, new Gson().toJson(folder), Folder.class, "PATCH", null);
 	}
 	
 	public ListenableFuture<Folder> delete(String folderId){
 		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folderId);
 
-		return execute(url, null, Folder.class, "DELETE");
+		return execute(url, null, Folder.class, "DELETE", null);
 	}
 }

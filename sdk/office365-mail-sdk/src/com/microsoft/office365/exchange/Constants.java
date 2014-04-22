@@ -26,6 +26,10 @@ public class Constants {
 
 	public static final String CONTACT_BY_ID = "/Contacts('%s')";
 	
+	public static final String CONTACTS_FOLDER = "/ContactFolder";
+	
+	public static final String CONTACTS_FOLDER_BY_ID = "/ContactFolder('%s')";
+	
 	public static final String EVENTS_URL = "/Calendar/Events";
 
 	public static final String CREATE_MESSAGE_URL = "/Drafts/Messages";

@@ -47,21 +47,23 @@ public class FolderItemAdapter extends BaseAdapter{
 		if (convertView == null)
 			view = inflater.inflate(R.layout.drawer_list_item, null);
 		Folder folder = mFolder.get(position);
-		String displayName = "";
+		String count = "";
 		
 		TextView tv = (TextView)view.findViewById(R.id.folder_name);
+		TextView itemsCount = (TextView)view.findViewById(R.id.folder_item_count);
+		
 		if(folder.getDisplayName().equals("Inbox")){
-			displayName = folder.getDisplayName() + " (" + folder.getUnreadItemCount() + ")";
+			count = " (" + folder.getUnreadItemCount() + ")";
 			tv.setBackgroundResource(R.color.cyan);
 			tv.setTextColor(Color.parseColor("#FFFFFF"));
 		}
 		else if(folder.getDisplayName().equals("Deleted Items"))
-			displayName = folder.getDisplayName() + " (" + folder.getUnreadItemCount() + ")";
+			count = " (" + folder.getUnreadItemCount() + ")";
 		else
-			displayName = folder.getDisplayName() + " (" + folder.getTotalCount() + ")";
+			count =  " (" + folder.getTotalCount() + ")";
 		
-		tv.setText(displayName);
-	
+		tv.setText(folder.getDisplayName());
+		itemsCount.setText(count);
 		return view;
 	}
 }

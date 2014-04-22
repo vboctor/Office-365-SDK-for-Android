@@ -21,7 +21,7 @@ import android.util.Log;
 /**
  * The Class RetrieveFodersTask.
  */
-public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List<Folder>>> {
+public class RetrievePrimaryFoldersTask extends AsyncTask<String, Void, Map<String,List<Folder>>> {
 
 
 	/** The m activity. */
@@ -32,7 +32,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 	
 	static Credentials mCredentials;
 	
-	public RetrieveFoldersTask(MainActivity activity, Credentials crendential) {
+	public RetrievePrimaryFoldersTask(MainActivity activity, Credentials crendential) {
 		mActivity = activity;
 		mCredentials = crendential;
 	}
