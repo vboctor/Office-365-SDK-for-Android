@@ -1,6 +1,8 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Folder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -99,5 +101,35 @@ public class FolderClient extends BaseClient<Folder>{
 		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folderId);
 
 		return execute(url, null, Folder.class, "DELETE", null);
+	}
+
+	@Override
+	public Folder copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Folder move() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Folder item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Attachment> getAttachments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Attachment getAttachment(Folder item) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

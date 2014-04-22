@@ -6,6 +6,8 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
 import microsoft.exchange.services.odata.model.Recipient;
@@ -175,5 +177,35 @@ public class MailClient extends BaseClient<Message>{
 		} 
 
 		return send(resultMessage);
+	}
+
+	@Override
+	public Message copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message move() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Message item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Attachment> getAttachments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Attachment getAttachment(Message item) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

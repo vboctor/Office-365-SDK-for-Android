@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import microsoft.exchange.services.odata.model.Attachment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +29,16 @@ import com.microsoft.office365.QueryOrder;
 public abstract class BaseClient<V> extends OfficeClient {
 
 	private GsonBuilder mBuilder = new GsonBuilder();
+	
+	public abstract V copy();
+	
+	public abstract V move();
+	
+	public abstract void delete(V item);
+	
+	public abstract List<Attachment> getAttachments();
+	
+	public abstract Attachment getAttachment(V item);
 
 	public BaseClient(Credentials credentials) {
 		super(credentials);

@@ -1,6 +1,8 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Event;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -69,5 +71,35 @@ public class EventClient extends BaseClient<Event>{
 		jObject.addProperty("Comment", comments);	
 
 		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST, null);
+	}
+
+	@Override
+	public Event copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Event move() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Event item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Attachment> getAttachments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Attachment getAttachment(Event item) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

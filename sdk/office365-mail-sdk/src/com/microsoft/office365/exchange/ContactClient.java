@@ -1,6 +1,8 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Contact;
 import microsoft.exchange.services.odata.model.ContactFolder;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -79,5 +81,65 @@ public class ContactClient extends BaseClient<Contact>{
 
 			return execute(url, null, ContactFolder.class, Constants.METHOD_DELETE, null);
 		}
+
+		@Override
+		public ContactFolder copy() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ContactFolder move() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void delete(ContactFolder item) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public List<Attachment> getAttachments() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Attachment getAttachment(ContactFolder item) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}
+
+	@Override
+	public Contact copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Contact move() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(Contact item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Attachment> getAttachments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Attachment getAttachment(Contact item) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
