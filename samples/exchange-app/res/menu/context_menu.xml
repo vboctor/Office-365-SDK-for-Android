@@ -5,29 +5,29 @@
         android:icon="@drawable/ic_action_delete"
         android:orderInCategory="101"
         android:showAsAction="ifRoom|withText"
-        android:title="Delete"/>
+        android:title="@string/menu_delete_title"/>
     <item
         android:id="@+id/menu_reply"
         android:icon="@drawable/ic_action_reply"
         android:orderInCategory="102"
         android:showAsAction="ifRoom|withText"
-        android:title="Reply"/>
+        android:title="@string/menu_reply_title"/>
     <item
         android:id="@+id/menu_reply_all"
         android:icon="@drawable/ic_action_reply_all"
         android:orderInCategory="103"
         android:showAsAction="ifRoom|withText"
-        android:title="ReplyAll"/>
+        android:title="@string/menu_replyall_title"/>
     <item
-        android:id="@+id/menu_foward"
+        android:id="@+id/menu_forward"
         android:icon="@drawable/ic_action_forward"
         android:orderInCategory="104"
         android:showAsAction="ifRoom|withText"
-        android:title="Foward"/>
+        android:title="@string/menu_forward_title" />
     <item
         android:id="@+id/menu_move_to"
         android:orderInCategory="105"
         android:showAsAction="ifRoom|withText"
-        android:title="Move To"/>
+        android:title="@string/menu_move_to_title"/>
 
 </menu>

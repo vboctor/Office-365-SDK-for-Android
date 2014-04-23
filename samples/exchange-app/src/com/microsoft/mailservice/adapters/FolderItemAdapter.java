@@ -50,8 +50,7 @@ public class FolderItemAdapter extends BaseAdapter{
 		String count = "";
 		
 		TextView tv = (TextView)view.findViewById(R.id.folder_name);
-		TextView itemsCount = (TextView)view.findViewById(R.id.folder_item_count);
-		
+		TextView tc = (TextView)view.findViewById(R.id.folder_item_count);
 		if(folder.getDisplayName().equals("Inbox")){
 			count = " (" + folder.getUnreadItemCount() + ")";
 			tv.setBackgroundResource(R.color.cyan);
@@ -63,7 +62,7 @@ public class FolderItemAdapter extends BaseAdapter{
 			count =  " (" + folder.getTotalCount() + ")";
 		
 		tv.setText(folder.getDisplayName());
-		itemsCount.setText(count);
+		tc.setText(count);
 		return view;
 	}
 }

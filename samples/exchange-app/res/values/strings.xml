@@ -4,4 +4,22 @@
     <string name="app_name">Inbox</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="menu_main_refresh">Refresh Emails</string>
+    <string name="menu_main_clear_credentials">Clear Credentials</string>
+    <string name="menu_send_mail_title">Send Mail</string>
+    <string name="menu_cancel_title">Cancel</string>
+    <string name="menu_delete_title">Delete</string>
+    <string name="menu_reply_title">Reply</string>
+    <string name="menu_replyall_title">ReplyAll</string>
+    <string name="menu_forward_title">Forward</string>
+    <string name="menu_move_to_title">Move To</string>
+    <string name="menu_send_mail_sub">Sub:</string>
+    <string name="menu_send_mail_cc">CC:</string>
+    <string name="menu_send_mail_to">To:</string>
+    <string name="main_retrieving_messages">Retrieving Messages....</string>
+    <string name="inbox">Inbox</string>
+    <string name="contacts">Contacts</string>
+    <string name="events">Events</string>
+    <string name="all">all</string>
+
 </resources>

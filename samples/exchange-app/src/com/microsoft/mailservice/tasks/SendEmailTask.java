@@ -53,7 +53,7 @@ public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 		mStoredRotation = mActivity.getRequestedOrientation();
 		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		mDialog.setTitle("Retrieving Messages...");
+		mDialog.setTitle("Sending Message...");
 		mDialog.setMessage("Please wait.");
 		mDialog.setCancelable(false);
 		mDialog.setIndeterminate(true);
@@ -71,10 +71,8 @@ public class SendEmailTask extends AsyncTask<Message, Void, Message> {
 		}
 
 		if (message != null) {
-			//MessageItemAdapter adapter = new MessageItemAdapter(mActivity, message);
-			//mActivity.setListAdapter(adapter);
-			//adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished Sending Mail", Toast.LENGTH_LONG).show();
+
+			Toast.makeText(mContext, "Finished Sending Mail", Toast.LENGTH_SHORT).show();
 
 			NavUtils.navigateUpTo(mActivity,new Intent(mActivity, MainActivity.class));
 		} else {

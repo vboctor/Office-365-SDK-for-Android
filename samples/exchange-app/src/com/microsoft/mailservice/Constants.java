@@ -17,5 +17,7 @@ public class Constants {
 		"DateTimeSent", 
 		"ToRecipients",
 	"LastModifiedTime"};
+	
+	public static final int TOP_VALUE = 40;
 
 }

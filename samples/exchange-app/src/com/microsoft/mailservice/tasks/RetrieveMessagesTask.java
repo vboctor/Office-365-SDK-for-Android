@@ -9,27 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import microsoft.exchange.services.odata.model.Message;
 import com.microsoft.mailservice.MainActivity;
+import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
 import com.microsoft.office365.exchange.MailClient;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RetrieveMessagesTask.
  */
 public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>> {
-
-	/** The m dialog. */
-	private ProgressDialog mDialog;
-
-	/** The m context. */
-	private Context mContext;
 
 	/** The m activity. */
 	private MainActivity mActivity;
@@ -45,8 +37,6 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 	
 	public RetrieveMessagesTask(MainActivity activity, Credentials crendential, Query query) {
 		mActivity = activity;
-		mContext = activity;
-		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
 		mQuery = query;
 	}
@@ -59,11 +49,7 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 		mStoredRotation = mActivity.getRequestedOrientation();
 		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		mDialog.setTitle("Retrieving Messages...");
-		mDialog.setMessage("Please wait.");
-		mDialog.setCancelable(false);
-		mDialog.setIndeterminate(true);
-		mDialog.show();
+		mActivity.findViewById(R.id.load_more).setVisibility(0);
 	}
 
 	/* (non-Javadoc)
@@ -71,22 +57,19 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 	 */
 	@Override
 	protected void onPostExecute(List<Message> messages) {
-		if (mDialog.isShowing()) {
-			mDialog.dismiss();
-			mActivity.setRequestedOrientation(mStoredRotation);
-		}
-
+		
 		if (messages != null) {
-			
 			mActivity.setMessages(mFolderId,messages);
 			MessageItemAdapter adapter = new MessageItemAdapter(mActivity, messages);
 			mActivity.setListAdapter(adapter);
 			adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished loading messages", Toast.LENGTH_LONG).show();
+			
+			mActivity.findViewById(R.id.load_more).setVisibility(8);
 			
 		} else {
-			//mApplication.handleError(mThrowable);
+			mActivity.findViewById(R.id.load_more).setVisibility(8);
 		}
+		mActivity.setRequestedOrientation(mStoredRotation);
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +81,12 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 		try {
 			MailClient client = new MailClient(mCredentials);
 			
-			messages = client.getMessages(mFolderId, mQuery).get();
+			List<Message> auxMessages = client.getMessages(mFolderId, mQuery).get();
+			
+			for(Message m : auxMessages){
+				messages.add(m);
+				
+			}
 			messages.add(new Message());
 			
 		} catch (Exception e) {

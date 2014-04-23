@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="2dip"
-            android:text="To:" />
+            android:text="@string/menu_send_mail_to" />
 
         <EditText
             android:id="@+id/textTo"
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="2dip"
-            android:text="CC:" />
+            android:text="@string/menu_send_mail_cc" />
 
         <EditText
             android:id="@+id/textCC"
@@ -50,7 +50,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/mail_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -60,16 +59,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="2dip"
-            android:text="Sub:" />
+            android:text="@string/menu_send_mail_sub" />
 
         <EditText
             android:id="@+id/textSubject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelSubject"
-            android:ems="10" />
+            android:ems="10"
+            android:inputType="text" />
     </RelativeLayout>
- <RelativeLayout
+
+    <RelativeLayout
         android:id="@+id/mail_send_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,9 +80,9 @@
             android:id="@+id/textBody"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:ems="20" />
+            android:ems="20"
+            android:inputType="textWebEditText" />
     </RelativeLayout>
-   
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
