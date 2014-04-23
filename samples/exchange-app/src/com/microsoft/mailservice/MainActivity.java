@@ -9,15 +9,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
+
 import org.json.JSONObject;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+<<<<<<< Updated upstream
+=======
+import android.os.AsyncTask;
+>>>>>>> Stashed changes
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,16 +33,20 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+<<<<<<< Updated upstream
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
+=======
+>>>>>>> Stashed changes
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
@@ -44,7 +56,11 @@ import com.microsoft.mailservice.tasks.RetrieveMessagesTask;
 import com.microsoft.mailservice.tasks.RetrieveMoreMessageTask;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
+<<<<<<< Updated upstream
 import android.support.v4.widget.SwipeRefreshLayout;
+=======
+import com.microsoft.office365.exchange.MailClient;
+>>>>>>> Stashed changes
 
 // TODO: Auto-generated Javadoc
 /**

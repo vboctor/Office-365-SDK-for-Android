@@ -5,39 +5,11 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Message {
+public class Message extends Item {
 
 	@SerializedName("Id")
 	@Expose
 	private String id;
-
-	@SerializedName("ChangeKey")
-	@Expose
-	private String changeKey;
-
-	@SerializedName("ClassName")
-	@Expose
-	private String className;
-
-	@SerializedName("Subject")
-	@Expose
-	private String subject;
-
-	@SerializedName("BodyPreview")
-	@Expose
-	private String bodyPreview;
-
-	@SerializedName("Body")
-	@Expose
-	private ItemBody body;
-
-	@SerializedName("Importance")
-	@Expose
-	private String importance;
-
-	@SerializedName("Categories")
-	@Expose
-	private List<Object> categories = new ArrayList<Object>(); // review this
 
 	@SerializedName("HasAttachments")
 	@Expose
@@ -107,38 +79,6 @@ public class Message {
 		this.id = id;
 	}
 
-	public String getChangeKey() {
-		return changeKey;
-	}
-
-	public void setChangeKey(String changeKey) {
-		this.changeKey = changeKey;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	public String getBodyPreview() {
-		return bodyPreview;
-	}
-
-	public void setBodyPreview(String bodyPreview) {
-		this.bodyPreview = bodyPreview;
-	}
-
 	public ItemBody getBody() {
 		return body;
 	}
@@ -153,14 +93,6 @@ public class Message {
 
 	public void setImportance(String importance) {
 		this.importance = importance;
-	}
-
-	public List<Object> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(List<Object> categories) {
-		this.categories = categories;
 	}
 
 	public Boolean getHasAttachments() {
