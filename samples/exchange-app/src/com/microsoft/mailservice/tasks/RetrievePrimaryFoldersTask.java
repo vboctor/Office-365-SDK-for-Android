@@ -55,7 +55,6 @@ public class RetrievePrimaryFoldersTask extends AsyncTask<String, Void, Map<Stri
 			mActivity.setRequestedOrientation(mStoredRotation);
 
 		if (folders != null) {
-			
 			FolderItemAdapter primaryAdapter = new FolderItemAdapter(mActivity, folders.get("Primary"));
 			FolderItemAdapter secondAdapter = new FolderItemAdapter(mActivity, folders.get("Secondary"));
 			mActivity.setListAdapter(primaryAdapter,secondAdapter);

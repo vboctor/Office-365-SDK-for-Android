@@ -86,7 +86,7 @@ public class MoveEmailTask extends AsyncTask<String, Void, String[]> {
 		try {
 			MailClient client = new MailClient(mCredentials);
 
-			client.moveTo(args[1], args[2]).get();
+			client.move(args[1], args[2]).get();
 
 		} catch (Exception e) {
 			Log.d(e.getMessage(), e.getStackTrace().toString());

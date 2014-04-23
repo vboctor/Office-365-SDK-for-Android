@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import microsoft.exchange.services.odata.model.Attachment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.common.util.concurrent.FutureCallback;
@@ -21,14 +23,21 @@ import com.microsoft.office365.Query;
 public abstract class BaseClient<V> extends OfficeClient {
 
 	private GsonBuilder mBuilder = new GsonBuilder();
-	private String mAttachmentUrl;
 
+	public abstract ListenableFuture<V> copy();
+	
+	public abstract ListenableFuture<V> move(String itemToMoveId, String moveToId);
+	
+	public abstract ListenableFuture<String> delete(String itemId);
+	
+	public abstract ListenableFuture<List<Attachment>> getAttachments();
+	
+	public abstract ListenableFuture<Attachment> getAttachment(V item);
+
+	public abstract ListenableFuture<Attachment> addAttachment(Attachment attachment, String itemId);
+	
 	public BaseClient(Credentials credentials) {
 		super(credentials);
-	}
-
-	protected void setAttachmentUrl(String url){
-		mAttachmentUrl = url + "/Attachments";
 	}
 
 	public ListenableFuture<List<V>> getList(String url, final Class<V[]> type, Query query) {
@@ -73,7 +82,7 @@ public abstract class BaseClient<V> extends OfficeClient {
 		return future;
 	}
 
-	public ListenableFuture<String> post(String url,V entity) {
+	public ListenableFuture<String> execute(String url,V entity, String method) {
 		final SettableFuture<String> future = SettableFuture.create();
 
 		Gson gson = new Gson();
@@ -85,7 +94,7 @@ public abstract class BaseClient<V> extends OfficeClient {
 		headers.put("Content-Type", "application/json;odata.metadata=full");
 		headers.put("Expect", "100-continue");
 
-		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, "POST", headers, getBytes(json));//(url, "PUT",);
+		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, method, headers, getBytes(json));//(url, "PUT",);
 
 		Futures.addCallback(requestFuture, new FutureCallback<JSONObject>() {
 			@Override
@@ -140,114 +149,6 @@ public abstract class BaseClient<V> extends OfficeClient {
 					String json = result.toString();
 
 					V entity = (V) gson.fromJson(json, type);
-					future.set(entity);
-				} else {
-					future.set(null);
-				}
-			}
-		});
-
-		return future;
-	}
-
-	public ListenableFuture<List<Attachment>> getAttachments(String itemId){
-
-		String url = String.format(mAttachmentUrl, itemId);
-		final SettableFuture<List<Attachment>> future = SettableFuture.create();
-
-		Map<String, String> headers = new HashMap<String, String>();
-
-		headers.put("Accept", "application/json;odata.metadata=full");
-		headers.put("Content-Type", "application/json;odata.metadata=full");
-		headers.put("Expect", "100-continue");
-
-		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, Constants.METHOD_GET, headers, null);
-
-		Futures.addCallback(requestFuture, new FutureCallback<JSONObject>() {
-			@Override
-			public void onFailure(Throwable error) {
-				future.setException(error);
-			}
-
-			@Override
-			public void onSuccess(JSONObject result) {
-				if (result != null) {
-					Gson gson = mBuilder.create();
-					String json = result.toString();
-
-					List<Attachment> entity = Arrays.asList(gson.fromJson(json, Attachment[].class));
-					future.set(entity);
-				} else {
-					future.set(null);
-				}
-			}
-		});
-
-		return future;
-	}
-
-	public ListenableFuture<Attachment> getAttachment(String parentId ,String attachmentId){
-		String url = String.format(mAttachmentUrl + "('%s')", parentId, attachmentId);
-
-		final SettableFuture<Attachment> future = SettableFuture.create();
-
-		Map<String, String> headers = new HashMap<String, String>();
-
-		headers.put("Accept", "application/json;odata.metadata=full");
-		headers.put("Content-Type", "application/json;odata.metadata=full");
-		headers.put("Expect", "100-continue");
-
-		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, Constants.METHOD_GET, headers, null);
-
-		Futures.addCallback(requestFuture, new FutureCallback<JSONObject>() {
-			@Override
-			public void onFailure(Throwable error) {
-				future.setException(error);
-			}
-
-			@Override
-			public void onSuccess(JSONObject result) {
-				if (result != null) {
-					Gson gson = mBuilder.create();
-					String json = result.toString();
-
-					Attachment entity = gson.fromJson(json, Attachment.class);
-					future.set(entity);
-				} else {
-					future.set(null);
-				}
-			}
-		});
-
-		return future;
-	}
-
-	public ListenableFuture<Attachment> addAttachment(Attachment attachment, String itemId){
-
-		String url = String.format(mAttachmentUrl, itemId);		
-		final SettableFuture<Attachment> future = SettableFuture.create();
-
-		Map<String, String> headers = new HashMap<String, String>();
-
-		headers.put("Accept", "application/json;odata.metadata=full");
-		headers.put("Content-Type", "application/json;odata.metadata=full");
-		headers.put("Expect", "100-continue");
-
-		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, Constants.METHOD_POST, headers, getBytes(new Gson().toJson(attachment)));
-
-		Futures.addCallback(requestFuture, new FutureCallback<JSONObject>() {
-			@Override
-			public void onFailure(Throwable error) {
-				future.setException(error);
-			}
-
-			@Override
-			public void onSuccess(JSONObject result) {
-				if (result != null) {
-					Gson gson = mBuilder.create();
-					String json = result.toString();
-
-					Attachment entity = gson.fromJson(json, Attachment.class);
 					future.set(entity);
 				} else {
 					future.set(null);

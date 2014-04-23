@@ -17,6 +17,7 @@ import com.microsoft.office365.exchange.FolderClient;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 // TODO: Auto-generated Javadoc
 /**
  * The Class RetrieveFodersTask.
@@ -29,9 +30,9 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
-	
+
 	static Credentials mCredentials;
-	
+
 	public RetrieveFoldersTask(MainActivity activity, Credentials crendential) {
 		mActivity = activity;
 		mCredentials = crendential;
@@ -52,16 +53,20 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 	 */
 	@Override
 	protected void onPostExecute(Map<String,List<Folder>> folders) {
-			mActivity.setRequestedOrientation(mStoredRotation);
+		mActivity.setRequestedOrientation(mStoredRotation);
 
 		if (folders != null) {
-			
-			FolderItemAdapter primaryAdapter = new FolderItemAdapter(mActivity, folders.get("Primary"));
-			FolderItemAdapter secondAdapter = new FolderItemAdapter(mActivity, folders.get("Secondary"));
-			mActivity.setListAdapter(primaryAdapter,secondAdapter);
-			primaryAdapter.notifyDataSetChanged();
-			secondAdapter.notifyDataSetChanged();
-			Log.d("Folder task", "Finished loading Folders");
+
+			if(folders.size() != 0){
+				FolderItemAdapter primaryAdapter = new FolderItemAdapter(mActivity, folders.get("Primary"));
+				FolderItemAdapter secondAdapter = new FolderItemAdapter(mActivity, folders.get("Secondary"));
+				mActivity.setListAdapter(primaryAdapter,secondAdapter);
+				primaryAdapter.notifyDataSetChanged();
+				secondAdapter.notifyDataSetChanged();
+				Log.d("Folder task", "Finished loading Folders");
+			}else{
+				Toast.makeText(mActivity, "No Folders Find it!!!", Toast.LENGTH_SHORT).show();
+			}
 		} else {
 			//mApplication.handleError(mThrowable);
 		}
@@ -76,14 +81,14 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 			FolderClient client = new FolderClient(mCredentials);
 
 			List<Folder> auxFolders = client.getFolders(null).get();	
-			
+
 			Folder inbox = null, draft = null, sentItems = null, deletedItems = null;
-			
+
 			folders.put("Primary", new ArrayList<Folder>());
 			folders.put("Secondary", new ArrayList<Folder>());
 			for(Folder folder : auxFolders){
 				String display = folder.getDisplayName();
-				
+
 				if(display.equals("Inbox")){
 					inbox = folder;
 				} else if ( display.equals("Drafts")){
@@ -101,7 +106,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 			folders.get("Primary").add(draft);
 			folders.get("Primary").add(deletedItems);
 			folders.get("Primary").add(sentItems);
-			
+
 			mActivity.setFolders(folders);
 		} catch (Exception e) {
 			Log.d(e.getMessage(), e.getStackTrace().toString());
@@ -109,10 +114,10 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 
 		return folders;
 	}
-	
+
 	List<Folder> orderFolders(List<Folder> folders){
 		List<Folder> orderedFolder = new ArrayList<Folder>();
-		
+
 		for(Folder folder : folders){
 			if(folder.getDisplayName().equals("Inbox")){
 				orderedFolder.add(folder);
@@ -120,7 +125,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 			folders.remove(folder);
 			break;
 		}
-		
+
 		for(Folder folder : folders){
 			if(folder.getDisplayName().equals("Inbox")){
 				orderedFolder.add(folder);
@@ -128,7 +133,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 			folders.remove(folder);
 			break;
 		}		
-		
+
 		return orderedFolder;
 	}
 }

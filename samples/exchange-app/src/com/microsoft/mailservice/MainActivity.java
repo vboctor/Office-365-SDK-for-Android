@@ -412,7 +412,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 		Futures.addCallback(future, new FutureCallback<Credentials>() {
 			@Override
 			public void onFailure(Throwable t) {
-				Log.e("Asset", t.getMessage());
+				Toast.makeText(MainActivity.this, "Error on Authentication: " + t.getMessage(), Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -442,7 +442,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 		Futures.addCallback(future, new FutureCallback<Credentials>() {
 			@Override
 			public void onFailure(Throwable t) {
-				Log.e("Asset", t.getMessage());
+				Toast.makeText(MainActivity.this, "Error on Authentication: " + t.getMessage(), Toast.LENGTH_LONG).show();
 			}
 
 			@Override

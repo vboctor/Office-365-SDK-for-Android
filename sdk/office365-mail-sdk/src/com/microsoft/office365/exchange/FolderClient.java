@@ -1,6 +1,8 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Folder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -73,6 +75,13 @@ public class FolderClient extends BaseClient<Folder>{
 		return execute(url, new Gson().toJson(jObject), Folder.class, "POST", null);
 	}
 	
+	public ListenableFuture<Folder> update(Folder folder){
+		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folder.getId());
+
+		return execute(url, new Gson().toJson(folder), Folder.class, "PATCH", null);
+	}
+
+	@Override
 	public ListenableFuture<Folder> move(String folderId, String toFolderId){
 		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folderId) + Constants.ACTION_MOVE;
 		JsonObject jObject = new JsonObject();
@@ -80,24 +89,36 @@ public class FolderClient extends BaseClient<Folder>{
 
 		return execute(url, new Gson().toJson(jObject), Folder.class, "POST", null);
 	}
-	
-	public ListenableFuture<Folder> copy(String folderId, String toFolderId){
-		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folderId) + Constants.ACTION_COPY;
-		JsonObject jObject = new JsonObject();
-		jObject.addProperty("DestinationId", toFolderId);
 
-		return execute(url, new Gson().toJson(jObject), Folder.class, "POST", null);
+	@Override
+	public ListenableFuture<Folder> copy() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public ListenableFuture<Folder> update(Folder folder){
-		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folder.getId());
-
-		return execute(url, new Gson().toJson(folder), Folder.class, "PATCH", null);
-	}
-	
-	public ListenableFuture<Folder> delete(String folderId){
+	@Override
+	public ListenableFuture<String> delete(String folderId) {
 		String url = Constants.BASE_URL + String.format(Constants.FOLDER_URL, folderId);
 
-		return execute(url, null, Folder.class, "DELETE", null);
+		return execute(url, null, Constants.METHOD_DELETE);		
+	}
+
+	@Override
+	public ListenableFuture<List<Attachment>> getAttachments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<Attachment> getAttachment(Folder item) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<Attachment> addAttachment(Attachment attachment,
+			String itemId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

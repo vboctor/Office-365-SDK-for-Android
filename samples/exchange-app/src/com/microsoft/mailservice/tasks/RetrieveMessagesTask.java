@@ -77,11 +77,13 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 		}
 
 		if (messages != null) {
+			
 			mActivity.setMessages(mFolderId,messages);
 			MessageItemAdapter adapter = new MessageItemAdapter(mActivity, messages);
 			mActivity.setListAdapter(adapter);
 			adapter.notifyDataSetChanged();
 			Toast.makeText(mContext, "Finished loading messages", Toast.LENGTH_LONG).show();
+			
 		} else {
 			//mApplication.handleError(mThrowable);
 		}

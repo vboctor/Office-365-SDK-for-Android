@@ -1,6 +1,8 @@
 package com.microsoft.office365.exchange;
 
 import java.util.List;
+
+import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Event;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -12,7 +14,7 @@ public class EventClient extends BaseClient<Event>{
 
 	public EventClient(Credentials credentials) {
 		super(credentials);
-		setAttachmentUrl(Constants.BASE_URL + Constants.EVENT_BY_ID);
+		//setAttachmentUrl(Constants.BASE_URL + Constants.EVENT_BY_ID);
 	}
 
 	public ListenableFuture<List<Event>> getEvents(Query query) {
@@ -34,12 +36,6 @@ public class EventClient extends BaseClient<Event>{
 		String url = Constants.BASE_URL + Constants.EVENTS_URL;
 
 		return execute(url,new Gson().toJson(event), Event.class, Constants.METHOD_PATCH, null);
-	}
-
-	public ListenableFuture<Event> delete(String eventId){
-		String url = Constants.BASE_URL + "Events('" + eventId + "')";
-		
-		return execute(url, null, null, Constants.METHOD_DELETE, null);
 	}
 	
 	public ListenableFuture<Event> accept(String eventId, String comments) {
@@ -70,5 +66,43 @@ public class EventClient extends BaseClient<Event>{
 		jObject.addProperty("Comment", comments);	
 
 		return execute(url, new Gson().toJson(jObject), Event.class, Constants.METHOD_POST, null);
+	}
+
+	@Override
+	public ListenableFuture<Event> copy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<Event> move(String itemToMoveId, String moveToId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<String> delete(String eventId){
+		String url = Constants.BASE_URL + "Events('" + eventId + "')";
+		
+		return execute(url, null, Constants.METHOD_DELETE);
+	}
+
+	@Override
+	public ListenableFuture<List<Attachment>> getAttachments() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<Attachment> getAttachment(Event item) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<Attachment> addAttachment(Attachment attachment,
+			String itemId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
