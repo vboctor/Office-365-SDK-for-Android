@@ -30,7 +30,7 @@ public abstract class BaseClient<V> extends OfficeClient {
 	
 	public abstract ListenableFuture<String> delete(String itemId);
 	
-	public abstract ListenableFuture<List<Attachment>> getAttachments();
+	public abstract ListenableFuture<List<Attachment>> getAttachments(V item);
 	
 	public abstract ListenableFuture<Attachment> getAttachment(V item);
 

@@ -88,7 +88,7 @@ public class EventClient extends BaseClient<Event>{
 	}
 
 	@Override
-	public ListenableFuture<List<Attachment>> getAttachments() {
+	public ListenableFuture<List<Attachment>> getAttachments(Event item) {
 		// TODO Auto-generated method stub
 		return null;
 	}

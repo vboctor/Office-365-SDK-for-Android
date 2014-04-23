@@ -9,9 +9,12 @@ import java.util.List;
 import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
-import microsoft.exchange.services.odata.model.MessageSummary;
 import microsoft.exchange.services.odata.model.Recipient;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
@@ -83,10 +86,6 @@ public class MailClient extends BaseClient<Message> {
 	}
 
 	public ListenableFuture<Message> getMessage(String messageId) {
-		return null;
-	}
-
-	public ListenableFuture<List<MessageSummary>> getMessages(Query query) {
 		return null;
 	}
 
@@ -220,14 +219,35 @@ public class MailClient extends BaseClient<Message> {
 	}
 
 	@Override
-	public ListenableFuture<List<Attachment>> getAttachments() {
-		// TODO Auto-generated method stub
-		return null;
+	public ListenableFuture<List<Attachment>> getAttachments(Message message) {
+	
+		final SettableFuture<List<Attachment>> future = SettableFuture.create();
+		
+		Futures.addCallback(future, new FutureCallback<List<Attachment>>(){
+			@Override
+			public void onFailure(Throwable t) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onSuccess(List<Attachment> result) {
+				//future.set(value)
+			}
+		});
+		
+		/*public ListenableFuture<Message> getMessage(String messageId, Query query) {
+		String url = Constants.BASE_URL
+				+ String.format(Constants.MESSAGE_BY_ID, messageId);
+
+		return execute(url, null, Message.class, Constants.METHOD_GET, query);
+		*/
+		return future;
 	}
 
 	@Override
-	public ListenableFuture<Attachment> getAttachment(Message item) {
-		// TODO Auto-generated method stub
+	public ListenableFuture<Attachment> getAttachment(Message message) {
+		
 		return null;
 	}
 

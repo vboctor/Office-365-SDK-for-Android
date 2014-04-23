@@ -103,12 +103,7 @@ public class FolderClient extends BaseClient<Folder>{
 		return execute(url, null, Constants.METHOD_DELETE);		
 	}
 
-	@Override
-	public ListenableFuture<List<Attachment>> getAttachments() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public ListenableFuture<Attachment> getAttachment(Folder item) {
 		// TODO Auto-generated method stub
@@ -118,6 +113,12 @@ public class FolderClient extends BaseClient<Folder>{
 	@Override
 	public ListenableFuture<Attachment> addAttachment(Attachment attachment,
 			String itemId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<List<Attachment>> getAttachments(Folder item) {
 		// TODO Auto-generated method stub
 		return null;
 	}
