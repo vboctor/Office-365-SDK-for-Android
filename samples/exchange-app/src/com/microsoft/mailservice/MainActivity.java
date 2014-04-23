@@ -55,13 +55,15 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 	public static ListView mMailListView;
 	ListView mListPrimaryFolderView;
 	ListView mListSecondaryFolderView;
-	Folder mLastSelectedFolder;
 	TextView mFolderTextView;
 	SwipeRefreshLayout mSwipeRefreshLayout;
 
+	//TODO: review this and do in a better way
 	static Map<String,List<Message>> mMessages = new HashMap<String,List<Message>>();
 	static Map<String,List<Folder>> mFolders;
-
+	static Folder mLastSelectedFolder;
+	//
+	
 	DrawerLayout mDrawerLayout;
 	ActionBarDrawerToggle mDrawerToggle;
 

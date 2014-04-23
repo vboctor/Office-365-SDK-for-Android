@@ -3,4 +3,9 @@
         <color name="cyan">#33B5E5</color>
         <color name="green">#8AE38A</color>
         <color name="white">#FFFFFF</color>
+        
+        <color name="soft_red">#FF4444</color>
+        <color name="soft_orange">#FFBB33</color>
+        <color name="soft_green">#99CC00</color>
+        <color name="soft_violet">#AA66CC</color>
 </resources>

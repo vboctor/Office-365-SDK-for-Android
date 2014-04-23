@@ -51,6 +51,14 @@ public class FolderItemAdapter extends BaseAdapter{
 		
 		TextView tv = (TextView)view.findViewById(R.id.folder_name);
 		TextView tc = (TextView)view.findViewById(R.id.folder_item_count);
+
+		
+		if(folder.getDisplayName().equals("Inbox"))
+		{tc.setBackgroundResource(R.color.soft_red);}
+		if(folder.getDisplayName().equals("Drafts")){tc.setBackgroundResource(R.color.soft_orange);}
+		else if(folder.getDisplayName().equals("Deleted Items")){tc.setBackgroundResource(R.color.soft_green);}
+		else if(folder.getDisplayName().equals("Sent Items")){tc.setBackgroundResource(R.color.soft_violet);}
+		
 		if(folder.getDisplayName().equals("Inbox")){
 			count = " (" + folder.getUnreadItemCount() + ")";
 			tv.setBackgroundResource(R.color.cyan);
