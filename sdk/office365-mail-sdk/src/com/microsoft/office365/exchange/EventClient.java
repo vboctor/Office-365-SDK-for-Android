@@ -12,6 +12,7 @@ public class EventClient extends BaseClient<Event>{
 
 	public EventClient(Credentials credentials) {
 		super(credentials);
+		setAttachmentUrl(Constants.BASE_URL + Constants.EVENT_BY_ID);
 	}
 
 	public ListenableFuture<List<Event>> getEvents(Query query) {

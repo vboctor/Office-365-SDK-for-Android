@@ -8,17 +8,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <ListView
-            android:id="@+id/mail_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="#FFFFFF"
-            android:choiceMode="singleChoice"
-            android:divider="#ddd"
-            android:dividerHeight="1dp"
-            android:paddingBottom="4dip"
-            android:paddingTop="4dip" />
+        <RelativeLayout       android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/layout_to_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <ListView
+                    android:id="@+id/mail_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:background="#FFFFFF"
+                    android:choiceMode="singleChoice"
+                    android:divider="#ddd"
+                    android:dividerHeight="1dp" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <TextView
+                android:id="@+id/load_more"
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                android:layout_alignParentBottom="true"
+                android:background="#3233B5E5"
+                android:gravity="center_vertical"
+                android:padding="6dp"
+                android:text="Retrieving Messages..."
+                android:textColor="#282828"
+                android:textSize="20dip"
+                android:visibility="invisible" />
+        </RelativeLayout>
     </FrameLayout>
 
     <TableLayout
@@ -26,9 +47,9 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="#FFFFFF"
         android:listSelector="@drawable/listview"
-        android:orientation="vertical" 
-        android:background="#FFFFFF">
+        android:orientation="vertical" >
 
         <TableRow>
 

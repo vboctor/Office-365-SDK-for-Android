@@ -97,6 +97,7 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 			MailClient client = new MailClient(mCredentials);
 			
 			messages = client.getMessages(mFolderId, mQuery).get();
+			messages.add(new Message());
 			
 		} catch (Exception e) {
 		}

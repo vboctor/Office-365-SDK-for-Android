@@ -22,34 +22,8 @@ public class MailClient extends BaseClient<Message>{
 
 	public MailClient(Credentials credentials){
 		super(credentials);
+		setAttachmentUrl(Constants.BASE_URL + Constants.MESSAGE_BY_ID);
 	}
-	
-   /*
-	public ListenableFuture<Message> getMessage(String messageId) 
-
-	public ListenableFuture<List<Message>> getMessages(String folderNameOrId)
-	public ListenableFuture<List<Message>> getMessages()
-	public ListenableFuture<List<Message>> getMessages(Query query) 
-
-	public ListenableFuture<List<MessageSummary>> getMessages(Query query) 
-
-	public ListenableFuture<Message> create(Message message) //draft or any other folder
-	public ListenableFuture<Folder> create(String displayName)
-
-	public ListenableFuture<Void> send(Message message)
-
-	public ListenableFuture<Folder> getFolder(String folderId) 
-	public ListenableFuture<List<Folder>> getFolders(Folder folder) 
-	public ListenableFuture<List<Folder>> getFolders(String folderId) 
-
-
-	public Message copy()
-
-	public Message createReply()
-	public Message createReplyAll()
-	public Message createForward()
-//review return type or void
-	public Message replyAll()*/
 	
 	public ListenableFuture<List<Message>> getInboxMessages(Query query) {
 		String url = Constants.BASE_URL + Constants.FOLDER_INBOX + Constants.MESSAGES_URL;

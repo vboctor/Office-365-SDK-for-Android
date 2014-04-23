@@ -21,18 +21,16 @@ public class ActionModeCallback implements ActionMode.Callback {
 	View mView;
 	int mPosition;
 	ListView mListView;
-	Folder mLastSelectedFolder;
-	MainActivity mActivity;
+	BaseActivity mActivity;
 	ListView mListPrimaryFolderView;
 
-	public ActionModeCallback(MainActivity activity, 
-			final View view, final int position, Folder lastSelectedFolder){
+	public ActionModeCallback(BaseActivity activity, 
+			final View view, final int position){
 		
 		mListPrimaryFolderView = ((ListView)activity.findViewById(R.id.list_primary_foders));
 		mListView = ((ListView)activity.findViewById(R.id.mail_list));
 		mView = view;
 		mPosition = position;
-		mLastSelectedFolder = lastSelectedFolder;
 		mActivity = activity;
 	}
 
@@ -85,16 +83,15 @@ public class ActionModeCallback implements ActionMode.Callback {
 
 			public void onClick(DialogInterface dialog, int id) {
 				Message message = (Message)mListView.getItemAtPosition(mPosition);
-				String folder = mLastSelectedFolder == null ? "Inbox": 
-					mLastSelectedFolder.getId();
 
-				if(mLastSelectedFolder != null && mLastSelectedFolder.getDisplayName().equals("Deleted Items")){
+
+				if(message.getParentFolderId().equals("DeletedItems")){
 					new DeleteEmailTask(mActivity, Authentication.getCurrentCredentials())
-					.execute(new String[]{ folder ,	message.getId()});
+					.execute(new String[]{ message.getParentFolderId() ,	message.getId()});
 				}
 				else{
 					new MoveEmailTask(mActivity, Authentication.getCurrentCredentials(), "Deleting Message...")
-					.execute(new String[]{folder ,
+					.execute(new String[]{message.getParentFolderId() ,
 							message.getId(), ((Folder)mListPrimaryFolderView.getItemAtPosition(2)).getId(), 
 					"Message Deleted."});
 				}

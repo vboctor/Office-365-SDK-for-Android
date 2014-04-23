@@ -4,11 +4,21 @@ import java.util.List;
 
 public class ContactFolder{
 
+	private String id;
+
 	private String ParentFolderId;
 	private String DisplayName;
 	private List<Contact> Contacts;
 	private List<ContactFolder> ChildFolders;
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	public String getParentFolderId() {
 		return ParentFolderId; 
 	}

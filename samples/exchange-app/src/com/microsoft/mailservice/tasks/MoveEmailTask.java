@@ -5,6 +5,7 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
+import com.microsoft.mailservice.BaseActivity;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.exchange.MailClient;
@@ -28,7 +29,7 @@ public class MoveEmailTask extends AsyncTask<String, Void, String[]> {
 	private Context mContext;
 
 	/** The m activity. */
-	private MainActivity mActivity;
+	private BaseActivity mActivity;
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
@@ -37,7 +38,7 @@ public class MoveEmailTask extends AsyncTask<String, Void, String[]> {
 
 	static Credentials mCredentials;
 
-	public MoveEmailTask(MainActivity activity, Credentials crendential, String messageDisplay) {
+	public MoveEmailTask(BaseActivity activity, Credentials crendential, String messageDisplay) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);

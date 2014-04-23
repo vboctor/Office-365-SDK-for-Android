@@ -12,6 +12,8 @@ public class ContactClient extends BaseClient<Contact>{
 
 	public ContactClient(Credentials credentials) {
 		super(credentials);
+
+		setAttachmentUrl(Constants.BASE_URL + Constants.CONTACT_BY_ID);
 	}
 
 	public ListenableFuture<Contact> getContact(String contactId, Query query) {

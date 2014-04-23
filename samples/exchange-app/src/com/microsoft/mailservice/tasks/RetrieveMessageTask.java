@@ -5,21 +5,27 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
-import com.microsoft.mailservice.BaseActivity;
+import java.util.ArrayList;
+import java.util.List;
+import microsoft.exchange.services.odata.model.Message;
+import com.microsoft.mailservice.MainActivity;
+import com.microsoft.mailservice.adapters.MessageItemAdapter;
 import com.microsoft.office365.Credentials;
+import com.microsoft.office365.Query;
 import com.microsoft.office365.exchange.MailClient;
+
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class DeleteEmailTask.
+ * The Class RetrieveMessagesTask.
  */
-public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
+public class RetrieveMessageTask extends AsyncTask<String, Void, Message> {
 
 	/** The m dialog. */
 	private ProgressDialog mDialog;
@@ -28,18 +34,23 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 	private Context mContext;
 
 	/** The m activity. */
-	private BaseActivity mActivity;
+	private Activity mActivity;
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
-
+	
 	static Credentials mCredentials;
+	
+	String mFolderId;
 
-	public DeleteEmailTask(BaseActivity activity, Credentials crendential) {
+	Query mQuery;
+	
+	public RetrieveMessageTask(Activity activity, Credentials crendential, Query query) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
+		mQuery = query;
 	}
 
 	/* (non-Javadoc)
@@ -50,7 +61,7 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 		mStoredRotation = mActivity.getRequestedOrientation();
 		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		mDialog.setTitle("Deleting Message...");
+		mDialog.setTitle("Retrieving Message...");
 		mDialog.setMessage("Please wait.");
 		mDialog.setCancelable(false);
 		mDialog.setIndeterminate(true);
@@ -61,28 +72,36 @@ public class DeleteEmailTask extends AsyncTask<String, Void, String[]> {
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
-	protected void onPostExecute(String[] args) {
-		if (mDialog.isShowing()) {
-			mDialog.dismiss();
-			mActivity.setRequestedOrientation(mStoredRotation);
-		}
-
-		Toast.makeText(mContext, "Message Deleted", Toast.LENGTH_LONG).show();
-		mActivity.deleteMessage(args[0], args[1]);
+	protected void onPostExecute(Message message) {
+//		if (mDialog.isShowing()) {
+//			mDialog.dismiss();
+//			mActivity.setRequestedOrientation(mStoredRotation);
+//		}
+//
+//		if (message != null) {
+//			MessageItemAdapter adapter = new MessageItemAdapter(mActivity, messages);
+//			mActivity.setListAdapter(adapter);
+//			adapter.notifyDataSetChanged();
+//			Toast.makeText(mContext, "Finished loading message", Toast.LENGTH_LONG).show();
+//		} else {
+//			//mApplication.handleError(mThrowable);
+//		}
 	}
 
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
-	protected String[] doInBackground(final String... args) {
+	protected Message doInBackground(final String... args) {
+		Message message = new Message();
 		try {
 			MailClient client = new MailClient(mCredentials);
-
-			client.delete(args[1]).get();
-
+			
+			message = client.getMessage(args[0], mQuery).get();
+			
+			
 		} catch (Exception e) {
-			Log.d(e.getMessage(), e.getStackTrace().toString());
 		}
-		return args;
+
+		return message;
 	}
 }

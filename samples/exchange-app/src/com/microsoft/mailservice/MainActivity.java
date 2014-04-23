@@ -12,10 +12,11 @@ import java.util.Map;
 import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
 import org.json.JSONObject;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.opengl.Visibility;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -24,11 +25,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -36,25 +40,27 @@ import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
-import com.microsoft.mailservice.tasks.RetrieveContactsTask;
 import com.microsoft.mailservice.tasks.RetrieveEventsTask;
 import com.microsoft.mailservice.tasks.RetrieveFoldersTask;
 import com.microsoft.mailservice.tasks.RetrieveMessagesTask;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
+import com.microsoft.office365.exchange.MailClient;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class MainActivity.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
 
-	ListView mListView;
+	public static ListView mMailListView;
 	ListView mListPrimaryFolderView;
 	ListView mListSecondaryFolderView;
 	Folder mLastSelectedFolder;
 	TextView mFolderTextView;
-
+	SwipeRefreshLayout swipeRefreshLayout;
+	
 	static Map<String,List<Message>> mMessages = new HashMap<String,List<Message>>();
 	static Map<String,List<Folder>> mFolders;
 
@@ -69,36 +75,24 @@ public class MainActivity extends Activity {
 		Authentication.createEncryptionKey(getApplicationContext());
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		setListMenu();
-		mListView = (ListView)findViewById(R.id.mail_list);
-		mListView.setOnItemClickListener(new OnItemClickListener() {
+		
+		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.layout_to_refresh);
+		swipeRefreshLayout.setOnRefreshListener(this);
+		swipeRefreshLayout.setColorScheme(android.R.color.holo_blue_light,
+				android.R.color.white, android.R.color.holo_blue_light,
+				android.R.color.white);
+		
+		mMailListView = (ListView)findViewById(R.id.mail_list);
+		mMailListView.setOnItemClickListener(mailListOnItemClick());
+		mMailListView.setOnScrollListener(maillistOnScroll());
 
-			@Override
-			public void onItemClick(AdapterView<?> adapter, View arg1, int position, long arg3) {
-				Intent intent = new Intent(MainActivity.this, MailActivity.class);
-				arg1.setBackgroundResource(R.color.cyan);
-				JSONObject payload = new JSONObject();
-				try {
-
-					Message message =(Message) mListView.getItemAtPosition(position);
-					payload.put("sender", message.getSender().getName());
-					payload.put("subject", message.getSubject());
-					payload.put("date", message.getDateTimeSent());
-					payload.put("body", message.getBody().getContent());
-
-					intent.putExtra("data", payload.toString());
-					startActivity(intent);
-				} catch (Throwable t) {
-				}				
-			}
-		});
-
-		mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+		mMailListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
 
 				view.setBackgroundResource(R.color.cyan);
-				startActionMode(new ActionModeCallback(MainActivity.this,view,position,mLastSelectedFolder));
+				startActionMode(new ActionModeCallback(MainActivity.this,view,position));
 				return true;
 			}
 		});
@@ -129,6 +123,102 @@ public class MainActivity extends Activity {
 		retrieveMesages("Inbox");	
 
 		setDrawerIconEvent();
+	}
+
+	private OnScrollListener maillistOnScroll() {
+		return new OnScrollListener() {
+
+			boolean isRetrivingData;
+			boolean shouldCall = true;
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				// TODO Auto-generated method stub
+				if(scrollState == SCROLL_STATE_TOUCH_SCROLL){
+
+				}
+			}
+			
+			@Override
+			public void onScroll(final AbsListView view, int firstVisibleItem,
+					int visibleItemCount, final int totalItemCount) {
+
+				if(totalItemCount > 0 && (firstVisibleItem + visibleItemCount)>= totalItemCount){
+
+					if(!isRetrivingData && shouldCall){
+						isRetrivingData = true;
+						AsyncTask<Void, Void, List<Message>> task = new AsyncTask<Void, Void, List<Message>>(){
+
+							@Override
+							protected void onPostExecute(List<Message> result) {
+								super.onPostExecute(result);
+
+								MessageItemAdapter adapter = (MessageItemAdapter)view.getAdapter();
+								adapter.addMoreItems(result);
+								adapter.notifyDataSetChanged();
+								isRetrivingData = false;
+								findViewById(R.id.load_more).setVisibility(8);
+								
+								if(result.size() == 0)shouldCall = false;
+							}
+							
+							@Override
+							protected void onPreExecute() {
+								super.onPreExecute();
+								
+								findViewById(R.id.load_more).setVisibility(0);
+							}
+
+							@Override
+							protected List<Message> doInBackground(Void... v) {
+								List<Message> messages = new ArrayList<Message>();
+
+								try {
+									MailClient client = new MailClient(Authentication.getCurrentCredentials());
+									Query query = new Query();
+
+									query = query.top(40).skip(totalItemCount).select(Constants.FIELDS_TO_SELECT);
+									String folder = mLastSelectedFolder != null ? mLastSelectedFolder.getDisplayName() : "Inbox";
+									messages = client.getMessages(folder, query).get();
+
+								} catch (Exception e) {
+									isRetrivingData = false;
+									Toast.makeText(MainActivity.this, "Error getting Messsages", Toast.LENGTH_SHORT).show();
+								}
+
+								return messages;
+							}
+						};
+					
+						task.execute();
+					}
+				}
+			}
+		};
+	}
+
+	OnItemClickListener mailListOnItemClick() {
+		return new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View arg1, int position, long arg3) {
+				
+				if(((Message)MainActivity.mMailListView.getItemAtPosition(position)).getId() != ""){
+					return;
+				}
+				
+				Intent intent = new Intent(MainActivity.this, MailActivity.class);
+				arg1.setBackgroundResource(R.color.cyan);
+				JSONObject payload = new JSONObject();
+				try {
+
+					payload.put("position", position);
+					intent.putExtra("data", payload.toString());
+					startActivity(intent);
+				} catch (Throwable t) {
+				}				
+			}
+		};
 	}
 
 	@Override
@@ -202,6 +292,7 @@ public class MainActivity extends Activity {
 		mFolders = folders;
 	}
 
+	@Override
 	public void deleteMessage(String folderId, String messageId){
 
 		Map<String,List<Message>> messages = new HashMap<String,List<Message>>();
@@ -222,11 +313,11 @@ public class MainActivity extends Activity {
 	}
 
 	public void setListAdapter(MessageItemAdapter adapter) {		
-		mListView.setAdapter(adapter);		
+		mMailListView.setAdapter(adapter);		
 	}
 
 	public void setListAdapter(EventItemAdapter adapter) {
-		mListView.setAdapter(adapter);			
+		mMailListView.setAdapter(adapter);			
 	}
 
 	public void setListAdapter(FolderItemAdapter adapter, FolderItemAdapter secondAdapter) {
@@ -234,9 +325,9 @@ public class MainActivity extends Activity {
 		mListSecondaryFolderView.setAdapter(secondAdapter);	
 	}
 
-//	void getContactListActivity() {
-//		new RetrieveContactsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
-//	}
+	//	void getContactListActivity() {
+	//		new RetrieveContactsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
+	//	}
 
 	void getEventListActivity() {
 		new RetrieveEventsTask(MainActivity.this, Authentication.getCurrentCredentials()).execute();
@@ -270,7 +361,7 @@ public class MainActivity extends Activity {
 		if(!mMessages.containsKey(folder))
 			getMessagesListActivity(folder);
 		else{
-			mListView.setAdapter(new MessageItemAdapter(this,mMessages.get(folder)));
+			mMailListView.setAdapter(new MessageItemAdapter(this,mMessages.get(folder)));
 		}
 
 		((TextView) findViewById(R.id.Calendar)).setOnClickListener(new OnClickListener() {
@@ -357,10 +448,72 @@ public class MainActivity extends Activity {
 			@Override
 			public void onSuccess(Credentials credentials) {
 				Query query = new Query();
-				
-				query = query.top(40).select(new String[]{"Id","Subject","Sender","ToRecipients", "CcRecipients", "DateTimeSent"});
+
+				query = query.top(40).select(Constants.FIELDS_TO_SELECT);
 				new RetrieveMessagesTask(MainActivity.this, credentials,query).execute(folder);
 			}
 		});
+	}
+
+	@Override
+	public void onRefresh() {
+	
+		AsyncTask<Void, Void, List<Message>> task = new AsyncTask<Void, Void, List<Message>>(){
+
+			@Override
+			protected void onPostExecute(List<Message> result) {
+				// TODO Auto-generated method stub
+				super.onPostExecute(result);
+
+				MessageItemAdapter adapter = (MessageItemAdapter)mMailListView.getAdapter();
+				adapter.addMoreItemsToTop(result);
+				adapter.notifyDataSetChanged();
+		
+				//findViewById(R.id.load_more).setVisibility(8);
+				swipeRefreshLayout.setRefreshing(false);
+			}
+			
+			@Override
+			protected void onPreExecute() {
+				// TODO Auto-generated method stub
+				super.onPreExecute();
+				
+				//findViewById(R.id.load_more).setVisibility(0);
+			}
+
+			@Override
+			protected List<Message> doInBackground(Void... v) {
+				List<Message> messages = new ArrayList<Message>();
+
+				try {
+					MailClient client = new MailClient(Authentication.getCurrentCredentials());
+					Query query = new Query();
+
+					query = query.top(40).select(Constants.FIELDS_TO_SELECT);
+					
+					query.setQueryText("$filter=LastModifiedTime%20gt%20" + ((Message)mMailListView.getItemAtPosition(0)).getLastModifiedTime() + "&");
+					String folder = mLastSelectedFolder != null ? mLastSelectedFolder.getDisplayName() : "Inbox";
+					messages = client.getMessages(folder, query).get();
+
+				} catch (Exception e) {
+					//isRetrivingData = false;
+					Toast.makeText(MainActivity.this, "Error getting Messsages", Toast.LENGTH_SHORT).show();
+				}
+
+				return messages;
+			}
+		};
+	
+		task.execute();
+		
+//		new Handler().postDelayed(new Runnable() {
+//			@Override
+//			public void run() {
+//				stopSwipeRefresh();
+//			}
+//		}, REFRESH_TIME_IN_SECONDS * 1000);
+	}
+	private void stopSwipeRefresh() {
+		
 	}
 }
