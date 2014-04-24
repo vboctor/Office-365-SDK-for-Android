@@ -9,19 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
-
 import org.json.JSONObject;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-<<<<<<< Updated upstream
-=======
-import android.os.AsyncTask;
->>>>>>> Stashed changes
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -36,14 +29,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-<<<<<<< Updated upstream
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
-=======
->>>>>>> Stashed changes
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -56,11 +44,6 @@ import com.microsoft.mailservice.tasks.RetrieveMessagesTask;
 import com.microsoft.mailservice.tasks.RetrieveMoreMessageTask;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
-<<<<<<< Updated upstream
-import android.support.v4.widget.SwipeRefreshLayout;
-=======
-import com.microsoft.office365.exchange.MailClient;
->>>>>>> Stashed changes
 
 // TODO: Auto-generated Javadoc
 /**
@@ -274,12 +257,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 			mFolderTextView.setTextColor(Color.parseColor("#282828"));
 		}
 		else{
-			TextView inbox =(TextView)((RelativeLayout)mListPrimaryFolderView.getChildAt(0)).getChildAt(0);
+			TextView inbox =(TextView)((RelativeLayout)mListPrimaryFolderView.getChildAt(0)).getChildAt(1);
 			inbox.setBackgroundResource(R.color.white);
 			inbox.setTextColor(Color.parseColor("#282828"));
 		}
 
-		mFolderTextView = (TextView)((RelativeLayout)arg1).getChildAt(0);
+		mFolderTextView = (TextView)((RelativeLayout)arg1).getChildAt(1);
 		mFolderTextView.setBackgroundResource(R.color.cyan);
 		mFolderTextView.setTextColor(Color.parseColor("#FFFFFF"));
 	}	
@@ -396,5 +379,4 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 			}
 		});
 	}
-
 }

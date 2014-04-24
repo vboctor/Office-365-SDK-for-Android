@@ -33,11 +33,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dip"
                 android:layout_alignParentBottom="true"
-                android:background="#6433B5E5"
+                android:background="#64CCCCCC"
                 android:gravity="center_vertical"
                 android:padding="6dp"
                 android:text="@string/main_retrieving_messages"
-                android:textColor="#0A0A0A"
+                android:textColor="@color/cyan"
                 android:textSize="20sp"
                 android:visibility="invisible" />
         </RelativeLayout>
@@ -45,7 +45,7 @@
 
     <TableLayout
         android:id="@+id/drawer_Linearlayout"
-        android:layout_width="240dp"
+        android:layout_width="225dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#FFFFFF"
