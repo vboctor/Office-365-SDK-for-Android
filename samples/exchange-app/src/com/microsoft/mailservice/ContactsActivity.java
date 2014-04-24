@@ -1,21 +1,11 @@
 package com.microsoft.mailservice;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 //import com.microsoft.mailservice.adapters.ContactItemAdapter;
 import com.microsoft.mailservice.tasks.RetrieveContactsTask;
-import com.microsoft.office365.exchange.ContactClient;
-
-import microsoft.exchange.services.odata.model.Contact;
-
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 
 public class ContactsActivity extends Activity{
 

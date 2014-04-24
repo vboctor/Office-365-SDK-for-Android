@@ -221,7 +221,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 			messages.put(f, new ArrayList<Message>());
 			List<Message> currentMessages = mMessages.get(f);
 			for(Message message : currentMessages){
-				if(!message.getId().equals(messageId)){
+				if(message.getId() != null && !message.getId().equals(messageId)){
 					messages.get(f).add(message);
 				}
 			}

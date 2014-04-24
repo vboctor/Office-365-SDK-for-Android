@@ -4,7 +4,6 @@ import java.util.List;
 import microsoft.exchange.services.odata.model.Folder;
 import android.content.Context;
 import android.graphics.Color;
-import android.transition.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

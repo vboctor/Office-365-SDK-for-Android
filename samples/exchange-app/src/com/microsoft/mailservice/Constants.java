@@ -16,7 +16,8 @@ public class Constants {
 		"CcRecipients", 
 		"DateTimeSent", 
 		"ToRecipients",
-	"LastModifiedTime"};
+	"LastModifiedTime",
+	"ParentFolderId"};
 	
 	public static final int TOP_VALUE = 40;
 
