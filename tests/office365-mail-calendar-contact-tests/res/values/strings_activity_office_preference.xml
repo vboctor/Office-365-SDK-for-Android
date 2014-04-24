@@ -1,0 +1,4 @@
+<resources>
+    <string name="title_activity_office_preference">Settings</string>
+    <string name="title_activity_aad_settings">AAD Settings</string>
+</resources>
