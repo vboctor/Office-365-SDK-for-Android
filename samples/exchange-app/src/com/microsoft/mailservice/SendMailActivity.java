@@ -2,6 +2,7 @@ package com.microsoft.mailservice;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import microsoft.exchange.services.odata.model.ItemBody;
@@ -20,11 +21,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class SendMailActivity  extends FragmentActivity{
 
-	private String mType;
-	private Message mMessage;
+	String mType;
+ 	Message mMessage;
+	EditText mTextTo;
+	EditText mTextCC;
+	EditText mTextSubject;
+	WebView mWebViewBody;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -35,8 +42,17 @@ public class SendMailActivity  extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_send_mail);
+		
 		mType = "";
-
+		String toRecipients = "";
+		String ccRecipients = "";
+		mTextTo = (EditText)findViewById(R.id.textTo);
+		mTextCC	= (EditText)findViewById(R.id.textCC);
+		mTextSubject = (EditText)findViewById(R.id.textSubject);
+		mWebViewBody =(WebView) findViewById(R.id.send_mail_body);
+		
+		List<Recipient> listRecipient;
+		
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			String data = bundle.getString("data");
@@ -47,52 +63,49 @@ public class SendMailActivity  extends FragmentActivity{
 					mMessage = gson.fromJson(payload.getString("message"), Message.class);
 					mType = payload.getString("action");
 					
-					WebView wv =(WebView) findViewById(R.id.send_mail_body);
-
 					if(mType.equals("replay")){
-						((EditText)findViewById(R.id.textTo)).setEnabled(false);
-						((EditText)findViewById(R.id.textCC)).setEnabled(false);
-						((EditText)findViewById(R.id.textSubject)).setEnabled(false);
-						
-						ItemBody body = mMessage.getBody();
-
-						if(body == null)
-						{   
-							int position = Integer.parseInt(payload.getString("position"));
-							new RetrieveBodyTask(this, position, R.id.send_mail_body).execute(mMessage.getId());
-						}
-						else{
-
-							wv.loadData(body.getContent(),"text/html", "utf-16");
-						}
+						setReplyItems(payload);
+						toRecipients = mMessage.getSender().getAddress();
 					}
 					else{
-						wv.setVisibility(8);
+						mWebViewBody.setVisibility(8);
+						listRecipient = mMessage.getCcRecipients();
+				
+						for(int i = 0; i < listRecipient.size(); i++){
+							ccRecipients += listRecipient.get(i).getAddress() + "; ";
+						}
+				
+						listRecipient = mMessage.getToRecipients();
+						for(int i = 0; i < listRecipient.size(); i++){
+							toRecipients += listRecipient.get(i).getAddress() + "; ";
+						}
 					}
 
-					List<Recipient> listRecipient = mMessage.getToRecipients();
-					String toRecipients = "";
-
-					for(int i = 0; i < listRecipient.size(); i++){
-						toRecipients += listRecipient.get(i).getAddress() + "; ";
-					}
-
-					((EditText)findViewById(R.id.textTo)).setText(toRecipients);
-
-					listRecipient = mMessage.getCcRecipients();
-					String ccRecipients = "";
-
-					for(int i = 0; i < listRecipient.size(); i++){
-						ccRecipients += listRecipient.get(i).getAddress() + "; ";
-					}
-
-					((EditText)findViewById(R.id.textCC)).setText(ccRecipients);
-					((EditText)findViewById(R.id.textSubject)).setText(mMessage.getSubject());
+					mTextCC.setText(ccRecipients);
+					mTextTo.setText(toRecipients);	
+					mTextSubject.setText(mMessage.getSubject());
 				} 
-				catch (JSONException e) {
-					Log.e("Asset", e.getMessage());
+				catch (Exception e) {
+					Toast.makeText(this,"Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
 				}
 			}
+		}
+	}
+
+	private void setReplyItems(JSONObject payload) throws JSONException {
+		mTextTo.setEnabled(false);
+		mTextCC.setEnabled(false);
+		mTextSubject.setEnabled(false);
+		
+		ItemBody body = mMessage.getBody();
+
+		if(body == null)
+		{   
+			int position = Integer.parseInt(payload.getString("position"));
+			new RetrieveBodyTask(this, position, R.id.send_mail_body).execute(mMessage.getId());
+		}
+		else{
+			mWebViewBody.loadData(body.getContent(),"text/html", "utf-16");
 		}
 	}
 

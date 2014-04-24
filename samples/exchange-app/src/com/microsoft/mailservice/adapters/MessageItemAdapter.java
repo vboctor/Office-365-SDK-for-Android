@@ -61,7 +61,7 @@ public class MessageItemAdapter extends BaseAdapter{
 		((TextView) view.findViewById(R.id.subject)).setText(sender == null ? "" : (subject.length() > 30 ? subject.substring(0, 30) + "..." : subject));
 		((TextView) view.findViewById(R.id.sendOn)).setText(date == null ? "" : message.getDateTimeSent().toString());
 		
-		if(sender != null){
+		if(sender != null && message.getId() != null){
 			
 			final Resources res = mActivity.getResources();
 		    final int tileSize = res.getDimensionPixelSize(R.dimen.letter_tile_size);

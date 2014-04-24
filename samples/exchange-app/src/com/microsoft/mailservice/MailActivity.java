@@ -2,17 +2,16 @@ package com.microsoft.mailservice;
 
 import microsoft.exchange.services.odata.model.ItemBody;
 import microsoft.exchange.services.odata.model.Message;
-import org.json.JSONException;
 import org.json.JSONObject;
+import com.google.gson.Gson;
 import com.microsoft.mailservice.tasks.RetrieveBodyTask;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MailActivity  extends BaseActivity{
 
@@ -55,8 +54,8 @@ public class MailActivity  extends BaseActivity{
 						wv.loadData(body.getContent(),"text/html", "utf-16");
 					}
 				}
-				catch (JSONException e) {
-					Log.e("Asset", e.getMessage());
+				catch (Exception e) {
+					Toast.makeText(this,"Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
 				}
 			}
 		}
@@ -77,15 +76,18 @@ public class MailActivity  extends BaseActivity{
 			//	mode.finish();
 			return true;
 		case R.id.menu_reply:
-				Intent intent = new Intent(MailActivity.this, MailActivity.class);
+				Intent intent = new Intent(MailActivity.this, SendMailActivity.class);
 				JSONObject payload = new JSONObject();
 				try {
-					payload.put("position", 0);
+			
+					payload.put("message", new Gson().toJson(mMessage));
+					payload.put("position", "0");
+					payload.put("action", "replay");
 					intent.putExtra("data", payload.toString());
 					startActivity(intent);
-				}
-				catch (Throwable t) {
-				}	
+				} catch (Exception e) {
+					Toast.makeText(this,"Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+				}		
 			
 			return true;
 		default:

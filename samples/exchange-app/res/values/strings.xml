@@ -20,6 +20,6 @@
     <string name="inbox">Inbox</string>
     <string name="contacts">Contacts</string>
     <string name="events">Events</string>
-    <string name="all">all</string>
+    <string name="all">All Items</string>
 
 </resources>
