@@ -48,6 +48,8 @@ public class Constants {
 	
 	public static final String ACTION_REPLY = "/Reply";
 	
+	public static final String ACTION_FORWARD = "/Forward";
+	
 	public static final String ACTION_CREATE_REPLY = "/CreateReply";
 	
 	public static final String ACTION_CREATE_FORWARD = "/CreateForward";

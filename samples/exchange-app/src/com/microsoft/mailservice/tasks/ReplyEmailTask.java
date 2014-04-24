@@ -5,7 +5,11 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
+import java.util.List;
+
 import microsoft.exchange.services.odata.model.Message;
+import microsoft.exchange.services.odata.model.Recipient;
+
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.SendMailActivity;
 import com.microsoft.office365.Credentials;
@@ -36,13 +40,16 @@ public class ReplyEmailTask extends AsyncTask<String, Void, Message> {
 	/** The m stored rotation. */
 	private int mStoredRotation;
 
+	private List<Recipient> mRecipietns;
+
 	static Credentials mCredentials;
 
-	public ReplyEmailTask(SendMailActivity activity, Credentials crendential) {
+	public ReplyEmailTask(SendMailActivity activity, Credentials crendential, List<Recipient> recipietns) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
+		mRecipietns = recipietns;
 	}
 
 	/* (non-Javadoc)
@@ -90,8 +97,10 @@ public class ReplyEmailTask extends AsyncTask<String, Void, Message> {
 
 			if(args[2].equals("reply"))
 				client.reply(args[0], args[1]).get();
-			else
+			else if(args[2].equals("reply_all"))
 				client.replyAll(args[0], args[1]).get();
+			else if(args[2].equals("forward"))
+				client.forward(args[0], args[1], mRecipietns).get();
 		} catch (Exception e) {
 			Toast.makeText(mContext, "Error sending mail: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}

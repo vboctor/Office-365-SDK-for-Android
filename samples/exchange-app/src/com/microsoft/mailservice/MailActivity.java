@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class MailActivity  extends BaseActivity{
 
 	Message mMessage;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -79,6 +79,8 @@ public class MailActivity  extends BaseActivity{
 			return createReplayIntent("reply");
 		case R.id.menu_reply_all:
 			return createReplayIntent("reply_all");
+		case R.id.menu_forward:
+			return createReplayIntent("forward");
 		default:
 			return false;
 		}
@@ -98,7 +100,7 @@ public class MailActivity  extends BaseActivity{
 			Toast.makeText(this,"Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
 		}		
 
-return true;
+		return true;
 	}
 
 	@Override

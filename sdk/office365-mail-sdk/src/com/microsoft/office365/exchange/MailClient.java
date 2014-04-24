@@ -11,11 +11,14 @@ import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
 import microsoft.exchange.services.odata.model.Recipient;
 
+import android.media.JetPlayer;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
@@ -190,6 +193,17 @@ public class MailClient extends BaseClient<Message> {
 		jObject.addProperty("Comment", comments);
 
 		return execute(url, new Gson().toJson(jObject), Message.class,Constants.METHOD_POST, null);
+	}
+	
+	public ListenableFuture<Message> forward(String messageId, String comments, List<Recipient> tos) {
+		String url = Constants.BASE_URL
+				+ String.format(Constants.MESSAGE_BY_ID, messageId) + Constants.ACTION_FORWARD;
+		Gson g = new Gson();
+			
+		JsonObject jObject = new JsonObject();
+		jObject.addProperty("Comment", comments);
+		jObject.add("ToRecipients",g.toJsonTree(tos));
+		return execute(url, g.toJson(jObject), Message.class,Constants.METHOD_POST, null);
 	}
 
 	public ListenableFuture<Message> forward(Message message, String comment,

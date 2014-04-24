@@ -42,6 +42,7 @@ public class ActionModeCallback implements ActionMode.Callback {
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		
 		return false;
 	}
 
@@ -54,17 +55,20 @@ public class ActionModeCallback implements ActionMode.Callback {
 			mode.finish();
 			return true;
 		case R.id.menu_reply:
-			reply("reply");
+			createReplyOrForward("reply");
 			return true;
 		case R.id.menu_reply_all:
-			reply("reply_all");
+			createReplyOrForward("reply_all");
+			return true;
+		case R.id.menu_forward:
+			createReplyOrForward("forward");
 			return true;
 		default:
 			return false;
 		}
 	}
 	
-	void reply(String action){
+	void createReplyOrForward(String action){
 			Intent intent = new Intent(mActivity, SendMailActivity.class);
 			JSONObject payload = new JSONObject();
 			try {

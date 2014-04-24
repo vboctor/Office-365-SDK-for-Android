@@ -71,8 +71,13 @@ public class SendMailActivity  extends FragmentActivity{
 						setReplyItems(payload);
 						toRecipients = mMessage.getSender().getAddress() + ";";
 					}
+					else if(mType.equals("forward")){
+						setReplyItems(payload);
+						mTextTo.setEnabled(true);
+						mTextCC.setEnabled(true);
+					}
 
-					if(!mType.equals("reply")){
+					if(!mType.equals("reply") && !mType.equals("forward")){
 						mWebViewBody.setVisibility(8);
 						listRecipient = mMessage.getCcRecipients();
 
@@ -136,14 +141,11 @@ public class SendMailActivity  extends FragmentActivity{
 		try {
 			switch (item.getItemId() ) {
 			case R.id.menu_send_mail:
-				if(mType.equals("reply")){
-					replay("reply");
-				}
-				else if(mType.equals("reply_all")){
-					replay("reply_all");
-				}
-				else
-					sentEmail();
+				if(mType.equals(""))
+					sentEmail();				
+				else 
+					replay(mType);
+
 				break;
 			case R.id.menu_cancel_mail:
 				NavUtils.navigateUpTo(this, new Intent(this, MainActivity.class));
@@ -200,7 +202,17 @@ public class SendMailActivity  extends FragmentActivity{
 	}
 
 	void replay(String action){
-		new ReplyEmailTask(this, Authentication.getCurrentCredentials())
+		String [] mails = ((EditText)findViewById(R.id.textTo)).getText().toString().split(";");
+		List<Recipient> toRecipients = new ArrayList<Recipient>();
+		for(String m : mails){
+			if(m.trim().length()>0){
+				Recipient mail = new Recipient();
+				mail.setAddress(m);
+				toRecipients.add(mail);
+			}
+		}
+		
+		new ReplyEmailTask(this, Authentication.getCurrentCredentials(), toRecipients)
 		.execute(mMessage.getId(),((EditText)findViewById(R.id.textBody)).getText().toString(),action);
 	}
 }
