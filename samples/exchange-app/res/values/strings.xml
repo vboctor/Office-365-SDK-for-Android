@@ -19,7 +19,7 @@
     <string name="main_retrieving_messages">Retrieving Messages....</string>
     <string name="inbox">Inbox</string>
     <string name="contacts">Contacts</string>
-    <string name="events">Events</string>
+    <string name="calendar">Calendar</string>
     <string name="all">All Items</string>
 
 </resources>

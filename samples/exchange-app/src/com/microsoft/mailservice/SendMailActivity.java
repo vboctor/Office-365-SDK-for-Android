@@ -26,12 +26,12 @@ import android.widget.Toast;
 public class SendMailActivity  extends FragmentActivity{
 
 	String mType;
- 	Message mMessage;
+	Message mMessage;
 	EditText mTextTo;
 	EditText mTextCC;
 	EditText mTextSubject;
 	WebView mWebViewBody;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -42,7 +42,7 @@ public class SendMailActivity  extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_send_mail);
-		
+
 		mType = "";
 		String toRecipients = "";
 		String ccRecipients = "";
@@ -50,9 +50,9 @@ public class SendMailActivity  extends FragmentActivity{
 		mTextCC	= (EditText)findViewById(R.id.textCC);
 		mTextSubject = (EditText)findViewById(R.id.textSubject);
 		mWebViewBody =(WebView) findViewById(R.id.send_mail_body);
-		
+
 		List<Recipient> listRecipient;
-		
+
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			String data = bundle.getString("data");
@@ -62,19 +62,24 @@ public class SendMailActivity  extends FragmentActivity{
 					Gson gson = new Gson();
 					mMessage = gson.fromJson(payload.getString("message"), Message.class);
 					mType = payload.getString("action");
-					
-					if(mType.equals("replay")){
+
+					if(mType.equals("reply")){
 						setReplyItems(payload);
 						toRecipients = mMessage.getSender().getAddress();
 					}
-					else{
+					else if(mType.equals("reply_all")){
+						setReplyItems(payload);
+						toRecipients = mMessage.getSender().getAddress() + ";";
+					}
+
+					if(!mType.equals("reply")){
 						mWebViewBody.setVisibility(8);
 						listRecipient = mMessage.getCcRecipients();
-				
+
 						for(int i = 0; i < listRecipient.size(); i++){
 							ccRecipients += listRecipient.get(i).getAddress() + "; ";
 						}
-				
+
 						listRecipient = mMessage.getToRecipients();
 						for(int i = 0; i < listRecipient.size(); i++){
 							toRecipients += listRecipient.get(i).getAddress() + "; ";
@@ -96,7 +101,7 @@ public class SendMailActivity  extends FragmentActivity{
 		mTextTo.setEnabled(false);
 		mTextCC.setEnabled(false);
 		mTextSubject.setEnabled(false);
-		
+
 		ItemBody body = mMessage.getBody();
 
 		if(body == null)
@@ -131,8 +136,11 @@ public class SendMailActivity  extends FragmentActivity{
 		try {
 			switch (item.getItemId() ) {
 			case R.id.menu_send_mail:
-				if(mType.equals("replay")){
-					replay();
+				if(mType.equals("reply")){
+					replay("reply");
+				}
+				else if(mType.equals("reply_all")){
+					replay("reply_all");
 				}
 				else
 					sentEmail();
@@ -191,8 +199,8 @@ public class SendMailActivity  extends FragmentActivity{
 		new SendEmailTask(this, Authentication.getCurrentCredentials()).execute(message);
 	}
 
-	void replay(){
+	void replay(String action){
 		new ReplyEmailTask(this, Authentication.getCurrentCredentials())
-		.execute(mMessage.getId(),((EditText)findViewById(R.id.textBody)).getText().toString());
+		.execute(mMessage.getId(),((EditText)findViewById(R.id.textBody)).getText().toString(),action);
 	}
 }

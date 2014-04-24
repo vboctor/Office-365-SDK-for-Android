@@ -181,7 +181,16 @@ public class MailClient extends BaseClient<Message> {
 
 		return execute(url, new Gson().toJson(jObject), Message.class,Constants.METHOD_POST, null);
 	}
+	
+	public ListenableFuture<Message> replyAll(String messageId, String comments) {
+		String url = Constants.BASE_URL
+				+ String.format(Constants.MESSAGE_BY_ID, messageId) + Constants.ACTION_REPLY_ALL;
 
+		JsonObject jObject = new JsonObject();
+		jObject.addProperty("Comment", comments);
+
+		return execute(url, new Gson().toJson(jObject), Message.class,Constants.METHOD_POST, null);
+	}
 
 	public ListenableFuture<Message> forward(Message message, String comment,
 			List<Recipient> toRecipients) {

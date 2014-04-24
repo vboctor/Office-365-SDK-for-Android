@@ -54,21 +54,24 @@ public class ActionModeCallback implements ActionMode.Callback {
 			mode.finish();
 			return true;
 		case R.id.menu_reply:
-			reply();
+			reply("reply");
+			return true;
+		case R.id.menu_reply_all:
+			reply("reply_all");
 			return true;
 		default:
 			return false;
 		}
 	}
 	
-	void reply(){
+	void reply(String action){
 			Intent intent = new Intent(mActivity, SendMailActivity.class);
 			JSONObject payload = new JSONObject();
 			try {
 				Message message = (Message)mListView.getItemAtPosition(mPosition);
 				payload.put("message", new Gson().toJson(message));
 				payload.put("position", mPosition);
-				payload.put("action", "replay");
+				payload.put("action", action);
 				intent.putExtra("data", payload.toString());
 				mActivity.startActivity(intent);
 			} catch (Throwable t) {

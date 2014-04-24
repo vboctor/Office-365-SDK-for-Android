@@ -25,7 +25,7 @@
                     android:background="#FFFFFF"
                     android:choiceMode="singleChoice"
                     android:divider="#ddd"
-                    android:dividerHeight="1dp" />
+                    android:dividerHeight="1sp" />
             </android.support.v4.widget.SwipeRefreshLayout>
 
             <TextView
@@ -37,9 +37,9 @@
                 android:gravity="center_vertical"
                 android:padding="6dp"
                 android:text="@string/main_retrieving_messages"
+                android:textAlignment="center"
                 android:textColor="#6433B5E5"
                 android:textSize="20sp"
-                android:textAlignment="center"
                 android:visibility="invisible" />
         </RelativeLayout>
     </FrameLayout>
@@ -81,36 +81,74 @@
                 android:dividerHeight="1dp" />
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#f3f3f3"
+            android:paddingTop="1dip" >
 
-            <TextView
-                android:id="@+id/contacts"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:divider="#f3f3f3"
-                android:dividerHeight="1dp"
-                android:gravity="center_vertical"
-                android:padding="6dp"
-                android:text="@string/contacts"
-                android:textColor="#282828"
-                android:textSize="15sp" />
+                android:layout_height="match_parent"
+                android:background="#FFFFFF" >
+
+                <TextView
+                    android:id="@+id/contacts"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/color_contacts"
+                    android:background="#FFFFFF"
+                    android:divider="#f3f3f3"
+                    android:dividerHeight="1dp"
+                    android:gravity="center_vertical"
+                    android:padding="6dp"
+                    android:text="@string/contacts"
+                    android:textColor="#282828"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/ic_action_person"
+                    android:layoutDirection="ltr" >
+                </ImageView>
+            </RelativeLayout>
         </TableRow>
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#f3f3f3"
+            android:paddingTop="1dip" >
 
-            <TextView
-                android:id="@+id/Calendar"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:divider="#f3f3f3"
-                android:dividerHeight="1dp"
-                android:gravity="center_vertical"
-                android:padding="6dp"
-                android:text="@string/events"
-                android:textColor="#282828"
-                android:textSize="20sp" />
+                android:layout_height="match_parent"
+                android:background="#FFFFFF" >
+
+                <TextView
+                    android:id="@+id/calendar"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/color_calendar"
+                    android:background="#FFFFFF"
+                    android:divider="#f3f3f3"
+                    android:dividerHeight="1dp"
+                    android:gravity="center_vertical"
+                    android:padding="6dp"
+                    android:text="@string/calendar"
+                    android:textColor="#282828"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/ic_action_event"
+                    android:layoutDirection="ltr" >
+                </ImageView>
+            </RelativeLayout>
         </TableRow>
 
         <TableRow>
@@ -124,7 +162,7 @@
                 android:gravity="center_vertical"
                 android:padding="6dip"
                 android:text="@string/all"
-               	android:textColor="@color/cyan"
+                android:textColor="@color/cyan"
                 android:textSize="20sp" />
         </TableRow>
 

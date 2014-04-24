@@ -88,7 +88,10 @@ public class ReplyEmailTask extends AsyncTask<String, Void, Message> {
 		try {
 			MailClient client = new MailClient(mCredentials);
 
-			client.reply(args[0], args[1]).get();
+			if(args[2].equals("reply"))
+				client.reply(args[0], args[1]).get();
+			else
+				client.replyAll(args[0], args[1]).get();
 		} catch (Exception e) {
 			Toast.makeText(mContext, "Error sending mail: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}

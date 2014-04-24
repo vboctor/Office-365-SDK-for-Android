@@ -76,23 +76,29 @@ public class MailActivity  extends BaseActivity{
 			//	mode.finish();
 			return true;
 		case R.id.menu_reply:
-				Intent intent = new Intent(MailActivity.this, SendMailActivity.class);
-				JSONObject payload = new JSONObject();
-				try {
-			
-					payload.put("message", new Gson().toJson(mMessage));
-					payload.put("position", "0");
-					payload.put("action", "replay");
-					intent.putExtra("data", payload.toString());
-					startActivity(intent);
-				} catch (Exception e) {
-					Toast.makeText(this,"Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
-				}		
-			
-			return true;
+			return createReplayIntent("reply");
+		case R.id.menu_reply_all:
+			return createReplayIntent("reply_all");
 		default:
 			return false;
 		}
+	}
+
+	private boolean createReplayIntent(String action) {
+		Intent intent = new Intent(MailActivity.this, SendMailActivity.class);
+		JSONObject payload = new JSONObject();
+		try {
+
+			payload.put("message", new Gson().toJson(mMessage));
+			payload.put("position",0);
+			payload.put("action", action);
+			intent.putExtra("data", payload.toString());
+			startActivity(intent);
+		} catch (Exception e) {
+			Toast.makeText(this,"Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
+		}		
+
+return true;
 	}
 
 	@Override

@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelTo"
             android:ems="10"
-            android:inputType="text" 
+            android:inputType="textMultiLine"
             android:textSize="17sp"
             android:typeface="sans" />
     </RelativeLayout>
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelCC"
             android:ems="10"
-            android:inputType="text" 
+            android:inputType="textMultiLine"
             android:textSize="17sp"
             android:typeface="sans" />
     </RelativeLayout>
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelSubject"
             android:ems="10"
-            android:inputType="text" 
+            android:inputType="textMultiLine"
             android:textSize="17sp"
             android:typeface="sans" />
     </RelativeLayout>
