@@ -11,7 +11,7 @@ import microsoft.exchange.services.odata.model.Event;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.exchange.EventClient;
+import com.microsoft.office365.exchange.CalendarClient;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -86,7 +86,7 @@ public class RetrieveEventsTask extends AsyncTask<String, Void, List<Event>> {
 	protected List<Event> doInBackground(final String... args) {
 		List<Event> events = new ArrayList<Event>();
 		try {
-			EventClient client = new EventClient(mCredentials);
+			CalendarClient client = new CalendarClient(mCredentials);
 
 			events = client.getEvents(null).get();		
 			

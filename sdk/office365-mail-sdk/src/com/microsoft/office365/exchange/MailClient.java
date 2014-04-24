@@ -144,7 +144,7 @@ public class MailClient extends BaseClient<Message> {
 		return execute(url, new Gson().toJson(message), Message.class,
 				Constants.METHOD_POST, null);
 	}
-		
+
 	public ListenableFuture<Message> update(Message message) {
 		String url = Constants.BASE_URL
 				+ String.format(Constants.MESSAGE_BY_ID, message.getId());
@@ -152,7 +152,7 @@ public class MailClient extends BaseClient<Message> {
 		return execute(url, new Gson().toJson(message), Message.class,
 				Constants.METHOD_PATCH, null);
 	}
-	
+
 	public ListenableFuture<Message> reply(Message message) {
 		String url = Constants.BASE_URL
 				+ String.format(Constants.MESSAGE_BY_ID, message.getId());
@@ -171,6 +171,17 @@ public class MailClient extends BaseClient<Message> {
 
 		return send(resultMessage);
 	}
+
+	public ListenableFuture<Message> reply(String messageId, String comments) {
+		String url = Constants.BASE_URL
+				+ String.format(Constants.MESSAGE_BY_ID, messageId) + Constants.ACTION_REPLY;
+
+		JsonObject jObject = new JsonObject();
+		jObject.addProperty("Comment", comments);
+
+		return execute(url, new Gson().toJson(jObject), Message.class,Constants.METHOD_POST, null);
+	}
+
 
 	public ListenableFuture<Message> forward(Message message, String comment,
 			List<Recipient> toRecipients) {
@@ -220,34 +231,34 @@ public class MailClient extends BaseClient<Message> {
 
 	@Override
 	public ListenableFuture<List<Attachment>> getAttachments(Message message) {
-	
+
 		final SettableFuture<List<Attachment>> future = SettableFuture.create();
-		
+
 		Futures.addCallback(future, new FutureCallback<List<Attachment>>(){
 			@Override
 			public void onFailure(Throwable t) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onSuccess(List<Attachment> result) {
 				//future.set(value)
 			}
 		});
-		
+
 		/*public ListenableFuture<Message> getMessage(String messageId, Query query) {
 		String url = Constants.BASE_URL
 				+ String.format(Constants.MESSAGE_BY_ID, messageId);
 
 		return execute(url, null, Message.class, Constants.METHOD_GET, query);
-		*/
+		 */
 		return future;
 	}
 
 	@Override
 	public ListenableFuture<Attachment> getAttachment(Message message) {
-		
+
 		return null;
 	}
 

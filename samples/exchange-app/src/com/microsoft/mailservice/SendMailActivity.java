@@ -9,6 +9,7 @@ import microsoft.exchange.services.odata.model.Message;
 import microsoft.exchange.services.odata.model.Recipient;
 import com.google.gson.Gson;
 import com.microsoft.mailservice.tasks.ReplyEmailTask;
+import com.microsoft.mailservice.tasks.RetrieveBodyTask;
 import com.microsoft.mailservice.tasks.SendEmailTask;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.EditText;
 
 public class SendMailActivity  extends FragmentActivity{
@@ -44,8 +46,29 @@ public class SendMailActivity  extends FragmentActivity{
 					Gson gson = new Gson();
 					mMessage = gson.fromJson(payload.getString("message"), Message.class);
 					mType = payload.getString("action");
+					
+					WebView wv =(WebView) findViewById(R.id.send_mail_body);
 
-					((EditText)findViewById(R.id.textBody)).setText(mMessage.getBody().getContent());
+					if(mType.equals("replay")){
+						((EditText)findViewById(R.id.textTo)).setEnabled(false);
+						((EditText)findViewById(R.id.textCC)).setEnabled(false);
+						((EditText)findViewById(R.id.textSubject)).setEnabled(false);
+						
+						ItemBody body = mMessage.getBody();
+
+						if(body == null)
+						{   
+							int position = Integer.parseInt(payload.getString("position"));
+							new RetrieveBodyTask(this, position, R.id.send_mail_body).execute(mMessage.getId());
+						}
+						else{
+
+							wv.loadData(body.getContent(),"text/html", "utf-16");
+						}
+					}
+					else{
+						wv.setVisibility(8);
+					}
 
 					List<Recipient> listRecipient = mMessage.getToRecipients();
 					String toRecipients = "";
@@ -64,6 +87,7 @@ public class SendMailActivity  extends FragmentActivity{
 					}
 
 					((EditText)findViewById(R.id.textCC)).setText(ccRecipients);
+					((EditText)findViewById(R.id.textSubject)).setText(mMessage.getSubject());
 				} 
 				catch (JSONException e) {
 					Log.e("Asset", e.getMessage());
@@ -117,7 +141,7 @@ public class SendMailActivity  extends FragmentActivity{
 		Message message= new Message();
 
 		ItemBody body = new ItemBody();
-		body.setContentType("HTML");//BodyType.HTML);
+		body.setContentType("HTML");
 		body.setContent((((EditText)findViewById(R.id.textBody)).getText().toString()));
 
 		List<Recipient> toRecipients = new ArrayList<Recipient>();
@@ -149,36 +173,13 @@ public class SendMailActivity  extends FragmentActivity{
 		message.setCcRecipients(ccRecipients);
 
 		message.setSubject(((EditText)findViewById(R.id.textSubject)).getText().toString());
-		message.setSubject(((EditText)findViewById(R.id.textSubject)).getText().toString());
 		message.setBody(body);
 
 		new SendEmailTask(this, Authentication.getCurrentCredentials()).execute(message);
 	}
 
 	void replay(){
-		List<Recipient> toRecipients = new ArrayList<Recipient>();
-
-		String [] mails = ((EditText)findViewById(R.id.textTo)).getText().toString().split(";");
-
-		for(String m : mails){
-			Recipient mail = new Recipient();
-			mail.setAddress(m);
-			toRecipients.add(mail);
-		}
-
-		mMessage.setToRecipients(toRecipients);
-
-		List<Recipient> ccRecipients = new ArrayList<Recipient>();
-
-		String [] mailsCc = ((EditText)findViewById(R.id.textCC)).getText().toString().split(";");
-
-		for(String m : mailsCc){
-			Recipient mail = new Recipient();
-			mail.setAddress(m);
-			ccRecipients.add(mail);
-		}
-
-		mMessage.setCcRecipients(ccRecipients);
-		new ReplyEmailTask(this, Authentication.getCurrentCredentials(), "testing").execute(mMessage);
+		new ReplyEmailTask(this, Authentication.getCurrentCredentials())
+		.execute(mMessage.getId(),((EditText)findViewById(R.id.textBody)).getText().toString());
 	}
 }

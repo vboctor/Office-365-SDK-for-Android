@@ -22,9 +22,8 @@ import android.widget.Toast;
 /**
  * The Class ReplyEmailTask.
  */
-public class ReplyEmailTask extends AsyncTask<Message, Void, Message> {
+public class ReplyEmailTask extends AsyncTask<String, Void, Message> {
 
-	private String mComments;
 	/** The m dialog. */
 	private ProgressDialog mDialog;
 
@@ -39,12 +38,11 @@ public class ReplyEmailTask extends AsyncTask<Message, Void, Message> {
 
 	static Credentials mCredentials;
 
-	public ReplyEmailTask(SendMailActivity activity, Credentials crendential, String comments) {
+	public ReplyEmailTask(SendMailActivity activity, Credentials crendential) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
-		mComments = comments;
 	}
 
 	/* (non-Javadoc)
@@ -73,10 +71,8 @@ public class ReplyEmailTask extends AsyncTask<Message, Void, Message> {
 		}
 
 		if (message != null) {
-			//MessageItemAdapter adapter = new MessageItemAdapter(mActivity, message);
-			//mActivity.setListAdapter(adapter);
-			//adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished Sending Mail", Toast.LENGTH_LONG).show();
+
+			Toast.makeText(mContext, "Mail Sended!!!", Toast.LENGTH_SHORT).show();
 
 			NavUtils.navigateUpTo(mActivity,new Intent(mActivity, MainActivity.class));
 		} else {
@@ -87,14 +83,14 @@ public class ReplyEmailTask extends AsyncTask<Message, Void, Message> {
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
-	protected Message doInBackground(final Message... args) {
+	protected Message doInBackground(String... args) {
 		Message messageSend = new Message();
 		try {
 			MailClient client = new MailClient(mCredentials);
 
-			client.reply(args[0]).get();
-			//client.send(messageId).get();
+			client.reply(args[0], args[1]).get();
 		} catch (Exception e) {
+			Toast.makeText(mContext, "Error sending mail: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 
 		return messageSend;

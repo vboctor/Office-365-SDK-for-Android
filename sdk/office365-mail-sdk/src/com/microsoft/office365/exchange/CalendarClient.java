@@ -10,9 +10,9 @@ import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
 
-public class EventClient extends BaseClient<Event>{
+public class CalendarClient extends BaseClient<Event>{
 
-	public EventClient(Credentials credentials) {
+	public CalendarClient(Credentials credentials) {
 		super(credentials);
 		//setAttachmentUrl(Constants.BASE_URL + Constants.EVENT_BY_ID);
 	}

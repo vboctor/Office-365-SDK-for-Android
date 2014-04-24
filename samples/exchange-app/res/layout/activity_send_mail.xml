@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#FFFFFF"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="vertical" >
@@ -15,7 +16,7 @@
             android:id="@+id/labelTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="2dip"
+            android:paddingLeft="2sp"
             android:text="@string/menu_send_mail_to" />
 
         <EditText
@@ -24,7 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelTo"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text" 
+            android:textSize="17sp"
+            android:typeface="sans" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -37,7 +40,7 @@
             android:id="@+id/labelCC"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="2dip"
+            android:paddingLeft="2sp"
             android:text="@string/menu_send_mail_cc" />
 
         <EditText
@@ -46,7 +49,9 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelCC"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text" 
+            android:textSize="17sp"
+            android:typeface="sans" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -58,7 +63,7 @@
             android:id="@+id/labelSubject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="2dip"
+            android:paddingLeft="2sp"
             android:text="@string/menu_send_mail_sub" />
 
         <EditText
@@ -67,7 +72,9 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/labelSubject"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text" 
+            android:textSize="17sp"
+            android:typeface="sans" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -78,10 +85,21 @@
 
         <EditText
             android:id="@+id/textBody"
+            android:layout_width="360sp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:singleLine="false"
+            android:textSize="17sp"
+            android:typeface="sans" />
+
+        <WebView
+            android:id="@+id/send_mail_body"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:ems="20"
-            android:inputType="textWebEditText" />
+            android:layout_below="@id/textBody" >
+        </WebView>
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager

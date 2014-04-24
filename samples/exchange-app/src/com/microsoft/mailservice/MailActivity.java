@@ -4,20 +4,20 @@ import microsoft.exchange.services.odata.model.ItemBody;
 import microsoft.exchange.services.odata.model.Message;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.microsoft.office365.Query;
-import com.microsoft.office365.exchange.MailClient;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import com.microsoft.mailservice.tasks.RetrieveBodyTask;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MailActivity  extends BaseActivity{
 
+	Message mMessage;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -37,61 +37,22 @@ public class MailActivity  extends BaseActivity{
 					JSONObject payload = new JSONObject(data);
 					final int position = Integer.parseInt(payload.getString("position"));
 
-					Message currentMessage = (Message)MainActivity.mMailListView.getItemAtPosition(position);
+					mMessage = (Message)MainActivity.mMailListView.getItemAtPosition(position);
 
-					((TextView) findViewById(R.id.mail_sender)).setText(currentMessage.getSender().getName());
-					((TextView) findViewById(R.id.mail_subject)).setText(currentMessage.getSubject());
-					((TextView) findViewById(R.id.mail_sendOn)).setText(currentMessage.getDateTimeSent());
+					((TextView) findViewById(R.id.mail_sender)).setText(mMessage.getSender().getName());
+					((TextView) findViewById(R.id.mail_subject)).setText(mMessage.getSubject());
+					((TextView) findViewById(R.id.mail_sendOn)).setText(mMessage.getDateTimeSent());
 
-					ItemBody body = currentMessage.getBody();
+					ItemBody body = mMessage.getBody();
 
 					if(body == null)
 					{
-						AsyncTask<String,Void,Message> t = new AsyncTask<String,Void,Message>(){
-							ProgressDialog mDialog = new ProgressDialog(MailActivity.this);
-
-							protected void onPreExecute() {
-
-								mDialog.setTitle("Retrieving Message...");
-								mDialog.setMessage("Please wait.");
-								mDialog.setCancelable(false);
-								mDialog.setIndeterminate(true);
-								mDialog.show();
-							}
-
-							@Override
-							protected void onPostExecute(Message result) {
-								mDialog.dismiss();
-								super.onPostExecute(result);
-								((Message)MainActivity.mMailListView.getItemAtPosition(position)).setBody(result.getBody());
-								WebView wv =(WebView) findViewById(R.id.mail_body);
-								wv.loadData(result.getBody().getContent(),"text/html", "utf-8");
-								Toast.makeText(MailActivity.this, "Finished loading message", Toast.LENGTH_LONG).show();
-							}
-
-							@Override
-							protected Message doInBackground(String... params) {
-
-								Message message = null;
-								try {
-									MailClient client = new MailClient(Authentication.getCurrentCredentials());
-									Query query = new Query().select(new String[]{ "Body" });
-
-									message = client.getMessage(params[0], query).get();
-
-								} catch (Exception e) {
-								}
-
-								return message;
-							}
-						};
-
-						t.execute(currentMessage.getId());
+						new RetrieveBodyTask(this, position,R.id.mail_body).execute(mMessage.getId());
 					}
 					else{
 
 						WebView wv =(WebView) findViewById(R.id.mail_body);
-						wv.loadData(body.getContent(),"text/html", "utf-8");
+						wv.loadData(body.getContent(),"text/html", "utf-16");
 					}
 				}
 				catch (JSONException e) {
@@ -106,26 +67,34 @@ public class MailActivity  extends BaseActivity{
 		getMenuInflater().inflate(R.menu.context_menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
 		case R.id.menu_delete:
-		//	removeRow();
-		//	mode.finish();
+			//	removeRow();
+			//	mode.finish();
 			return true;
 		case R.id.menu_reply:
-			//reply();
+				Intent intent = new Intent(MailActivity.this, MailActivity.class);
+				JSONObject payload = new JSONObject();
+				try {
+					payload.put("position", 0);
+					intent.putExtra("data", payload.toString());
+					startActivity(intent);
+				}
+				catch (Throwable t) {
+				}	
+			
 			return true;
 		default:
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void deleteMessage(String folderId, String messageId) {
 		// TODO Auto-generated method stub
-
 	}	
 }

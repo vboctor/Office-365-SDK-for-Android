@@ -67,6 +67,7 @@ public class ActionModeCallback implements ActionMode.Callback {
 			try {
 				Message message = (Message)mListView.getItemAtPosition(mPosition);
 				payload.put("message", new Gson().toJson(message));
+				payload.put("position", mPosition);
 				payload.put("action", "replay");
 				intent.putExtra("data", payload.toString());
 				mActivity.startActivity(intent);
