@@ -16,6 +16,7 @@ import com.microsoft.office365.Query;
 import com.microsoft.office365.exchange.MailClient;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
+import android.widget.ListView;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -61,7 +62,7 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<Message>>
 		if (messages != null) {
 			mActivity.setMessages(mFolderId,messages);
 			MessageItemAdapter adapter = new MessageItemAdapter(mActivity, messages);
-			mActivity.setListAdapter(adapter);
+			((ListView)mActivity.findViewById(R.id.mail_list)).setAdapter(adapter);
 			adapter.notifyDataSetChanged();
 			
 			mActivity.findViewById(R.id.load_more).setVisibility(8);

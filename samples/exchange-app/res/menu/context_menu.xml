@@ -10,24 +10,24 @@
         android:id="@+id/menu_reply"
         android:icon="@drawable/ic_action_reply"
         android:orderInCategory="102"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="always"
         android:title="@string/menu_reply_title"/>
     <item
         android:id="@+id/menu_reply_all"
         android:icon="@drawable/ic_action_reply_all"
         android:orderInCategory="103"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="always"
         android:title="@string/menu_replyall_title"/>
     <item
         android:id="@+id/menu_forward"
         android:icon="@drawable/ic_action_forward"
         android:orderInCategory="104"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="always"
         android:title="@string/menu_forward_title" />
     <item
         android:id="@+id/menu_move_to"
         android:orderInCategory="105"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="never"
         android:title="@string/menu_move_to_title"/>
 
 </menu>

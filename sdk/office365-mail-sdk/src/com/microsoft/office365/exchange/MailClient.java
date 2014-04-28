@@ -10,15 +10,11 @@ import microsoft.exchange.services.odata.model.Attachment;
 import microsoft.exchange.services.odata.model.Folder;
 import microsoft.exchange.services.odata.model.Message;
 import microsoft.exchange.services.odata.model.Recipient;
-
-import android.media.JetPlayer;
-
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;

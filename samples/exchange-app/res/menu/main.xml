@@ -6,10 +6,11 @@
         android:orderInCategory="101"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_main_refresh"/>
-    
-       <item
+    <item
         android:id="@+id/menu_clear_credentials"
+        android:icon="@drawable/ic_action_settings"
         android:orderInCategory="101"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="never"
         android:title="@string/menu_main_clear_credentials"/>
+
 </menu>

@@ -134,6 +134,12 @@ public abstract class BaseClient<V> extends OfficeClient {
 		headers.put("Content-Type", "application/json;odata.metadata=full");
 		headers.put("Expect", "100-continue");
 
+		if(method.equals(Constants.METHOD_PATCH)){
+
+			headers.put("X-HTTP-Method-Override", "PATCH");
+			method = Constants.METHOD_POST;
+		}
+		
 		ListenableFuture<JSONObject> requestFuture = this.executeRequestJson(url, method, headers, getBytes(json));//(url, "PUT",);
 
 		Futures.addCallback(requestFuture, new FutureCallback<JSONObject>() {

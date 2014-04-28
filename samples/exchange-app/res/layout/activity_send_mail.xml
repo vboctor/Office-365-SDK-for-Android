@@ -12,87 +12,50 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/labelTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="2sp"
-            android:text="@string/menu_send_mail_to" />
-
         <EditText
             android:id="@+id/textTo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/labelTo"
             android:ems="10"
+            android:hint="To"
             android:inputType="textMultiLine"
             android:textSize="17sp"
             android:typeface="sans" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/mail_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/labelCC"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="2sp"
-            android:text="@string/menu_send_mail_cc" />
 
         <EditText
             android:id="@+id/textCC"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/labelCC"
+            android:layout_below="@id/textTo"
             android:ems="10"
+            android:hint="Cc"
             android:inputType="textMultiLine"
             android:textSize="17sp"
             android:typeface="sans" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/labelSubject"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="2sp"
-            android:text="@string/menu_send_mail_sub" />
 
         <EditText
             android:id="@+id/textSubject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/labelSubject"
+            android:layout_below="@id/textCC"
             android:ems="10"
+            android:hint="Subject"
             android:inputType="textMultiLine"
             android:textSize="17sp"
             android:typeface="sans" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/mail_send_body"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
 
         <EditText
             android:id="@+id/textBody"
             android:layout_width="360sp"
             android:layout_height="wrap_content"
+            android:layout_below="@id/textSubject"
             android:ems="10"
             android:inputType="textMultiLine"
             android:scrollbars="vertical"
             android:singleLine="false"
             android:textSize="17sp"
-            android:typeface="sans" />
+            android:typeface="sans" 
+            android:hint="Compose email"/>
 
         <WebView
             android:id="@+id/send_mail_body"

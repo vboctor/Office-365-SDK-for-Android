@@ -7,6 +7,7 @@ import microsoft.exchange.services.odata.model.Contact;
 import microsoft.exchange.services.odata.model.ContactFolder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.Query;
 
@@ -33,15 +34,37 @@ public class ContactClient extends BaseClient<Contact> {
 
 	public ListenableFuture<Contact> create(Contact contact) {
 		String url = Constants.BASE_URL + Constants.CONTACTS_URL;
+		
+		JsonObject  jObject = new JsonObject();
+		jObject.addProperty("CompanyName", contact.getCompanyName());
+		jObject.addProperty("Department", contact.getDepartment());
+		jObject.addProperty("DisplayName", contact.getDisplayName());
+		jObject.addProperty("EmailAddress1", contact.getEmailAddress1());
+		jObject.addProperty("GivenName", contact.getGivenName());
+		jObject.addProperty("JobTitle", contact.getJobTitle());
+		jObject.addProperty("MiddleName", contact.getMiddleName());
+		jObject.addProperty("NickName", contact.getNickName());
+		jObject.addProperty("Surname", contact.getSurname());
 
-		return execute(url, new Gson().toJson(contact), Contact.class,
+		return execute(url, new Gson().toJson(jObject), Contact.class,
 				Constants.METHOD_POST, null);
 	}
 
 	public ListenableFuture<Contact> update(Contact contact) {
-		String url = Constants.BASE_URL + Constants.CONTACTS_URL;
+		String url = Constants.BASE_URL + String.format(Constants.CONTACT_BY_ID, contact.getId());
 
-		return execute(url, new Gson().toJson(contact), Contact.class,
+		JsonObject  jObject = new JsonObject();
+		jObject.addProperty("CompanyName", contact.getCompanyName());
+		jObject.addProperty("Department", contact.getDepartment());
+		jObject.addProperty("DisplayName", contact.getDisplayName());
+		jObject.addProperty("EmailAddress1", contact.getEmailAddress1());
+		jObject.addProperty("GivenName", contact.getGivenName());
+		jObject.addProperty("JobTitle", contact.getJobTitle());
+		jObject.addProperty("MiddleName", contact.getMiddleName());
+		jObject.addProperty("NickName", contact.getNickName());
+		jObject.addProperty("Surname", contact.getSurname());
+		
+		return execute(url, new Gson().toJson(jObject), Contact.class,
 				Constants.METHOD_PATCH, null);
 	}
 

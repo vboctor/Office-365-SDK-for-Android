@@ -8,7 +8,6 @@ import android.webkit.WebView;
 import android.widget.Toast;
 import com.microsoft.mailservice.Authentication;
 import com.microsoft.mailservice.MainActivity;
-import com.microsoft.mailservice.R;
 import com.microsoft.office365.Query;
 import com.microsoft.office365.exchange.MailClient;
 
@@ -60,5 +59,4 @@ public class RetrieveBodyTask extends AsyncTask<String,Void,Message>{
 
 		return message;
 	}
-
 }

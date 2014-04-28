@@ -5,28 +5,24 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
 import microsoft.exchange.services.odata.model.Contact;
 import com.microsoft.mailservice.ContactsActivity;
-import com.microsoft.mailservice.R;
-import com.microsoft.mailservice.adapters.ContactItemAdapter;
-//import com.microsoft.mailservice.adapters.ContactItemAdapter;
 import com.microsoft.office365.Credentials;
-import com.microsoft.office365.Query;
 import com.microsoft.office365.exchange.ContactClient;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.widget.ListView;
+import android.support.v4.app.NavUtils;
 import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RetrieveContactsTask.
+ * The Class CreateContactTask.
  */
-public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>> {
+public class CRUDContactTask extends AsyncTask<Contact, Void, Void> {
 
 	/** The m dialog. */
 	private ProgressDialog mDialog;
@@ -34,22 +30,23 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	/** The m context. */
 	private Context mContext;
 
-	private Query mQuery;
-	
 	/** The m activity. */
-	private ContactsActivity mActivity;
+	private Activity mActivity;
 
 	/** The m stored rotation. */
 	private int mStoredRotation;
-	
+
 	static Credentials mCredentials;
+	static String mAction;
+	static String[] mMessage;
 	
-	public RetrieveContactsTask(ContactsActivity activity, Credentials crendential, Query query) {
+	public CRUDContactTask(Activity activity, Credentials crendential,String[] args) {
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 		mCredentials = crendential;
-		mQuery = query;
+		mAction = args[0];
+		mMessage = new String[]{args[1], args[2],args[3]};
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +57,7 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 		mStoredRotation = mActivity.getRequestedOrientation();
 		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		mDialog.setTitle("Retrieving Contacts...");
+		mDialog.setTitle(mMessage[0]);
 		mDialog.setMessage("Please wait.");
 		mDialog.setCancelable(false);
 		mDialog.setIndeterminate(true);
@@ -71,38 +68,34 @@ public class RetrieveContactsTask extends AsyncTask<String, Void, List<Contact>>
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
-	protected void onPostExecute(List<Contact> contacts) {
-		
-		
+	protected void onPostExecute(Void v) {
 		if (mDialog.isShowing()) {
 			mDialog.dismiss();
 			mActivity.setRequestedOrientation(mStoredRotation);
 		}
 
-		if (contacts != null) {
-			ListView contactListView = (ListView) mActivity.findViewById(R.id.contact_list);
-			ContactItemAdapter adapter = new ContactItemAdapter(mActivity,contacts);
-			contactListView.setAdapter(adapter);
-			adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished loading contacts", Toast.LENGTH_LONG).show();
-		} else {
-			//mApplication.handleError(mThrowable);
-		}
+		Toast.makeText(mContext, mMessage[2], Toast.LENGTH_SHORT).show();
+
+		NavUtils.navigateUpTo(mActivity,new Intent(mActivity, ContactsActivity.class));
 	}
 
 	/* (non-Javadoc)
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
-	protected List<Contact> doInBackground(final String... args) {
-		List<Contact> contacts = new ArrayList<Contact>();
+	protected Void doInBackground(final Contact... args) {
 		try {
 			ContactClient client = new ContactClient(mCredentials);
 
-			contacts = client.getContacts(mQuery).get();		
+			if(mAction.equals("create"))
+				client.create(args[0]).get();
+			else if(mAction.equals("delete"))
+				client.delete(args[0].getId()).get();
+			else client.update(args[0]).get();
 			
 		} catch (Exception e) {
+			Toast.makeText(mContext, mMessage[1] + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
-
-		return contacts;
+		
+		return null;
 	}
 }

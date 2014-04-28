@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 import microsoft.exchange.services.odata.model.Folder;
 import com.microsoft.mailservice.MainActivity;
+import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.exchange.FolderClient;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 // TODO: Auto-generated Javadoc
 /**
@@ -60,7 +62,10 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String,List
 			if(folders.size() != 0){
 				FolderItemAdapter primaryAdapter = new FolderItemAdapter(mActivity, folders.get("Primary"));
 				FolderItemAdapter secondAdapter = new FolderItemAdapter(mActivity, folders.get("Secondary"));
-				mActivity.setListAdapter(primaryAdapter,secondAdapter);
+				
+				((ListView)mActivity.findViewById(R.id.list_primary_foders)).setAdapter(primaryAdapter);
+				((ListView)mActivity.findViewById(R.id.list_secondary_foders)).setAdapter(secondAdapter);
+					
 				primaryAdapter.notifyDataSetChanged();
 				secondAdapter.notifyDataSetChanged();
 				Log.d("Folder task", "Finished loading Folders");

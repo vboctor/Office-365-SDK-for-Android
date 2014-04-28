@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import microsoft.exchange.services.odata.model.Event;
 import com.microsoft.mailservice.MainActivity;
+import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.exchange.CalendarClient;
@@ -16,6 +17,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
+import android.widget.ListView;
 import android.widget.Toast;
 
 // TODO: Auto-generated Javadoc
@@ -72,7 +74,7 @@ public class RetrieveEventsTask extends AsyncTask<String, Void, List<Event>> {
 
 		if (events != null) {
 			EventItemAdapter adapter = new EventItemAdapter(mActivity, events);
-			mActivity.setListAdapter(adapter);
+			((ListView)mActivity.findViewById(R.id.mail_list)).setAdapter(adapter);
 			adapter.notifyDataSetChanged();
 			Toast.makeText(mContext, "Finished loading events", Toast.LENGTH_LONG).show();
 		} else {

@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -35,7 +36,6 @@ import android.widget.Toast;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.microsoft.mailservice.adapters.EventItemAdapter;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
 import com.microsoft.mailservice.tasks.RefreshMessageTask;
@@ -55,6 +55,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 	ListView mListPrimaryFolderView;
 	ListView mListSecondaryFolderView;
 	TextView mFolderTextView;
+	TextView mContacts;
+
 	SwipeRefreshLayout mSwipeRefreshLayout;
 
 	//TODO: review this and do in a better way
@@ -62,7 +64,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 	static Map<String,List<Folder>> mFolders;
 	static Folder mLastSelectedFolder;
 	//
-	
+
 	DrawerLayout mDrawerLayout;
 	ActionBarDrawerToggle mDrawerToggle;
 
@@ -78,6 +80,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mMailListView = (ListView)findViewById(R.id.mail_list);
 		mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.layout_to_refresh);
+		mContacts = (TextView) findViewById(R.id.contacts);
 
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mSwipeRefreshLayout.setColorScheme(android.R.color.holo_blue_light,
@@ -98,10 +101,24 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 			}
 		});
 
+		mContacts.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				//				mFolderTextView.setBackgroundResource(R.color.white);
+				//				mFolderTextView.setTextColor(Color.parseColor("#282828"));
+				mContacts.setBackgroundResource(R.color.cyan);
+				mContacts.setTextColor(Color.parseColor("#FFFFFF"));
+
+				Intent intent = new Intent(MainActivity.this,ContactsActivity.class);
+				startActivity(intent);
+			}
+		});
+
 		retrieveMesages("Inbox");	
 		setDrawerIconEvent();
 	}
-	
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState){
 		super.onPostCreate(savedInstanceState);
@@ -159,7 +176,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 						((Message)mMailListView.getItemAtPosition(0))
 						.getLastModifiedTime());
 	}
-	
+
 	OnScrollListener maillistOnScroll() {
 		return new OnScrollListener() {
 
@@ -231,19 +248,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 		retrieveMesages(folderId);
 	}
 
-	public void setListAdapter(MessageItemAdapter adapter) {		
-		mMailListView.setAdapter(adapter);		
-	}
-
-	public void setListAdapter(EventItemAdapter adapter) {
-		mMailListView.setAdapter(adapter);			
-	}
-
-	public void setListAdapter(FolderItemAdapter adapter, FolderItemAdapter secondAdapter) {
-		mListPrimaryFolderView.setAdapter(adapter);		
-		mListSecondaryFolderView.setAdapter(secondAdapter);	
-	}
-
 	void newMailActivity() {
 		Intent intent = new Intent(MainActivity.this, SendMailActivity.class);
 		startActivity(intent);		
@@ -294,7 +298,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 				super.onDrawerClosed(view);
 				invalidateOptionsMenu();
 
-				getActionBar().setTitle(mLastSelectedFolder.getDisplayName());
+				if(mLastSelectedFolder != null)
+					getActionBar().setTitle(mLastSelectedFolder.getDisplayName());
 
 			}
 
@@ -325,7 +330,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 	}
 
 	void setListFolderMenu() {
-		
+
 		mListPrimaryFolderView = (ListView)findViewById(R.id.list_primary_foders);
 		mListSecondaryFolderView = (ListView)findViewById(R.id.list_secondary_foders);
 
@@ -374,7 +379,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 			public void onSuccess(Credentials credentials) {
 				Query query = new Query();
 
-				query = query.top(40).select(Constants.FIELDS_TO_SELECT);
+				query = query.top(40).select(Constants.MAIL_FIELDS_TO_SELECT);
 				new RetrieveMessagesTask(MainActivity.this, credentials,query).execute(folder);
 			}
 		});

@@ -50,7 +50,7 @@ public class RetrieveMoreMessageTask extends AsyncTask<String, Void, List<Messag
 			MailClient client = new MailClient(Authentication.getCurrentCredentials());
 			Query query = new Query();
 
-			query = query.top(Constants.TOP_VALUE).skip(Integer.parseInt(args[0]) - 1).select(Constants.FIELDS_TO_SELECT);
+			query = query.top(Constants.TOP_VALUE).skip(Integer.parseInt(args[0]) - 1).select(Constants.MAIL_FIELDS_TO_SELECT);
 			//String folder = mLastSelectedFolder != null ? mLastSelectedFolder.getDisplayName() : "Inbox";
 			messages = client.getMessages(args[1], query).get();
 

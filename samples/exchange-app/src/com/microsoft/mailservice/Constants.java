@@ -10,7 +10,7 @@ public class Constants {
 	public static final String RESOURCE_ID =  "https://outlook.office365.com/";	
 	public static final String ODATA_ENDPOINT = "ews/odata";
 	public static final String ENCRYPTION_KEY = "EncryptionKey";
-	public static final String[] FIELDS_TO_SELECT = new String[]{"Id","Subject",
+	public static final String[] MAIL_FIELDS_TO_SELECT = new String[]{"Id","Subject",
 		"Sender",
 		"ToRecipients", 
 		"CcRecipients", 
@@ -18,6 +18,16 @@ public class Constants {
 		"ToRecipients",
 	"LastModifiedTime",
 	"ParentFolderId"};
+	
+	public static final String[] CONTACT_FIELDS_TO_SELECT = new String[]{"Id","DisplayName",
+		"Surname",
+		"EmailAddress1", 
+		"JobTitle", 
+		"Department", 
+		"CompanyName",
+	"MiddleName",
+	"GivenName", 
+	"NickName"};
 	
 	public static final int TOP_VALUE = 40;
 

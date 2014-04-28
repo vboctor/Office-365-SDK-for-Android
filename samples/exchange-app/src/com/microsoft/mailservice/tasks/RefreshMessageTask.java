@@ -47,7 +47,7 @@ public class RefreshMessageTask extends AsyncTask<String, Void, List<Message>>{
 			MailClient client = new MailClient(Authentication.getCurrentCredentials());
 			Query query = new Query();
 
-			query = query.top(Constants.TOP_VALUE).select(Constants.FIELDS_TO_SELECT);
+			query = query.top(Constants.TOP_VALUE).select(Constants.MAIL_FIELDS_TO_SELECT);
 
 			query.setQueryText("$filter=LastModifiedTime%20gt%20" + args[1] + "&");
 	
