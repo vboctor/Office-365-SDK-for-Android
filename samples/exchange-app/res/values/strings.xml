@@ -4,7 +4,7 @@
     <string name="app_name">Inbox</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="menu_main_refresh">Refresh Emails</string>
+    <string name="menu_main_refresh">Send Emails</string>
     <string name="menu_main_clear_credentials">Clear Credentials</string>
     <string name="menu_send_mail_title">Send Mail</string>
     <string name="menu_cancel_title">Cancel</string>

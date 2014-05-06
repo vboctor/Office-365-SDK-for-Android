@@ -30,6 +30,8 @@ public class Item {
 	@Expose
 	private List<Object> categories = new ArrayList<Object>();
 	
+	@SerializedName("Attachments")
+	@Expose
 	private List<Attachment> attachments =  new ArrayList<Attachment>();
 
 	public String getChangeKey() {
