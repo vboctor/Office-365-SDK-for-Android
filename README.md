@@ -80,11 +80,11 @@ All the code that calls into the lists SDK is in the /assetmanagement/src/com/mi
 
 Note: The app has been tested on Android versions API 14 and 17 .
 
-**Files-discovery-app**
+**sample-file-discovery**
 
 ----------
 
-Download the following code onto your machine from this repo: office365-base-sdk, office365-files-sdk, files-discovery-app.
+Download the following code onto your machine from this repo: office365-base-sdk, office365-files-sdk, sample-file-discovery.
 Download the Azure Active directory Android library [ADAL] from the following [repo](https://github.com/MSOpenTech/azure-activedirectory-library-for-android).
 
 Import the above code into your favorite IDE.
@@ -95,19 +95,17 @@ Add a dependency on the office365-files-sdk and ADAL the from the files demo app
 
 Subscribe to SharePoint online from [here](http://msdn.microsoft.com/en-us/library/fp179924(v=office.15).aspx) or use an existing SharePoint Online site.
 
-Please edit the /file-discovery-app/src/com/microsoft/office365/file-discovery-app/Constants.java file and provide the values for the constants below.Please refer to [this](http://msdn.microsoft.com/en-us/library/dn605895(v=office.15).aspx) to understand how to obtain the values below and set the right permissions for the app so that it can read files from sharepoint.
+Please edit the sample-file-discovery\src\com\microsoft\filediscovery\Constants.java file and provide the values for the constants below.Please refer to [this](http://msdn.microsoft.com/en-us/library/dn605895(v=office.15).aspx) to understand how to obtain the values below and set the right permissions for the app so that it can read files from sharepoint.
     
     public static final String CLIENT_ID = "your-client-id";
     public static final String REDIRECT_URL = "http://your-redirect-url.com";
-
-Click on the OneDrive link on your SharePoint site to instantiate it and run the application. You will be asked to login with your SP account. Once logged in, the app will retrieve the lists of files from your OneDrive account.
 
 A breakdown of the code is below.
 
 Step 1: The app gets authorized by the user by calling the Authorization URL and passing its hardcoded scope.
 
 Step 2: The app gets a token for Discovery by calling the Token URL and passing the code from 
-OfficeClient.
+OfficeClient in the file sample-file-discovery\src\com\microsoft\filediscovery\datasource\ListItemsDataSource.java
 
     officeClient = mApplication.getOfficeClient(DiscoveryFragment.this.getActivity(), Constants.DISCOVERY_RESOURCE_ID).get();
     
