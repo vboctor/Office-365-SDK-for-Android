@@ -22,7 +22,7 @@
 -->
 <resources>
 
-    <string name="app_name">Office365Demo</string>
+    <string name="app_name">Mail Calendar Contact Demo</string>
 
     <string name="title_activity_mail_item">MailItemActivity</string>
     <string name="title_activity_event">EventActivity</string>

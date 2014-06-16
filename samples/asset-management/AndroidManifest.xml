@@ -22,24 +22,27 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.microsoft.assetmanagement.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.microsoft.assetmanagement.AppSettingsActivity"
-            android:label="@string/title_activity_app_settings" >
+            android:label="@string/title_activity_app_settings"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.microsoft.assetmanagement.AADSettingsActivity"
-            android:label="@string/title_activity_aad_settings" >
+            android:label="@string/title_activity_aad_settings"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.microsoft.assetmanagement.NTLMSettingsActivity"
-            android:label="@string/title_activity_ntml_settings" >
+            android:label="@string/title_activity_ntml_settings"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.microsoft.assetmanagement.CarListActivity"
@@ -61,11 +64,13 @@
         </activity>
         <activity
             android:name="com.microsoft.assetmanagement.SharepointListItemActivity"
-            android:label="@string/title_activity_sharepoint_list_item" >
+            android:label="@string/title_activity_sharepoint_list_item"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.microsoft.adal.AuthenticationActivity"
-            android:label="Authenticate to Azure AD" >
+            android:label="Authenticate to Azure AD"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
