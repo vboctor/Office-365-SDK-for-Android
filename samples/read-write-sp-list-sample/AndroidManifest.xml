@@ -15,13 +15,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.microsoft.assetmanagement.AssetApplication"
+        android:name="com.microsoft.readwritelistsample.AssetApplication"
         android:allowBackup="true"
         android:icon="@drawable/contoso_32_agave"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.microsoft.assetmanagement.MainActivity"
+            android:name="com.microsoft.readwritelistsample.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -30,40 +30,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.AppSettingsActivity"
+            android:name="com.microsoft.readwritelistsample.AppSettingsActivity"
             android:label="@string/title_activity_app_settings"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.AADSettingsActivity"
+            android:name="com.microsoft.readwritelistsample.AADSettingsActivity"
             android:label="@string/title_activity_aad_settings"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.NTLMSettingsActivity"
+            android:name="com.microsoft.readwritelistsample.NTLMSettingsActivity"
             android:label="@string/title_activity_ntml_settings"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.CarListActivity"
+            android:name="com.microsoft.readwritelistsample.CarListActivity"
             android:label="@string/title_activity_sharepoint_lists"
-            android:parentActivityName="com.microsoft.assetmanagement.MainActivity"
+            android:parentActivityName="com.microsoft.readwritelistsample.MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.microsoft.assetmanagement.MainActivity" />
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.DisplayCarActivity"
+            android:name="com.microsoft.readwritelistsample.DisplayCarActivity"
             android:label="@string/title_activity_display_car"
-            android:parentActivityName="com.microsoft.assetmanagement.CarListActivity"
+            android:parentActivityName="com.microsoft.readwritelistsample.CarListActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.microsoft.assetmanagement.CarListActivity" />
         </activity>
         <activity
-            android:name="com.microsoft.assetmanagement.SharepointListItemActivity"
+            android:name="com.microsoft.readwritelistsample.SharepointListItemActivity"
             android:label="@string/title_activity_sharepoint_list_item"
             android:screenOrientation="portrait">
         </activity>

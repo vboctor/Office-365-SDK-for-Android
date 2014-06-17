@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Asset Management</string>
+    <string name="app_name">Read-Write SP list sample</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_sharepoint_lists">Available Cars</string>
     <string name="title_activity_sharepoint_list_item">List Item</string>
