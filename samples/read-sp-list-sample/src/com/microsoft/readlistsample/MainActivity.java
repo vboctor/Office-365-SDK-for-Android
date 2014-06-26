@@ -39,6 +39,8 @@ public class MainActivity extends Activity {
 
 	private AuthenticationContext mAuthContext;
 	private OAuthCredentials credentials;
+	private AppPreferences mAppPreferences;
+	private ReadListApplication mApplication;
 
 	Button btnGetListItems;
 	TextView txtOutput;
@@ -58,12 +60,21 @@ public class MainActivity extends Activity {
 		btnGetListItems = (Button) findViewById(R.id.button_getListItems);
 		txtOutput = (TextView) findViewById(R.id.textView_Output);
 
+		mApplication = (ReadListApplication) getApplication();
+		mAppPreferences = (mApplication).getAppPreferences();
+
 		btnGetAccessToken.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				getToken();
 
+				if (mApplication.hasConfiguration()) {
+					getToken();
+				} else {
+					Intent intent = new Intent(MainActivity.this,
+							AppPreferencesActivity.class);
+					startActivity(intent);
+				}
 			}
 		});
 
@@ -92,7 +103,8 @@ public class MainActivity extends Activity {
 	protected AuthenticationContext getAuthContext() {
 		if (mAuthContext == null) {
 			try {
-				mAuthContext = new AuthenticationContext(this, Constants.AUTHORITY_URL, false);
+				mAuthContext = new AuthenticationContext(this,
+						Constants.AUTHORITY_URL, false);
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -105,8 +117,10 @@ public class MainActivity extends Activity {
 	}
 
 	protected void getToken() {
-		getAuthContext().acquireToken(this, Constants.RESOURCE_ID, Constants.CLIENT_ID, Constants.REDIRECT_URL,
-				Constants.USER_HINT, new AuthenticationCallback<AuthenticationResult>() {
+		getAuthContext().acquireToken(this, mAppPreferences.getSharepointUrl(),
+				mAppPreferences.getClientId(),
+				mAppPreferences.getRedirectUrl(), Constants.USER_HINT,
+				new AuthenticationCallback<AuthenticationResult>() {
 
 					@Override
 					public void onError(Exception exc) {
@@ -115,8 +129,10 @@ public class MainActivity extends Activity {
 
 					@Override
 					public void onSuccess(AuthenticationResult result) {
-						if (result != null && !result.getAccessToken().isEmpty()) {
-							credentials = new OAuthCredentials(result.getAccessToken());
+						if (result != null
+								&& !result.getAccessToken().isEmpty()) {
+							credentials = new OAuthCredentials(result
+									.getAccessToken());
 							txtOutput.setText("Got token!");
 							Log.i(TAG, credentials.toString());
 							btnGetListItems.setEnabled(true);
@@ -129,10 +145,12 @@ public class MainActivity extends Activity {
 
 		txtOutput.setText("Getting items...");
 		// construct a SP Lists client with previously set credentials
-		SharepointListsClient client = new SharepointListsClient(Constants.RESOURCE_ID, "/", credentials);
+		SharepointListsClient client = new SharepointListsClient(
+				mAppPreferences.getSharepointUrl(), "/", credentials);
 
 		// asynchronous path, takes advantage of futures
-		ListenableFuture<List<SPListItem>> result = client.getListItems(listTitle, null);
+		ListenableFuture<List<SPListItem>> result = client.getListItems(
+				listTitle, null);
 		Futures.addCallback(result, new FutureCallback<List<SPListItem>>() {
 			@Override
 			public void onFailure(Throwable t) {
@@ -154,7 +172,8 @@ public class MainActivity extends Activity {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+								MainActivity.this,
 								android.R.layout.simple_list_item_1, itemTitles);
 						lvOutput.setAdapter(adapter);
 						txtOutput.setText("Done!");
@@ -169,12 +188,19 @@ public class MainActivity extends Activity {
 
 		menu.add(Menu.NONE, MENU_RESET_TOKEN, Menu.NONE, "Clear Token Cache");
 		menu.add(Menu.NONE, MENU_SHOW_TOKEN, Menu.NONE, "Show Token");
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.action_settings: {
+			Intent intent = new Intent(MainActivity.this,
+					AppPreferencesActivity.class);
+			startActivity(intent);
+			return true;
+		}
 		case MENU_RESET_TOKEN: {
 			resetToken();
 			clearCookies();

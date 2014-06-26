@@ -21,35 +21,15 @@ package com.microsoft.readlistsample;
  */
 
 /**
- * Stores application public constants such as URLs to update configurations, default check back-in values, etc.
+ * Stores application public constants such as URLs to update configurations,
+ * default check back-in values, etc.
  */
 public class Constants {
 
-    /**
-     * Login.
-     * Example: name@your-domain.onmicrosoft.com
-     * This can be blank.
-     */
-    public static final String USER_HINT = "";
-    
-   /**
-     * Url for Oauth2 authorization page.
-     */
-    public static final String AUTHORITY_URL = "https://login.windows.net/common";
+	/**
+	 * Login. Example: name@your-domain.onmicrosoft.com This can be blank.
+	 */
+	public static final String USER_HINT = "";
+	public static final String AUTHORITY_URL = "https://login.windows.net/common";
 
-    /**
-     * Application unique ID for Oauth2 authorization.
-     */
-    public static final String CLIENT_ID = "Enter your client ID here";
-
-    /**
-     * Resource id - URL of the resource we will work with.
-     * TODO: Use Discovery API
-     */
-    public static final String RESOURCE_ID = "https://your-domain.sharepoint.com";
-
-    /**
-     * URL application will be redirected after authentication.
-     */
-    public static final String REDIRECT_URL = "Enter your redirect URL here";
-	}
+}
