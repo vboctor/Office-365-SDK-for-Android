@@ -41,6 +41,8 @@ public class ServiceListActivity extends FragmentActivity {
 
 	/** The m application. */
 	private DiscoveryAPIApplication mApplication;
+	private AppPreferences mPreferences;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -55,32 +57,40 @@ public class ServiceListActivity extends FragmentActivity {
 		new RetrieveServicesTask(ServiceListActivity.this).execute();
 
 		mApplication = (DiscoveryAPIApplication) getApplication();
+		mPreferences = mApplication.getAppPreferences();
+
 		mListView = (ListView) findViewById(R.id.list);
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> adapter, View arg1, int position, long arg3) {
+			public void onItemClick(AdapterView<?> adapter, View arg1,
+					int position, long arg3) {
 
-				final ServiceViewItem serviceItem = (ServiceViewItem) mListView.getItemAtPosition(position);
+				final ServiceViewItem serviceItem = (ServiceViewItem) mListView
+						.getItemAtPosition(position);
 
 				if (serviceItem.getSelectable()) {
 					try {
 
-						ListenableFuture<Map<String, Credentials>> future = Authentication.authenticate(
-								ServiceListActivity.this,
-								((ServiceViewItem) mListView.getItemAtPosition(position)).getResourceId());
+						ListenableFuture<Map<String, Credentials>> future = Authentication
+								.authenticate(ServiceListActivity.this,
+										((ServiceViewItem) mListView
+												.getItemAtPosition(position))
+												.getResourceId(), mPreferences);
 
-						Futures.addCallback(future, new FutureCallback<Map<String, Credentials>>() {
-							@Override
-							public void onFailure(Throwable t) {
-								Log.e("Asset", t.getMessage());
-							}
+						Futures.addCallback(future,
+								new FutureCallback<Map<String, Credentials>>() {
+									@Override
+									public void onFailure(Throwable t) {
+										Log.e("Asset", t.getMessage());
+									}
 
-							@Override
-							public void onSuccess(Map<String, Credentials> credentials) {
-								openSelectedService(serviceItem);
-							}
-						});
+									@Override
+									public void onSuccess(
+											Map<String, Credentials> credentials) {
+										openSelectedService(serviceItem);
+									}
+								});
 
 					} catch (Throwable t) {
 						Log.e("Asset", t.getMessage());
@@ -152,12 +162,12 @@ public class ServiceListActivity extends FragmentActivity {
 	public void openSelectedService(ServiceViewItem serviceItem) {
 
 		Intent intent = new Intent(mApplication, FileListActivity.class);
-		
+
 		JSONObject payload = new JSONObject();
 		try {
 			payload.put(Constants.RESOURCEID, serviceItem.getResourceId());
 			payload.put(Constants.ENDPOINT, serviceItem.getEndpointUri());
-			
+
 			intent.putExtra("data", payload.toString());
 			startActivity(intent);
 		} catch (Throwable t) {

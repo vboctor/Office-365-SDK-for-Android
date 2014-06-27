@@ -6,10 +6,12 @@
 package com.microsoft.onedrivediscovery;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
+
 import com.microsoft.office365.Credentials;
 import com.microsoft.office365.LogLevel;
 import com.microsoft.office365.Logger;
@@ -21,19 +23,41 @@ import com.microsoft.office365.files.FileClient;
  * The Class AssetApplication.
  */
 public class DiscoveryAPIApplication extends Application {
+	private AppPreferences mPreferences;
 
 	/*
 	 * (non-Javadoc)
-	 * 	
-	/* (non-Javadoc)
+	 * 
+	 * /* (non-Javadoc)
+	 * 
 	 * @see android.app.Application#onCreate()
 	 */
 	@Override
 	public void onCreate() {
 
-		Log.d("Asset Management", "onCreate");
 		super.onCreate();
-	}	
+		mPreferences = new AppPreferences(
+				PreferenceManager.getDefaultSharedPreferences(this));
+	}
+
+	public AppPreferences getAppPreferences() {
+		return mPreferences;
+	}
+
+	public boolean hasConfiguration() {
+
+		if (isNullOrEmpty(mPreferences.getClientId()))
+			return false;
+
+		if (isNullOrEmpty(mPreferences.getRedirectUrl()))
+			return false;
+
+		return true;
+	}
+
+	private boolean isNullOrEmpty(String value) {
+		return value == null || value.length() == 0;
+	}
 
 	/**
 	 * Handle error.

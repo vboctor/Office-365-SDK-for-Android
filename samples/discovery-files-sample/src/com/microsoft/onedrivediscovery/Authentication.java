@@ -23,7 +23,7 @@ public class Authentication {
 
 	/** The m credentials. */
 	private static Map<String, Credentials> mCredentials = new HashMap<String, Credentials>();
-	
+
 	/**
 	 * Gets the credentials.
 	 * 
@@ -42,26 +42,33 @@ public class Authentication {
 	public static void setCredentials(Map<String, Credentials> credentials) {
 		mCredentials = credentials;
 	}
-	
+
 	/**
 	 * Authenticate.
 	 * 
 	 * @param activity
 	 *            the activity
+	 * @param mAppPreferences
 	 * @return the office future
 	 */
-	public static ListenableFuture<Map<String, Credentials>> authenticate(Activity activity, final String resourceId) {
-		final SettableFuture<Map<String, Credentials>> result = SettableFuture.create();
+	public static ListenableFuture<Map<String, Credentials>> authenticate(
+			Activity activity, final String resourceId,
+			AppPreferences preferences) {
+		final SettableFuture<Map<String, Credentials>> result = SettableFuture
+				.create();
 
-		getAuthenticationContext(activity).acquireToken(activity, resourceId, Constants.CLIENT_ID,
-				Constants.REDIRECT_URL, "", new AuthenticationCallback<AuthenticationResult>() {
+		getAuthenticationContext(activity).acquireToken(activity, resourceId,
+				preferences.getClientId(), preferences.getRedirectUrl(), "",
+				new AuthenticationCallback<AuthenticationResult>() {
 
 					@Override
-					public void onSuccess(AuthenticationResult authenticationResult) {
+					public void onSuccess(
+							AuthenticationResult authenticationResult) {
 						// once succeeded we create a credentials instance
 						// using
 						// the token from ADAL
-						mCredentials.put(resourceId, new OAuthCredentials(authenticationResult.getAccessToken()));
+						mCredentials.put(resourceId, new OAuthCredentials(
+								authenticationResult.getAccessToken()));
 						result.set(mCredentials);
 					}
 
@@ -72,7 +79,7 @@ public class Authentication {
 				});
 		return result;
 	}
-	
+
 	public static AuthenticationContext context = null;
 
 	/**
@@ -80,26 +87,29 @@ public class Authentication {
 	 * 
 	 * @return authenticationContext, if successful
 	 */
-	public static AuthenticationContext getAuthenticationContext(Activity activity) {
+	public static AuthenticationContext getAuthenticationContext(
+			Activity activity) {
 
 		try {
-			context = new AuthenticationContext(activity, Constants.AUTHORITY_URL, false);
+			context = new AuthenticationContext(activity,
+					Constants.AUTHORITY_URL, false);
 		} catch (Throwable t) {
 			Log.e("Asset", t.getMessage());
 		}
 		return context;
-	}	
+	}
 
 	public static void ResetToken(Activity activity) {
 		getAuthenticationContext(activity).getCache().removeAll();
-		
+
 	}
-	
+
 	static void createEncryptionKey(Context applicationContext) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(applicationContext);
 
 		if (!preferences.contains(Constants.ENCRYPTION_KEY)) {
-			//generate a random key
+			// generate a random key
 			Random r = new Random();
 			byte[] bytes = new byte[32];
 			r.nextBytes(bytes);
@@ -110,12 +120,14 @@ public class Authentication {
 			editor.putString(Constants.ENCRYPTION_KEY, key);
 			editor.commit();
 		}
-		
-		AuthenticationSettings.INSTANCE.setSecretKey(getEncryptionKey(applicationContext));
+
+		AuthenticationSettings.INSTANCE
+				.setSecretKey(getEncryptionKey(applicationContext));
 	}
 
 	static byte[] getEncryptionKey(Context applicationContext) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(applicationContext);
 		String key = preferences.getString(Constants.ENCRYPTION_KEY, null);
 
 		if (key != null) {

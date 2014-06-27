@@ -8,5 +8,6 @@
     <string name="title_activity_app_settings">Application Settings</string>
     <string name="show_my_services">Show My Services</string>
     <string name="title_activity_file_item">File</string>
-    
+    <string name="preferences">Preferences</string>
+
 </resources>

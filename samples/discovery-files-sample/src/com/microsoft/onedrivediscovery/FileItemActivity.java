@@ -58,6 +58,7 @@ public class FileItemActivity extends FragmentActivity {
 
 	/** The m application. */
 	private DiscoveryAPIApplication mApplication;
+	private AppPreferences mPreferences;
 
 	/** The Constant CAMARA_REQUEST_CODE. */
 	final static int CAMARA_REQUEST_CODE = 1000;
@@ -70,6 +71,7 @@ public class FileItemActivity extends FragmentActivity {
 
 	String mResourceId;
 	String mEndPoint;
+
 	/**
 	 * Sets the car view item.
 	 * 
@@ -101,14 +103,17 @@ public class FileItemActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		mApplication = (DiscoveryAPIApplication) getApplication();
+		mPreferences = mApplication.getAppPreferences();
+
 		setContentView(R.layout.activity_file_display);
 
 		Bundle bundle = getIntent().getExtras();
-		Uri imageUri =(Uri)bundle.get(Intent.EXTRA_STREAM);
+		Uri imageUri = (Uri) bundle.get(Intent.EXTRA_STREAM);
 
 		try {
-			if(imageUri != null){
-				bundle = new ShareTask(this,imageUri, getIntent()).execute().get().getExtras();	
+			if (imageUri != null) {
+				bundle = new ShareTask(this, imageUri, getIntent()).execute()
+						.get().getExtras();
 			}
 
 			DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -121,15 +126,14 @@ public class FileItemActivity extends FragmentActivity {
 
 				payload = new JSONObject(data);
 				mFileSaveItem = new FileItem();
-				mResourceId= payload.getString(Constants.RESOURCEID);
+				mResourceId = payload.getString(Constants.RESOURCEID);
 				mEndPoint = payload.getString(Constants.ENDPOINT);
 				mFileSaveItem.setResourceId(mResourceId);
 				mFileSaveItem.setEndpoint(mEndPoint);
 
-				ShowImageToShare(Uri.parse(payload.getString("uri")));	
+				ShowImageToShare(Uri.parse(payload.getString("uri")));
 			}
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			Log.e("Asset", e.getMessage());
 		}
 	}
@@ -145,7 +149,8 @@ public class FileItemActivity extends FragmentActivity {
 
 			if (stream != null) {
 				mFileSaveItem.setContent(stream.toByteArray());
-				mAdapter = new  DisplayFileItemAdapter(this, mFileSaveItem.getContent());
+				mAdapter = new DisplayFileItemAdapter(this,
+						mFileSaveItem.getContent());
 				ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
 				viewPager.setAdapter(mAdapter);
 			}
@@ -192,36 +197,38 @@ public class FileItemActivity extends FragmentActivity {
 			public void run() {
 				CharSequence[] sources = { "From Library", "From Camera" };
 				AlertDialog.Builder builder = new AlertDialog.Builder(that);
-				builder.setTitle("Select an option:").setSingleChoiceItems(sources, 0,
-						new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int item) {
-						dialog.dismiss();
-						openPhotoSource(item);
-					}
+				builder.setTitle("Select an option:").setSingleChoiceItems(
+						sources, 0, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int item) {
+								dialog.dismiss();
+								openPhotoSource(item);
+							}
 
-					private void openPhotoSource(int itemSelected) {
-						switch (itemSelected) {
-						case 0:
-							invokePhotoLibrayIntent();
-							break;
-						case 1:
-							invokeFromCameraIntent();
-							break;
-						default:
-							break;
-						}
-					}
+							private void openPhotoSource(int itemSelected) {
+								switch (itemSelected) {
+								case 0:
+									invokePhotoLibrayIntent();
+									break;
+								case 1:
+									invokeFromCameraIntent();
+									break;
+								default:
+									break;
+								}
+							}
 
-					private void invokeFromCameraIntent() {
-						dispatchTakePictureIntent();
-					}
+							private void invokeFromCameraIntent() {
+								dispatchTakePictureIntent();
+							}
 
-					private void invokePhotoLibrayIntent() {
-						Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-						photoPickerIntent.setType("image/*");
-						startActivityForResult(photoPickerIntent, SELECT_PHOTO);
-					}
-				});
+							private void invokePhotoLibrayIntent() {
+								Intent photoPickerIntent = new Intent(
+										Intent.ACTION_PICK);
+								photoPickerIntent.setType("image/*");
+								startActivityForResult(photoPickerIntent,
+										SELECT_PHOTO);
+							}
+						});
 				builder.create().show();
 			}
 		});
@@ -240,13 +247,15 @@ public class FileItemActivity extends FragmentActivity {
 	@SuppressLint("SimpleDateFormat")
 	private File createImageFile() throws IOException {
 		// Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+				.format(new Date());
 		String imageFileName = "JPEG_" + timeStamp + "_";
-		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		File storageDir = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 		File image = File.createTempFile(imageFileName, /* prefix */
 				".jpg", /* suffix */
 				storageDir /* directory */
-				);
+		);
 
 		// Save a file: path for use with ACTION_VIEW intents
 		mCurrentPhotoPath = image.getAbsolutePath();
@@ -269,7 +278,8 @@ public class FileItemActivity extends FragmentActivity {
 			}
 			// Continue only if the File was successfully created
 			if (photoFile != null) {
-				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+						Uri.fromFile(photoFile));
 				startActivityForResult(takePictureIntent, CAMARA_REQUEST_CODE);
 			}
 		}
@@ -281,8 +291,10 @@ public class FileItemActivity extends FragmentActivity {
 	private void saveAction() {
 		hideSoftPad();
 
-		mFileSaveItem.setName(((EditText) findViewById(R.id.textFileName)).getText().toString().trim());// .getText().toString();
-		if (mFileSaveItem.getName().length() == 0 || mFileSaveItem.getContent() == null) {
+		mFileSaveItem.setName(((EditText) findViewById(R.id.textFileName))
+				.getText().toString().trim());// .getText().toString();
+		if (mFileSaveItem.getName().length() == 0
+				|| mFileSaveItem.getContent() == null) {
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Information");
@@ -324,7 +336,8 @@ public class FileItemActivity extends FragmentActivity {
 	 *            the data
 	 * @return the image data
 	 */
-	private final byte[] getImageData(int requestCode, int resultCode, Intent data) {
+	private final byte[] getImageData(int requestCode, int resultCode,
+			Intent data) {
 
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -335,7 +348,8 @@ public class FileItemActivity extends FragmentActivity {
 				try {
 					Uri selectedImage = data.getData();
 
-					InputStream imageStream = getContentResolver().openInputStream(selectedImage);
+					InputStream imageStream = getContentResolver()
+							.openInputStream(selectedImage);
 					Bitmap bitmap = mResizer.getBitmapFrom(imageStream);
 					ByteArrayOutputStream stream = new ByteArrayOutputStream();
 					bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -349,7 +363,8 @@ public class FileItemActivity extends FragmentActivity {
 			if (resultCode == RESULT_OK) {
 				try {
 					if (mCurrentPhotoPath != null) {
-						Bitmap bitmap = mResizer.getBitmapFrom(mCurrentPhotoPath);
+						Bitmap bitmap = mResizer
+								.getBitmapFrom(mCurrentPhotoPath);
 						ByteArrayOutputStream stream = new ByteArrayOutputStream();
 						bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 						return stream.toByteArray();
@@ -369,8 +384,8 @@ public class FileItemActivity extends FragmentActivity {
 	 * Hide soft pad.
 	 */
 	private void hideSoftPad() {
-		((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE)).toggleSoftInput(
-				InputMethodManager.SHOW_IMPLICIT, 0);
+		((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE))
+				.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 	}
 
 	protected void openFile(String fileName) {
@@ -385,57 +400,71 @@ public class FileItemActivity extends FragmentActivity {
 		Uri mUri;
 		Intent mIntent;
 
-		public ShareTask(Activity activity, Uri uri, Intent currentIntent){
+		public ShareTask(Activity activity, Uri uri, Intent currentIntent) {
 			mActivity = activity;
 			mUri = uri;
 			mIntent = currentIntent;
 		}
+
 		@Override
 		protected Intent doInBackground(java.lang.Void... params) {
 
-			ListenableFuture<Map<String, Credentials>> future = Authentication.authenticate(mActivity,
-					Constants.DISCOVERY_RESOURCE_ID);
+			ListenableFuture<Map<String, Credentials>> future = Authentication
+					.authenticate(mActivity,
+					Constants.DISCOVERY_RESOURCE_ID, mPreferences);
 
-			Futures.addCallback(future, new FutureCallback<Map<String, Credentials>>() {
-				@Override
-				public void onFailure(Throwable t) {
-					Log.e("Asset", t.getMessage());
-				}
+			Futures.addCallback(future,
+					new FutureCallback<Map<String, Credentials>>() {
+						@Override
+						public void onFailure(Throwable t) {
+							Log.e("Asset", t.getMessage());
+						}
 
-				@Override
-				public void onSuccess(Map<String, Credentials> credentials) {
-					setResourceAuthentication();
-				}
-			});
+						@Override
+						public void onSuccess(
+								Map<String, Credentials> credentials) {
+							setResourceAuthentication();
+						}
+					});
 
 			return mIntent;
-		}	
-
-		void setResourceAuthentication(){
-			final ServiceViewItem item = new ListItemsDataSource((DiscoveryAPIApplication)getApplication()).getFileService();			//startActivity(new Intent(MainActivity.this, ServiceListActivity.class));
-			ListenableFuture<Map<String, Credentials>> future = Authentication.authenticate(mActivity, item.getResourceId());
-
-			Futures.addCallback(future, new FutureCallback<Map<String, Credentials>>() {
-				@Override
-				public void onFailure(Throwable t) {
-					Log.e("Asset", t.getMessage());
-				}
-
-				@Override
-				public void onSuccess(Map<String, Credentials> credentials) {
-
-					JSONObject payload = new JSONObject();
-
-					try {
-						payload.put(Constants.RESOURCEID, item.getResourceId());
-						payload.put(Constants.ENDPOINT, item.getEndpointUri());
-						payload.put("uri", mUri);			
-						mIntent.putExtra(Constants.DATA, payload.toString());
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-			});
 		}
-	} 
+
+		void setResourceAuthentication() {
+			final ServiceViewItem item = new ListItemsDataSource(
+					(DiscoveryAPIApplication) getApplication())
+					.getFileService(); // startActivity(new
+										// Intent(MainActivity.this,
+										// ServiceListActivity.class));
+			ListenableFuture<Map<String, Credentials>> future = Authentication
+					.authenticate(mActivity, item.getResourceId(), mPreferences);
+
+			Futures.addCallback(future,
+					new FutureCallback<Map<String, Credentials>>() {
+						@Override
+						public void onFailure(Throwable t) {
+							Log.e("Asset", t.getMessage());
+						}
+
+						@Override
+						public void onSuccess(
+								Map<String, Credentials> credentials) {
+
+							JSONObject payload = new JSONObject();
+
+							try {
+								payload.put(Constants.RESOURCEID,
+										item.getResourceId());
+								payload.put(Constants.ENDPOINT,
+										item.getEndpointUri());
+								payload.put("uri", mUri);
+								mIntent.putExtra(Constants.DATA,
+										payload.toString());
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+		}
+	}
 }
