@@ -48,7 +48,6 @@ public class Authentication {
 	 * 
 	 * @param activity
 	 *            the activity
-	 * @param mAppPreferences
 	 * @return the office future
 	 */
 	public static ListenableFuture<Map<String, Credentials>> authenticate(
