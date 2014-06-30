@@ -29,15 +29,11 @@ class NetworkRunnable implements Runnable {
 	/**
 	 * Initializes the network runnable
 	 * 
-	 * @param logger
-	 *            logger to log activity
 	 * @param request
 	 *            The request to execute
 	 * @param future
 	 *            Future for the operation
-	 * @param callback
-	 *            Callback to invoke after the request execution
-	 */
+     */
 	public NetworkRunnable(Request request, SettableFuture<Response> future) {
 		mRequest = request;
 		mFuture = future;
