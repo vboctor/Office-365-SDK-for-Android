@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.microsoft.assetmanagement.R;
 import com.microsoft.office365.Query;
 import com.microsoft.office365.files.FileClient;
 import com.microsoft.office365.files.FileSystemItem;
@@ -17,6 +16,7 @@ import com.microsoft.office365.lists.SPList;
 import com.microsoft.office365.lists.SPListItem;
 import com.microsoft.office365.lists.SharepointListsClient;
 import com.microsoft.readwritelistsample.AssetApplication;
+import com.microsoft.readwritelistsample.R;
 import com.microsoft.readwritelistsample.files.SharepointListsClientWithFiles;
 import com.microsoft.readwritelistsample.files.SharepointListsClientWithFiles.SPFile;
 import com.microsoft.readwritelistsample.viewmodel.CarListViewItem;

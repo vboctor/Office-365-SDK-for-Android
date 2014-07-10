@@ -10,7 +10,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
-import com.microsoft.assetmanagement.R;
 
 // TODO: Auto-generated Javadoc
 /**

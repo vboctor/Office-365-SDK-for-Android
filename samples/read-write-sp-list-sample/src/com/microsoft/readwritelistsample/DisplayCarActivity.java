@@ -33,7 +33,6 @@ import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.microsoft.assetmanagement.R;
 import com.microsoft.office365.lists.SPListItem;
 import com.microsoft.readwritelistsample.adapters.DisplayCarAdapter;
 import com.microsoft.readwritelistsample.files.BitmapResizer;

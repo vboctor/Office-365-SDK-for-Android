@@ -36,8 +36,8 @@
         android:title="NTLM Settings" >
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.microsoft.assetmanagement.NTLMSettingsActivity"
-            android:targetPackage="com.microsoft.assetmanagement" />
+            android:targetClass="com.microsoft.readwritelistsample.NTLMSettingsActivity"
+            android:targetPackage="com.microsoft.readwritelistsample" />
     </PreferenceScreen>
     
     <PreferenceScreen
@@ -45,20 +45,9 @@
         android:title="AAD Settings" >
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.microsoft.assetmanagement.AADSettingsActivity"
-            android:targetPackage="com.microsoft.assetmanagement" />
+            android:targetClass="com.microsoft.readwritelistsample.AADSettingsActivity"
+            android:targetPackage="com.microsoft.readwritelistsample" />
     </PreferenceScreen>
-
-    <!--
-    <PreferenceScreen
-        android:summary="Enter OAuth your settings"
-        android:title="OAuth Settings" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetClass="com.microsoft.assetmanagement.OAuthSettingActivity"
-            android:targetPackage="com.microsoft.assetmanagement" />
-    </PreferenceScreen>
-    -->
 
     <EditTextPreference
         android:name="listSize"

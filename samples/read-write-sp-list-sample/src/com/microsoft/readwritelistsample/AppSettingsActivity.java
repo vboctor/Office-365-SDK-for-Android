@@ -5,7 +5,6 @@
  ******************************************************************************/
 package com.microsoft.readwritelistsample;
 
-import com.microsoft.assetmanagement.R;
 
 import android.app.Fragment;
 import android.os.Bundle;

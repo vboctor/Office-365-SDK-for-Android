@@ -16,7 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.microsoft.assetmanagement.R;
+import com.microsoft.readwritelistsample.R;
 import com.microsoft.readwritelistsample.viewmodel.CarListViewItem;
 
 // TODO: Auto-generated Javadoc

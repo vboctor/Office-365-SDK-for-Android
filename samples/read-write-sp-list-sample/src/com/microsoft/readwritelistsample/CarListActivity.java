@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.microsoft.assetmanagement.R;
 import com.microsoft.readwritelistsample.adapters.CarItemAdapter;
 import com.microsoft.readwritelistsample.tasks.RetrieveCarsTask;
 import com.microsoft.readwritelistsample.viewmodel.CarListViewItem;

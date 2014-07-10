@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.microsoft.assetmanagement.R;
 import com.microsoft.office365.Credentials;
 
 // TODO: Auto-generated Javadoc

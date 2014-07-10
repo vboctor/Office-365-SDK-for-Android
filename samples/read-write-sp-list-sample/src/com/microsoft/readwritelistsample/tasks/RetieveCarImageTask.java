@@ -8,10 +8,10 @@ import android.support.v4.view.ViewPager;
 import android.widget.EditText;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.microsoft.assetmanagement.R;
 import com.microsoft.office365.lists.SPListItem;
 import com.microsoft.readwritelistsample.AssetApplication;
 import com.microsoft.readwritelistsample.DisplayCarActivity;
+import com.microsoft.readwritelistsample.R;
 import com.microsoft.readwritelistsample.adapters.DisplayCarAdapter;
 import com.microsoft.readwritelistsample.files.SharepointListsClientWithFiles;
 import com.microsoft.readwritelistsample.files.SharepointListsClientWithFiles.DocumentLibraryItem;

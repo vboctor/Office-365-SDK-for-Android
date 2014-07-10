@@ -6,7 +6,6 @@
 package com.microsoft.readwritelistsample;
 
 
-import com.microsoft.assetmanagement.R;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
