@@ -42,14 +42,15 @@ public class SaveFileTask extends AsyncTask<FileItem, Void, Void> {
 	/** The m throwable. */
 	private Throwable mThrowable;
 
-	private String mResourceId; 
+	private String mResourceId;
 
 	private String mEndpoint;
-	
+
 	/**
 	 * Instantiates a SaveFileTask task
 	 *
-	 * @param activity the activity
+	 * @param activity
+	 *            the activity
 	 */
 	public SaveFileTask(Activity activity) {
 		mActivity = activity;
@@ -58,7 +59,9 @@ public class SaveFileTask extends AsyncTask<FileItem, Void, Void> {
 		mSource = new ListItemsDataSource(mApplication);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#onPreExecute()
 	 */
 	protected void onPreExecute() {
@@ -69,7 +72,9 @@ public class SaveFileTask extends AsyncTask<FileItem, Void, Void> {
 		mDialog.show();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
@@ -79,7 +84,8 @@ public class SaveFileTask extends AsyncTask<FileItem, Void, Void> {
 		}
 
 		if (mThrowable == null) {
-			Toast.makeText(mActivity, "File Uploaded.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mActivity, "File Uploaded.", Toast.LENGTH_SHORT)
+					.show();
 
 		} else {
 			mApplication.handleError(mThrowable);
@@ -88,7 +94,8 @@ public class SaveFileTask extends AsyncTask<FileItem, Void, Void> {
 		Intent intent = new Intent(mActivity, FileListActivity.class);
 		JSONObject payload = new JSONObject();
 		try {
-			payload.put(Constants.REDIRECT_URL, mResourceId);
+			payload.put(mApplication.getAppPreferences().getRedirectUrl(),
+					mResourceId);
 			payload.put(Constants.ENDPOINT, mEndpoint);
 			intent.putExtra(Constants.DATA, payload.toString());
 			NavUtils.navigateUpTo(mActivity, intent);
@@ -97,7 +104,9 @@ public class SaveFileTask extends AsyncTask<FileItem, Void, Void> {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
 	@Override

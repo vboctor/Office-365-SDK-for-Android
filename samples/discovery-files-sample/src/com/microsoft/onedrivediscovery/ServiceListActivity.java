@@ -54,11 +54,8 @@ public class ServiceListActivity extends FragmentActivity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_lists);
 
-		new RetrieveServicesTask(ServiceListActivity.this).execute();
-
 		mApplication = (DiscoveryAPIApplication) getApplication();
 		mPreferences = mApplication.getAppPreferences();
-
 		mListView = (ListView) findViewById(R.id.list);
 
 		mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -98,6 +95,8 @@ public class ServiceListActivity extends FragmentActivity {
 				}
 			}
 		});
+		
+		new RetrieveServicesTask(ServiceListActivity.this).execute();
 	}
 
 	/*

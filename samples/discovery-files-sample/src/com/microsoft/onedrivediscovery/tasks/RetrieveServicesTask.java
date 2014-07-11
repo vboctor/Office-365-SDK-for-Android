@@ -23,33 +23,35 @@ import com.microsoft.onedrivediscovery.viewmodel.ServiceViewItem;
 /**
  * The Class RetrieveServicesTask.
  */
-public class RetrieveServicesTask extends AsyncTask<String, Void, ArrayList<ServiceViewItem>> {
+public class RetrieveServicesTask extends
+		AsyncTask<String, Void, ArrayList<ServiceViewItem>> {
 
 	/** The m dialog. */
 	private ProgressDialog mDialog;
-	
+
 	/** The m context. */
 	private Context mContext;
-	
+
 	/** The m activity. */
 	private ServiceListActivity mActivity;
-	
+
 	/** The m source. */
 	private ListItemsDataSource mSource;
-	
+
 	/** The m application. */
 	private DiscoveryAPIApplication mApplication;
-	
+
 	/** The m throwable. */
 	private Throwable mThrowable;
-	
+
 	/** The m stored rotation. */
 	private int mStoredRotation;
 
 	/**
 	 * Instantiates a new retrieve services task.
 	 *
-	 * @param activity the activity
+	 * @param activity
+	 *            the activity
 	 */
 	public RetrieveServicesTask(ServiceListActivity activity) {
 		mActivity = activity;
@@ -59,13 +61,16 @@ public class RetrieveServicesTask extends AsyncTask<String, Void, ArrayList<Serv
 		mSource = new ListItemsDataSource(mApplication);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#onPreExecute()
 	 */
 	protected void onPreExecute() {
 
 		mStoredRotation = mActivity.getRequestedOrientation();
-		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+		mActivity
+				.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 		mDialog.setTitle("Retrieving Services...");
 		mDialog.setMessage("Please wait.");
 		mDialog.setCancelable(false);
@@ -73,27 +78,38 @@ public class RetrieveServicesTask extends AsyncTask<String, Void, ArrayList<Serv
 		mDialog.show();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
 	protected void onPostExecute(final ArrayList<ServiceViewItem> serviceItems) {
-		if (mDialog.isShowing()) {
-			mDialog.dismiss();
-			mActivity.setRequestedOrientation(mStoredRotation);
-		}
-		if (serviceItems != null) {
 
-			ServiceItemAdapter adapter = new ServiceItemAdapter(mActivity, serviceItems);
-			mActivity.setListAdapter(adapter);
-			adapter.notifyDataSetChanged();
-			Toast.makeText(mContext, "Finished loading services", Toast.LENGTH_LONG).show();
-		} else {
-			mApplication.handleError(mThrowable);
+		try {
+			if (mDialog.isShowing()) {
+				mDialog.dismiss();
+				mActivity.setRequestedOrientation(mStoredRotation);
+			}
+			if (serviceItems != null) {
+
+				ServiceItemAdapter adapter = new ServiceItemAdapter(mActivity,
+						serviceItems);
+				mActivity.setListAdapter(adapter);
+				adapter.notifyDataSetChanged();
+				Toast.makeText(mContext, "Finished loading services",
+						Toast.LENGTH_LONG).show();
+			} else {
+				mApplication.handleError(mThrowable);
+			}
+		} catch (Throwable t) {
+			mApplication.handleError(t);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#doInBackground(Params[])
 	 */
 	protected ArrayList<ServiceViewItem> doInBackground(final String... args) {
