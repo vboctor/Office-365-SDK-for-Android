@@ -8,6 +8,15 @@
         android:summary="Enter your Sharepoint Server URL"
         android:title="Sharepoint URL" >
     </EditTextPreference>
+    
+     <EditTextPreference
+        android:name="siteUrl"
+        android:defaultValue=""
+        android:key="prefSiteRelativeUrl"
+        android:summary="Enter site URL"
+        android:title="Relative site URL" >
+    </EditTextPreference>
+    
     <EditTextPreference
         android:name="libraryName"
         android:defaultValue=""
