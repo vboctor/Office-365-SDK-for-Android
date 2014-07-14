@@ -11,17 +11,23 @@ public class AppPreferences {
 	}
 
 	public String getClientId() {
-		String library = mPreferences.getString("prefAADClientId", null);
-		return library;
+		String clientId = mPreferences.getString("prefAADClientId", null);
+		return clientId;
 	}
 
 	public String getRedirectUrl() {
-		String library = mPreferences.getString("prefAADRedirectUrl", null);
-		return library;
+		String redirectUrl = mPreferences.getString("prefAADRedirectUrl", null);
+		return redirectUrl;
 	}
 
 	public String getSharepointUrl() {
-		String library = mPreferences.getString("prefSharepointUrl", null);
-		return library;
+		String url = mPreferences.getString("prefSharepointUrl", null);
+		return url;
 	}
+	
+	public String getSharepointSite() {
+		String site = mPreferences.getString("prefSharepointSite", null);
+		return site;
+	}
+	
 }

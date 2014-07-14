@@ -124,6 +124,7 @@ public class MainActivity extends Activity {
 
 					@Override
 					public void onError(Exception exc) {
+						txtOutput.setText(exc.getMessage());
 						Log.e(TAG, exc.getMessage());
 					}
 
@@ -145,8 +146,14 @@ public class MainActivity extends Activity {
 
 		txtOutput.setText("Getting items...");
 		// construct a SP Lists client with previously set credentials
+
+		String sharepointSite = mAppPreferences.getSharepointSite();
+		if (sharepointSite == null || sharepointSite.length() == 0) {
+			sharepointSite = "/";
+		}
+
 		SharepointListsClient client = new SharepointListsClient(
-				mAppPreferences.getSharepointUrl(), "/", credentials);
+				mAppPreferences.getSharepointUrl(), sharepointSite, credentials);
 
 		// asynchronous path, takes advantage of futures
 		ListenableFuture<List<SPListItem>> result = client.getListItems(

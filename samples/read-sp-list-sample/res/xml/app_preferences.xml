@@ -20,7 +20,12 @@
             android:summary="Enter the Redirect URL"
             android:title="Sharepoint URL" >
         </EditTextPreference>
+           <EditTextPreference
+            android:name="sharepoint_site"
+            android:key="prefSharepointSite"
+            android:summary="Enter the relative site"
+            android:title="Sharepoint Site" >
+        </EditTextPreference>
     </PreferenceCategory>
-    
 
 </PreferenceScreen>
