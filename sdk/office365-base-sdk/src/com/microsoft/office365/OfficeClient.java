@@ -12,6 +12,8 @@ import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -40,6 +42,7 @@ public class OfficeClient {
 
 				@Override
 				public void log(String message, LogLevel level) {
+					Log.d("client", message);
 				}
 			};
 		} else {
