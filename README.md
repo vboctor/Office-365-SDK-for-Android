@@ -4,6 +4,7 @@
 
 - [Overview](#overview)
 - [Details](#details)
+- [Samples](#samples)
 - [Quick Start for SharePoint lists and files](#quick-start-for-sharepoint-lists-and-files)
 - [Quick Start for Exchange mail, calendar and contact apps](#quick-start-for-exchange-mail-calendar-and-contact-apps)
 - [Building Mail-Calendar-Contact SDK from Sources](#building-mail-calendar-contact-sdk-from-sources)
@@ -42,70 +43,52 @@ Exchange SDK [is available](http://search.maven.org/#browse%7C1648781292) as Mav
 
 To help you get started quickly, we have created sample applications, including:
 
-• Asset management app that allows the user to view the items in a particular list of a SharePoint site, add a new item with a picture into this list, update and delete an item from this list.
+• read-write-sp-list-sample app that allows the user to view the items in a particular list of a SharePoint site, add a new item with a picture into this list, update and delete an item from this list.
 
-• Mail contact and calendar app that lets the user view all his mails from the drafts folder and send mail, events from all his calendars and all his contacts.
+• exchange-sample app that lets the user view all his mails from the drafts folder and send mail, events from all his calendars and all his contacts.
 
-Additionally we are working on an SDK that covers the [discovery API](http://go.microsoft.com/fwlink/?LinkID=392944 "discovery API"). Until then please look at the files-discovery-app that we have written that uses the discovery API to get the list of files from my-lists on SharePoint.
+Additionally we are working on an SDK that covers the [discovery API](http://go.microsoft.com/fwlink/?LinkID=392944 "discovery API"). Until then please look at the discovery-files-sample that we have written that uses the discovery API to get the list of files from my-lists on SharePoint.
 
-## Quick Start for SharePoint lists and files ##
+## Samples##
 
-**Asset-management-app**
+There are currently 4 samples, each one excercise a different Office 365 API.
+All the samples are available as .zip file with all the required dependencies included. Please download it from [here](https://office365androidsamples.blob.core.windows.net/samples/office365-android-sdk-samples.zip).
 
-----------
+What's included:
 
-Download the following code onto your machine from this repo: office365-base-sdk, office365-lists-sdk, asset-management from this repo and import the above code into your favorite IDE.
+- **discovery-files-sample** (Files and Discovery API)
+- **exchange-sample** (Exchange API)
+- **read-sp-list-sample** (Sharepoint Lists API)
+- **read-write-sp-list-sample** (Sharepoint Lists API)
 
-Add a dependency on the office365-base-sdk from the office365-lists-sdk.
-Add a dependency on the office365-lists-sdk from the asset-management app
 
-Subscribe to SharePoint online from [here](http://msdn.microsoft.com/en-us/library/fp179924(v=office.15).aspx) or use an existing SharePoint Online site.
+Samples require an existing Office 365 account or subscribe for one [here](http://msdn.microsoft.com/en-us/library/fp179924(v=office.15).aspx)
 
-The application expects a picture library on the site with Title and Description columns visible in the default view of the library.
-Run the application. Click on the cog wheel at the top of the app on the first screen and you will see the second screen that has the list of settings that need to be configured. Examples are below.
+All sample applications require a Client ID and Redirect URL in order to get the OAuth authentication token from Azure Active Directory. Please follow the following steps to get mentioned values.
 
-- SharePoint URL would be like “https://foobar.sharepoint.com
-- Site URL would be like “sites/developers”
-- Library name would be something like “foobarPictureLibrary”
-- Please choose the Cookie authentication method under authentication method.
 
-The configuration for the app is done. You can go back to the first screen and click on the box next to the settings to retrieve the items in the picture library, add an item or update the title or description of an existing item.
+1. Create an Application inside Active Directory using Azure Management Portal
+2. Inside Active Directory, go to Applications and Add a new one
+3. Select "Add an application my organization is developing"
+4. Select "Native Client Application"
+5. Enter a redirect URL e.g.: https://myorganization/oauth
+6. For Office 365 API Access, you can select Exchange Online or SharePoint Online (or both).
 
-All the code that calls into the lists SDK is in the /assetmanagement/src/com/microsoft/assetmanagement/datasource/ListItemsDataSource.java class
+Once you have set the permissions for your application, using the ClientID, Redirect URL you can ask for an AAD token using your credentials. These are the values you must use in the sample applications.
 
-- View the list items – Refer to the getDefaultListViewItems method
-- Add a list item – Refer to saveNewCar method
-- Update a list item – Refer to updateCarData method
-- Delete a list item – Refer to deleteCar method
+Please refer to [this](http://msdn.microsoft.com/en-us/library/dn605895(v=office.15).aspx) for further information.
 
-Note: The app has been tested on Android versions API 14 and 17 .
+##Quick Start for SharePoint lists and files ##
 
-**sample-file-discovery**
+**discovery-files-sample**
 
-----------
+---
 
-Download the following code onto your machine from this repo: office365-base-sdk, office365-files-sdk, sample-file-discovery.
-Download the Azure Active directory Android library [ADAL] from the following [repo](https://github.com/MSOpenTech/azure-activedirectory-library-for-android).
-
-Import the above code into your favorite IDE.
-
-Add a dependency on the office365-base-sdk from the office365-lists-sdk.
-Add a dependency on the office365-base-sdk from the office365-files-sdk.
-Add a dependency on the office365-files-sdk and ADAL the from the files demo app.
-
-Subscribe to SharePoint online from [here](http://msdn.microsoft.com/en-us/library/fp179924(v=office.15).aspx) or use an existing SharePoint Online site.
-
-Please edit the sample-file-discovery\src\com\microsoft\filediscovery\Constants.java file and provide the values for the constants below.Please refer to [this](http://msdn.microsoft.com/en-us/library/dn605895(v=office.15).aspx) to understand how to obtain the values below and set the right permissions for the app so that it can read files from sharepoint.
-    
-    public static final String CLIENT_ID = "your-client-id";
-    public static final String REDIRECT_URL = "http://your-redirect-url.com";
-
-A breakdown of the code is below.
+A breakdown of the code is below:
 
 Step 1: The app gets authorized by the user by calling the Authorization URL and passing its hardcoded scope.
 
-Step 2: The app gets a token for Discovery by calling the Token URL and passing the code from 
-OfficeClient in the file sample-file-discovery\src\com\microsoft\filediscovery\datasource\ListItemsDataSource.java
+Step 2: The app gets a token for Discovery by calling the Token URL and passing the code from [here](https://github.com/OfficeDev/Office-365-SDK-for-Android/blob/master/samples/discovery-files-sample/src/com/microsoft/onedrivediscovery/datasource/ListItemsDataSource.java)
 
     officeClient = mApplication.getOfficeClient(DiscoveryFragment.this.getActivity(), Constants.DISCOVERY_RESOURCE_ID).get();
     
@@ -125,38 +108,47 @@ Step 6: Now the app is set to call the service using the service URL and the tok
 
     String sharepointResourceId = fileService.getServiceResourceId(); String endpointUrl = fileService.getServiceEndpointUri(); String sharepointUrl = endpointUrl.split("_api")[0]; FileClient fileClient = mApplication.getFileClient(DiscoveryFragment.this.getActivity(), sharepointResourceId, sharepointUrl).get();
 
+**read-write-sp-list-sample**
+
+---
+
+The application expects a **picture library** on the site with Title and Description columns visible in the default view of the library.
+Run the application. Click on the cog wheel at the top of the app on the first screen and you will see the second screen that has the list of settings that need to be configured. Examples are below.
+
+- SharePoint URL would be like “*https://foobar.sharepoint.com*"
+- Site URL would be like “*sites/developers*”
+- Library name would be something like “*foobarPictureLibrary*”
+- Please choose the AAD method under authentication method for Sharepoint Online.
+
+
+The configuration for the app is done. You can go back to the first screen and click on the box next to the settings to retrieve the items in the picture library, add an item or update the title or description of an existing item.
+
+All the code that calls into the lists SDK is in the [https://github.com/OfficeDev/Office-365-SDK-for-Android/blob/master/samples/read-write-sp-list-sample/src/com/microsoft/readwritelistsample/datasource/ListItemsDataSource.java]( https://github.com/OfficeDev/Office-365-SDK-for-Android/blob/master/samples/read-write-sp-list-sample/src/com/microsoft/readwritelistsample/datasource/ListItemsDataSource.java "ListItemsDataSource.java")  class
+
+- View the list items – Refer to the getDefaultListViewItems method
+- Add a list item – Refer to saveNewCar method
+- Update a list item – Refer to updateCarData method
+- Delete a list item – Refer to deleteCar method
+
+Note: The app has been tested on Android versions API 14 and 17 .
+
+**read-sp-list-sample**
+
+---
+Click on the cog wheel or menu at the top of the app on the first screen and you will see the second screen that has the list of settings that need to be configured.
+Once you have set the Client ID and Redirect URL, after passing the authentication steps, the application should have the authentication token. If the token is available, simply enter any existing Sharepoint List Name and click "Get List Items" to retrieve the list contents.
+
 ## Quick Start for Exchange mail, calendar and contact apps ##
 
-There are 2 apps in the samples folder that utilize the mail-calendar-contact sdk. 
-* The mail app is a simple app that retrieves emails from the user's drafts folder. 
-* The mail-calendar-contact app retrieves emails from the users drafts folder, sends email, retrieves events from the user's calendar and retrieves contacts from the user's contact list.
+**mail-calendar-contact**
 
-**The set up for both apps is given below.**
+---
 
- 1. Download the following code onto your machine: 
-- [mail-app](https://github.com/OfficeDev/Office-365-SDK-for-Android/tree/master/samples/mail-app) or the [mail-calendar-contact-app](https://github.com/OfficeDev/Office-365-SDK-for-Android/tree/master/samples/mail-calendar-contacts-app)
-- [Azure Active Directory Android library](https://github.com/MSOpenTech/azure-activedirectory-library-for-android) (AADAL).
+Retrieves emails from the users drafts folder, retrieves events from the user's calendar and retrieves contacts from the user's contact list.
 
- 2. Add a dependency on ADAL from the mail-app.
+The application requires and Exchange Online account, subscribe to a mail account from [here](http://msdn.microsoft.com/en-us/library/fp179924(v=office.15).aspx) or use an existing Exchange Online mail account.
 
- 3. Download [Otto library](http://square.github.io/otto/) (this is only required for mail-calendar-contact app). Put it in the 'libs' folder and add to build path.
-
- 4. Subscribe to a mail account from [here](http://msdn.microsoft.com/en-us/library/fp179924(v=office.15).aspx) or use an existing mail account.
-
- 5. Modify the following in the ```Constants.java``` file. Please refer to [this](http://msdn.microsoft.com/en-us/library/dn605895(v=office.15).aspx) to understand how to obtain the values below.
-```java
-    // For example if the user name is foo@bar.com, then bar.com is the domain name.
-    String DOMAIN = "Enter the domain for the user name"; 
-    // For example "b1392c0b-a846-2ffb-eb20-1a982f58b936".
-    String CLIENT_ID = "Grab this from the Azure management portal after you register your application";
-    // For example http://bar.com 
-    String REDIRECT_URL = "Grab this from the Azure management portal after you register your application";
-    // For example like foo@bar.com 
-    String USER_HINT = "Enter your login here";
-```
- If you hit a JAR Mismatch issue with the 
- ```android-support-v4.jar``` please replace this jar in the AADAL libs folder with the latest one from the Android SDK  ```<SDK-root>/extras/android/support/v4/```.
- 6. Run the application. User will be asked to enter his account details and all the mails from the drafts folder are retrieved.
+Click on menu at the top-left of the app and select *Preferences*. You will see the second screen that has the list of settings that need to be configured.
 
 
 ## Running Mail-Calendar-Contact e2e Tests ##
