@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+        <PreferenceCategory android:title="AAD Settings" >
+        <EditTextPreference
+            android:name="clientId"
+            android:key="prefAADClientId"
+            android:summary="Enter the client ID"
+            android:title="Client ID" >
+        </EditTextPreference>
+        <EditTextPreference
+            android:name="redirect_url"
+            android:key="prefAADRedirectUrl"
+            android:summary="Enter the Redirect URL"
+            android:title="Redirect URL" >
+        </EditTextPreference>
+         <EditTextPreference
+            android:name="sharepoint_url"
+            android:key="prefSharepointUrl"
+            android:summary="Enter the Redirect URL"
+            android:title="Sharepoint URL" >
+        </EditTextPreference>
+           <EditTextPreference
+            android:name="sharepoint_site"
+            android:key="prefSharepointSite"
+            android:summary="Enter the relative site"
+            android:title="Sharepoint Site" >
+        </EditTextPreference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

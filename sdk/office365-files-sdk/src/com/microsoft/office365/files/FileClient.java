@@ -31,7 +31,6 @@ public class FileClient extends SharepointClient {
 	 * Instantiates a new file API client.
 	 * 
 	 * @param serverUrl
-	 * @param siteUrl
 	 * @param credentials
 	 */
 	public FileClient(String serverUrl, String siteRelativeUrl, Credentials credentials) {
@@ -465,10 +464,6 @@ public class FileClient extends SharepointClient {
 	 * Moves an item from the given sourcePath to the given destinationPath.
 	 * Returns the destination path when succeeds
 	 * 
-	 * @param source
-	 *            Path
-	 * @param destination
-	 *            Path
 	 * @param overwrite
 	 *            flag
 	 * @return OfficeFuture<String>

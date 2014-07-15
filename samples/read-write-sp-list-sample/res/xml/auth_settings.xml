@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <EditTextPreference
+        android:name="sharepointUrl"
+        android:defaultValue=""
+        android:key="prefSharepointUrl"
+        android:summary="Enter your Sharepoint Server URL"
+        android:title="Sharepoint URL" >
+    </EditTextPreference>
+    
+     <EditTextPreference
+        android:name="siteUrl"
+        android:defaultValue=""
+        android:key="prefSiteRelativeUrl"
+        android:summary="Enter site URL"
+        android:title="Relative site URL" >
+    </EditTextPreference>
+    
+    <EditTextPreference
+        android:name="libraryName"
+        android:defaultValue=""
+        android:key="prefLibraryName"
+        android:summary="Enter the name of the library"
+        android:title="Library name" >
+    </EditTextPreference>
+
+    <ListPreference
+        android:defaultValue="NTLM"
+        android:entries="@array/authOptions"
+        android:entryValues="@array/authValues"
+        android:key="listPref"
+        android:summary="Select an authentication method"
+        android:title="Authentication method" />
+
+    <PreferenceScreen
+        android:summary="Configure your NTLM credentials"
+        android:title="NTLM Settings" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.microsoft.readwritelistsample.NTLMSettingsActivity"
+            android:targetPackage="com.microsoft.readwritelistsample" />
+    </PreferenceScreen>
+    
+    <PreferenceScreen
+        android:summary="Configure your AAD credentials"
+        android:title="AAD Settings" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.microsoft.readwritelistsample.AADSettingsActivity"
+            android:targetPackage="com.microsoft.readwritelistsample" />
+    </PreferenceScreen>
+
+    <EditTextPreference
+        android:name="listSize"
+        android:defaultValue="30"
+        android:inputType="number"
+        android:key="prefListSize"
+        android:summary="Default number of items to display"
+        android:title="List items count" >
+    </EditTextPreference>
+
+    <Preference
+        android:key="prefEraseSettings"
+        android:summary="Erase stored cookies"
+        android:title="Erase Cookies" />
+    <Preference>
+    </Preference>
+
+</PreferenceScreen>

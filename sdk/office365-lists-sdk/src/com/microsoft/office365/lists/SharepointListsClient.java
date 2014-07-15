@@ -29,8 +29,6 @@ public class SharepointListsClient extends SharepointClient {
 	/**
 	 * Instantiates a new sharepoint lists client.
 	 * 
-	 * @param siteUrl
-	 *            the site url
 	 * @param credentials
 	 *            the credentials
 	 */
@@ -41,8 +39,6 @@ public class SharepointListsClient extends SharepointClient {
 	/**
 	 * Instantiates a new sharepoint lists client.
 	 * 
-	 * @param siteUrl
-	 *            the site url
 	 * @param credentials
 	 *            the credentials
 	 * @param logger
@@ -306,8 +302,6 @@ public class SharepointListsClient extends SharepointClient {
 	 * 
 	 * @param listItem
 	 *            the list item
-	 * @param list
-	 *            the list
 	 * @return the office future
 	 */
 	public ListenableFuture<Void> deleteListItem(final SPListItem listItem, final String listName) {

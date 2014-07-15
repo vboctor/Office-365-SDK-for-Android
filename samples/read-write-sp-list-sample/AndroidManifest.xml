@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.microsoft.readwritelistsample"
+    android:screenOrientation="portrait"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="com.microsoft.readwritelistsample.AssetApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/contoso_32_agave"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.microsoft.readwritelistsample.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.microsoft.readwritelistsample.AppSettingsActivity"
+            android:label="@string/title_activity_app_settings"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.microsoft.readwritelistsample.AADSettingsActivity"
+            android:label="@string/title_activity_aad_settings"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.microsoft.readwritelistsample.NTLMSettingsActivity"
+            android:label="@string/title_activity_ntml_settings"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.microsoft.readwritelistsample.CarListActivity"
+            android:label="@string/title_activity_sharepoint_lists"
+            android:parentActivityName="com.microsoft.readwritelistsample.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.microsoft.assetmanagement.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.microsoft.readwritelistsample.DisplayCarActivity"
+            android:label="@string/title_activity_display_car"
+            android:parentActivityName="com.microsoft.readwritelistsample.CarListActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.microsoft.assetmanagement.CarListActivity" />
+        </activity>
+        <activity
+            android:name="com.microsoft.readwritelistsample.SharepointListItemActivity"
+            android:label="@string/title_activity_sharepoint_list_item"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.microsoft.adal.AuthenticationActivity"
+            android:label="Authenticate to Azure AD"
+            android:screenOrientation="portrait">
+        </activity>
+    </application>
+
+</manifest>
