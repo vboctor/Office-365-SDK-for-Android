@@ -25,6 +25,7 @@
 bin/
 gen/
 target/
+*guava-16.0.1.jar
 *android-support-v4.jar
 
 # Ignore gradle files
