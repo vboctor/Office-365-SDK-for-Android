@@ -12,6 +12,8 @@ import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -24,7 +26,12 @@ public class OfficeClient {
 
 	Credentials mCredentials;
 	Logger mLogger;
+	Context mContext;
 
+	public OfficeClient(Context context){
+		mContext = context;
+	}
+	
 	public OfficeClient(Credentials credentials) {
 		this(credentials, null);
 	}

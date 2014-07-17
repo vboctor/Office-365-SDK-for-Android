@@ -11,12 +11,10 @@ public class TestClient {
 	public TestClient() {
 
 		mOfficeClient = new OfficeClient(new OAuthCredentials("fooToken"));
-		mMailClient = mOfficeClient.getMailClient();
-
+		mMailClient = mOfficeClient.getMailClient("some value", "some value");
 	}
 
 	public void canCreateMail() {
 		mMailClient.newMessage(DefaultFolder.DRAFTS);
-		mMailClient.Service.flush();
 	}
 }

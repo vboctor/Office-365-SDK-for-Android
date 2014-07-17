@@ -1,5 +1,8 @@
 package com.microsoft.office365.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.microsoft.exchange.services.odata.model.DefaultFolder;
 import com.microsoft.exchange.services.odata.model.Me;
 import com.microsoft.exchange.services.odata.model.Messages;
@@ -7,13 +10,34 @@ import com.microsoft.exchange.services.odata.model.types.IFileAttachment;
 import com.microsoft.exchange.services.odata.model.types.IFolder;
 import com.microsoft.exchange.services.odata.model.types.IItemAttachment;
 import com.microsoft.exchange.services.odata.model.types.IMessage;
+import com.microsoft.exchange.services.odata.model.types.IMessageCollection;
 import com.microsoft.exchange.services.odata.model.types.Recipient;
+import com.microsoft.office.core.Configuration;
+import com.microsoft.office.core.auth.method.IAuthenticator;
+import com.microsoft.office.core.net.NetworkException;
+import com.microsoft.office365.http.OAuthCredentials;
+import com.msopentech.odatajclient.proxy.api.Query;
+import com.msopentech.org.apache.http.client.HttpClient;
+import com.msopentech.org.apache.http.client.methods.HttpUriRequest;
 
 public class MailClient {
 
-	public static Me Service;
+	// TODO: wrap endpoint configuration???
+	public MailClient(final OAuthCredentials credentials, String resourceId, String odataEndpoint) {
 
-	public MailClient() {
+		Configuration.setServerBaseUrl(resourceId + odataEndpoint);
+		Configuration.setAuthenticator(new IAuthenticator() {
+
+			@Override
+			public void prepareClient(HttpClient client) throws NetworkException {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void prepareRequest(HttpUriRequest request) {
+				request.addHeader("Authorization", "Bearer " + credentials.getToken());
+			}
+		});
 	}
 
 	public IMessage newMessage() {
@@ -32,8 +56,7 @@ public class MailClient {
 		if (message == null) {
 			throw new IllegalArgumentException("message cannot be null");
 		}
-
-		//TODO: Flush?
+		// TODO: Flush?
 	}
 
 	public void send(IMessage message) {
@@ -61,7 +84,7 @@ public class MailClient {
 		IMessage message = Me.getMessages().get(messageId);
 		if (message != null) {
 			message.reply(comment);
-			Service.flush();
+			Me.flush();
 		}
 	}
 
@@ -183,4 +206,14 @@ public class MailClient {
 		message.setIsRead(false);
 	}
 
+	public List<IMessage> getMessages(String folderId) { //TODO:Overload with a Query parameter?
+		List<IMessage> messages = null;
+		IFolder folder = Me.getFolders().get(folderId);
+		if (folder != null) {
+			Query<IMessage, IMessageCollection> query = folder.getMessages().createQuery();
+			query.setMaxResults(10); //TODO: 
+			messages = new ArrayList<IMessage>(query.getResult());
+		}
+		return messages;
+	}
 }

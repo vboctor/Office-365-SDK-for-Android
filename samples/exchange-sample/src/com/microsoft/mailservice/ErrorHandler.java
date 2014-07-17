@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class ErrorHandler {
-	
+
 	private static final String UNKNOWN_ERROR = "Unknown error";
 
 	public static void handleError(Throwable e, final Activity activity) {
@@ -21,12 +21,11 @@ public class ErrorHandler {
 				message = UNKNOWN_ERROR;
 			}
 		}
-		
+
 		final String finalMessage = message;
 		Log.e("exchange-sample-error", finalMessage);
-		
+
 		activity.runOnUiThread(new Runnable() {
-			
 			@Override
 			public void run() {
 				Toast.makeText(activity, "Error: " + finalMessage, Toast.LENGTH_LONG).show();

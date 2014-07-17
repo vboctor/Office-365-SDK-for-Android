@@ -1,17 +1,12 @@
 package com.microsoft.office365.api;
 
-import com.microsoft.office.core.Configuration;
-import com.microsoft.office.core.auth.method.IAuthenticator;
-import com.microsoft.office.core.net.NetworkException;
 import com.microsoft.office365.files.FileClient;
 import com.microsoft.office365.http.OAuthCredentials;
 import com.microsoft.office365.lists.SharepointListsClient;
-import com.msopentech.org.apache.http.client.HttpClient;
-import com.msopentech.org.apache.http.client.methods.HttpUriRequest;
 
 public class OfficeClient {
 
-	private OAuthCredentials mCredentials;
+	protected OAuthCredentials mCredentials;
 	private MailClient mMailClient;
 	private FileClient mFileClient;
 
@@ -19,25 +14,8 @@ public class OfficeClient {
 
 	public OfficeClient(OAuthCredentials credentials) {
 		mCredentials = credentials;
-		configureService();
 	}
-
-	private void configureService() {
-		Configuration.setServerBaseUrl("serverBaseUrl");
-		Configuration.setAuthenticator(new IAuthenticator() {
-
-			@Override
-			public void prepareRequest(HttpUriRequest request) {
-				request.addHeader("Authorization", "Bearer " + mCredentials.getToken());
-			}
-
-			@Override
-			public void prepareClient(HttpClient client) throws NetworkException {
-			}
-
-		});
-	}
-
+	
 	public SharepointListsClient createListClient() {
 		mSharepointClient = new SharepointListsClient("some-server", "some-relative", mCredentials);
 		return mSharepointClient;
@@ -48,9 +26,10 @@ public class OfficeClient {
 		return mFileClient;
 	}
 
-	public MailClient getMailClient() {
-		mMailClient = new MailClient();
+	public MailClient getMailClient(String resourceId, String odataEndpoint) {
+		
+		
+		mMailClient = new MailClient(mCredentials, resourceId, odataEndpoint);
 		return mMailClient;
 	}
-
 }

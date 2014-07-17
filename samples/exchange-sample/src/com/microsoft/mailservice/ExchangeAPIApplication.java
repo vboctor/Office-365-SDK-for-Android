@@ -5,6 +5,9 @@
  ******************************************************************************/
 package com.microsoft.mailservice;
 
+import com.microsoft.office365.api.OfficeClient;
+import com.microsoft.office365.http.OAuthCredentials;
+
 import android.app.Activity;
 import android.app.Application;
 import android.preference.PreferenceManager;
@@ -19,7 +22,9 @@ import android.widget.Toast;
  */
 public class ExchangeAPIApplication extends Application {
 
+	private OfficeClient mOfficeClient;
 	private AppPreferences mPreferences;
+	private OAuthCredentials mCredentials;
 
 	/*
 	 * (non-Javadoc)
@@ -34,6 +39,17 @@ public class ExchangeAPIApplication extends Application {
 		Log.d("Asset Management", "onCreate");
 		super.onCreate();
 		mPreferences = new AppPreferences(PreferenceManager.getDefaultSharedPreferences(this));
+	}
+	
+	public void setOauthCredentials(OAuthCredentials credentials){
+		mCredentials = credentials;
+	}
+		
+	public synchronized OfficeClient getClient() {
+		if (mOfficeClient == null) {
+			mOfficeClient = new OfficeClient(mCredentials);
+		}
+		return mOfficeClient;
 	}
 
 	public AppPreferences getAppPreferences() {

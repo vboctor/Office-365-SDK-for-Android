@@ -42,7 +42,6 @@ import com.microsoft.mailservice.tasks.RetrieveFoldersTask;
 import com.microsoft.mailservice.tasks.RetrieveMessagesTask;
 import com.microsoft.mailservice.tasks.RetrieveMoreMessageTask;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MainActivity.
  */
@@ -82,31 +81,28 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 	private void load() {
 		if (mApplication.hasConfiguration()) {
 			Authentication.createEncryptionKey(getApplicationContext());
-			com.microsoft.office.core.Configuration.setServerBaseUrl(Constants.RESOURCE_ID + Constants.ODATA_ENDPOINT);
 			startAuthentication();
 		} else {
 			startActivity(new Intent(this, AppPreferencesActivity.class));
 		}
 	}
 
-
 	private void startAuthentication() {
-		ListenableFuture<Void> authFuture = Authentication.authenticate(this, mAppPreferences);
+		ListenableFuture<Void> authFuture = Authentication.authenticate(this);
 		Futures.addCallback(authFuture, new FutureCallback<Void>() {
 
 			@Override
-			public void onFailure(final Throwable arg0) {
+			public void onFailure(final Throwable t) {
 				runOnUiThread(new Runnable() {
 					public void run() {
-
-						Toast.makeText(MainActivity.this, "Error while getting credentials: " + arg0.getMessage(),
+						Toast.makeText(MainActivity.this, "Error while getting credentials: " + t.getMessage(),
 								Toast.LENGTH_LONG).show();
 					}
 				});
 			}
 
 			@Override
-			public void onSuccess(Void arg0) {
+			public void onSuccess(Void v) {
 				onAuthenticationSuccessfull();
 			}
 		});
@@ -194,7 +190,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 				load();
 				return true;
 			}
-			
+
 			default:
 				if (mDrawerToggle.onOptionsItemSelected(item))
 					return true;
@@ -328,9 +324,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 		mListPrimaryFolderView = (ListView) findViewById(R.id.list_primary_foders);
 		mListSecondaryFolderView = (ListView) findViewById(R.id.list_secondary_foders);
 
-		if (mFolders == null)
+		if (mFolders == null) {
 			getFolderListActivity();
-		else {
+		} else {
 			mListPrimaryFolderView.setAdapter(new FolderItemAdapter(this, mFolders.get("Primary")));
 			mListSecondaryFolderView.setAdapter(new FolderItemAdapter(this, mFolders.get("Secondary")));
 		}
@@ -340,7 +336,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				mLastSelectedFolder = (IFolder) mListPrimaryFolderView.getItemAtPosition(position);
-				retrieveMesages(mLastSelectedFolder.getId());
+				//retrieveMesages(mLastSelectedFolder.getId());
+				
+				retrieveMesages("Inbox");
 			}
 		});
 

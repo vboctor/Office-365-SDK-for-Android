@@ -21,14 +21,11 @@ import com.microsoft.adal.AuthenticationContext;
 import com.microsoft.adal.AuthenticationResult;
 import com.microsoft.adal.AuthenticationSettings;
 import com.microsoft.adal.UserInfo;
-import com.microsoft.office.core.Configuration;
-import com.microsoft.office.core.auth.method.IAuthenticator;
-import com.microsoft.office.core.net.NetworkException;
-import com.msopentech.org.apache.http.client.HttpClient;
-import com.msopentech.org.apache.http.client.methods.HttpUriRequest;
+import com.microsoft.office365.http.OAuthCredentials;
 
 public class Authentication {
 
+	public static AuthenticationContext context = null;
 	private static String mLogedInUser;
 
 	/**
@@ -36,49 +33,45 @@ public class Authentication {
 	 * 
 	 * @param activity
 	 *            the activity
-	 * @param mAppPreferences 
+	 * @param mAppPreferences
 	 * @return
 	 */
-	public static SettableFuture<Void> authenticate(final Activity activity, AppPreferences preferences) {
+	public static SettableFuture<Void> authenticate(final Activity rootActivity) {
 
 		final SettableFuture<Void> result = SettableFuture.create();
-		getAuthenticationContext(activity).acquireToken(activity, 
-				Constants.RESOURCE_ID, 
-				preferences.getClientId(),
-				preferences.getRedirectUrl(), 
-				"", new AuthenticationCallback<AuthenticationResult>() {
+		final ExchangeAPIApplication application = (ExchangeAPIApplication) rootActivity.getApplication();
+		final AppPreferences preferences = application.getAppPreferences();
+
+		getAuthenticationContext(rootActivity).acquireToken(rootActivity, Constants.RESOURCE_ID,
+				preferences.getClientId(), preferences.getRedirectUrl(), "",
+				new AuthenticationCallback<AuthenticationResult>() {
 
 					@Override
 					public void onSuccess(final AuthenticationResult authenticationResult) {
+
 						if (authenticationResult != null && !TextUtils.isEmpty(authenticationResult.getAccessToken())) {
 
-                            Configuration.setAuthenticator(new IAuthenticator() {
-                                @Override
-                                public void prepareRequest(HttpUriRequest request) {
-                                    request.addHeader("Authorization", "Bearer " + authenticationResult.getAccessToken());
-                                }
-
-                                @Override
-                                public void prepareClient(HttpClient client) throws NetworkException {}
-
-                            });
-                            
-                            UserInfo ui = authenticationResult.getUserInfo();
-
-    						SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-    						if (ui != null) {
-
-    							mLogedInUser = ui.getUserId();
-    							SharedPreferences.Editor editor = sharedPref.edit();
-    							editor.putString("UserId", mLogedInUser);
-    							editor.commit();
-
-    						} else {
-    							mLogedInUser = sharedPref.getString("UserId", "");
-    						}
+							OAuthCredentials credentials = new OAuthCredentials(authenticationResult.getAccessToken());
+							application.setOauthCredentials(credentials);
+							storeUserId(rootActivity, authenticationResult);
+							result.set(null);
 						}
+					}
 
-						result.set(null);
+					private void storeUserId(final Activity rootActivity,
+							final AuthenticationResult authenticationResult) {
+
+						UserInfo ui = authenticationResult.getUserInfo();
+						SharedPreferences sharedPref = rootActivity.getPreferences(Context.MODE_PRIVATE);
+
+						if (ui != null) {
+							mLogedInUser = ui.getUserId();
+							SharedPreferences.Editor editor = sharedPref.edit();
+							editor.putString("UserId", mLogedInUser);
+							editor.commit();
+						} else {
+							mLogedInUser = sharedPref.getString("UserId", "");
+						}
 					}
 
 					@Override
@@ -88,8 +81,6 @@ public class Authentication {
 				});
 		return result;
 	}
-
-	public static AuthenticationContext context = null;
 
 	/**
 	 * Gets AuthenticationContext for AAD.
@@ -108,23 +99,12 @@ public class Authentication {
 
 	public static void resetToken(Activity activity) {
 		getAuthenticationContext(activity).getCache().removeAll();
-		Configuration.setAuthenticator(new IAuthenticator() {
-			
-			@Override
-			public void prepareRequest(HttpUriRequest arg0) {
-			}
-			
-			@Override
-			public void prepareClient(HttpClient arg0) throws NetworkException {
-			}
-		});
 	}
 
 	static void createEncryptionKey(Context applicationContext) {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
 
 		if (!preferences.contains(Constants.ENCRYPTION_KEY)) {
-			// generate a random key
 			Random r = new Random();
 			byte[] bytes = new byte[32];
 			r.nextBytes(bytes);
