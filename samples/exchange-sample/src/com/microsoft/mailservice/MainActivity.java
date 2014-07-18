@@ -336,9 +336,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				mLastSelectedFolder = (IFolder) mListPrimaryFolderView.getItemAtPosition(position);
-				//retrieveMesages(mLastSelectedFolder.getId());
-				
-				retrieveMesages("Inbox");
+				retrieveMesages(mLastSelectedFolder.getId());
 			}
 		});
 

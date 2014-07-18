@@ -18,12 +18,14 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.microsoft.exchange.services.odata.model.Me;
 import com.microsoft.exchange.services.odata.model.types.IFolder;
+import com.microsoft.mailservice.Constants;
 import com.microsoft.mailservice.ErrorHandler;
+import com.microsoft.mailservice.ExchangeAPIApplication;
 import com.microsoft.mailservice.MainActivity;
 import com.microsoft.mailservice.R;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
+import com.microsoft.office365.api.MailClient;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,6 +33,8 @@ import com.microsoft.mailservice.adapters.FolderItemAdapter;
  */
 public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, List<IFolder>>> {
 
+	private ExchangeAPIApplication mApplication;
+	
 	/** The m dialog. */
 	private ProgressDialog mDialog;
 
@@ -44,6 +48,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, Lis
 		mActivity = activity;
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
+		mApplication = (ExchangeAPIApplication) mActivity.getApplication();
 	}
 
 	/*
@@ -106,8 +111,10 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, Lis
 		Map<String, List<IFolder>> folders = new HashMap<String, List<IFolder>>();
 		try {
 
-			List<IFolder> auxFolders = new ArrayList<IFolder>(Me.getRootFolder().getChildFolders());
+			MailClient mailClient = mApplication.getClient().getMailClient(Constants.RESOURCE_ID,
+					Constants.ODATA_ENDPOINT);
 
+			List<IFolder> auxFolders = mailClient.getChildFolders();
 			IFolder inbox = null, draft = null, sentItems = null, deletedItems = null;
 
 			folders.put("Primary", new ArrayList<IFolder>());

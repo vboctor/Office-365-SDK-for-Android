@@ -206,12 +206,19 @@ public class MailClient {
 		message.setIsRead(false);
 	}
 
-	public List<IMessage> getMessages(String folderId) { //TODO:Overload with a Query parameter?
+	public List<IFolder> getChildFolders() {
+		List<IFolder> childFolders = new ArrayList<IFolder>(Me.getRootFolder().getChildFolders());
+		return childFolders;
+	}
+
+	public List<IMessage> getMessages(String folderId) { 
+		
+		// TODO:Overload with a query parameter?
 		List<IMessage> messages = null;
 		IFolder folder = Me.getFolders().get(folderId);
 		if (folder != null) {
 			Query<IMessage, IMessageCollection> query = folder.getMessages().createQuery();
-			query.setMaxResults(10); //TODO: 
+			query.setMaxResults(10); // TODO:
 			messages = new ArrayList<IMessage>(query.getResult());
 		}
 		return messages;
