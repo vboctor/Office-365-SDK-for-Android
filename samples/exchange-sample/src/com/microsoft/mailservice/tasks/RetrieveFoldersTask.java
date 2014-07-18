@@ -60,7 +60,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, Lis
 
 		mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		mDialog.setTitle("Retrieving information...");
+		mDialog.setTitle("Retrieving folders...");
 		mDialog.setMessage("Please wait.");
 		mDialog.setCancelable(false);
 		mDialog.setIndeterminate(true);
@@ -111,8 +111,9 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, Lis
 		Map<String, List<IFolder>> folders = new HashMap<String, List<IFolder>>();
 		try {
 
-			MailClient mailClient = mApplication.getClient().getMailClient(Constants.RESOURCE_ID,
-					Constants.ODATA_ENDPOINT);
+			MailClient mailClient = mApplication.getClient()
+												.getMailClient(Constants.RESOURCE_ID, 
+															   Constants.ODATA_ENDPOINT);
 
 			List<IFolder> auxFolders = mailClient.getChildFolders();
 			IFolder inbox = null, draft = null, sentItems = null, deletedItems = null;

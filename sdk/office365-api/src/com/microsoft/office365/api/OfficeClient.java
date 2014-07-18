@@ -27,8 +27,6 @@ public class OfficeClient {
 	}
 
 	public MailClient getMailClient(String resourceId, String odataEndpoint) {
-		
-		
 		mMailClient = new MailClient(mCredentials, resourceId, odataEndpoint);
 		return mMailClient;
 	}

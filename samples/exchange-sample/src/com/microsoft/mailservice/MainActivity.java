@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -316,7 +317,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 	}
 
 	private void getFolderListActivity() {
-		new RetrieveFoldersTask(MainActivity.this).execute();
+		new RetrieveFoldersTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 	}
 
 	private void setListFolderMenu() {
@@ -351,6 +352,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 	}
 
 	public void getMessagesListActivity(final String folder) {
-		new RetrieveMessagesTask(MainActivity.this).execute(folder);
+		new RetrieveMessagesTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, folder);
 	}
 }
