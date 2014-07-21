@@ -93,8 +93,9 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<IMessage>
 		List<IMessage> messages = null;
 		mFolderId = args[0];
 		try {
-			MailClient mailClient = mApplication.getClient().getMailClient(Constants.RESOURCE_ID,
-					Constants.ODATA_ENDPOINT);
+			MailClient mailClient = mApplication.getClient()
+												.getMailClient(Constants.RESOURCE_ID,
+															   Constants.ODATA_ENDPOINT);
 			messages = mailClient.getMessages(mFolderId);
 			return messages;
 		} catch (Exception e) {

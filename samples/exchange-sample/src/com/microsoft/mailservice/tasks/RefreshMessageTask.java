@@ -5,7 +5,6 @@
  ******************************************************************************/
 package com.microsoft.mailservice.tasks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -14,19 +13,20 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 
-import com.microsoft.exchange.services.odata.model.Me;
-import com.microsoft.exchange.services.odata.model.types.IFolder;
 import com.microsoft.exchange.services.odata.model.types.IMessage;
-import com.microsoft.exchange.services.odata.model.types.IMessageCollection;
 import com.microsoft.mailservice.Constants;
 import com.microsoft.mailservice.ErrorHandler;
+import com.microsoft.mailservice.ExchangeAPIApplication;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
-import com.msopentech.odatajclient.proxy.api.Query;
+import com.microsoft.office365.api.MailClient;
 
+//TODO:Review. This looks so familiar to retrieve messages
 public class RefreshMessageTask extends AsyncTask<String, Void, List<IMessage>> {
 
 	private Activity mActivity;
 	private MessageItemAdapter mAdapter;
+	private ExchangeAPIApplication mApplication;
+
 	SwipeRefreshLayout mSwipeRefreshLayout;
 
 	/** The m dialog. */
@@ -40,6 +40,7 @@ public class RefreshMessageTask extends AsyncTask<String, Void, List<IMessage>> 
 		mContext = mActivity;
 		mAdapter = adpater;
 		mSwipeRefreshLayout = swipeRefreshLayout;
+		mApplication = (ExchangeAPIApplication) activity.getApplication();
 		mDialog = new ProgressDialog(mContext);
 	}
 
@@ -77,13 +78,10 @@ public class RefreshMessageTask extends AsyncTask<String, Void, List<IMessage>> 
 		String folderId = args[0];
 
 		try {
-			IFolder folder = Me.getFolders().get(folderId);
-			if (folder != null) {
-				Query<IMessage, IMessageCollection> query = folder.getMessages().createQuery();
-				query.setMaxResults(Constants.TOP_VALUE);
-				messages = new ArrayList<IMessage>(query.getResult());
-			}
-			return messages;
+			MailClient mailClient = mApplication.getClient()
+												.getMailClient(Constants.RESOURCE_ID,
+														Constants.ODATA_ENDPOINT);
+			messages = mailClient.getMessages(folderId);
 		} catch (Exception e) {
 			ErrorHandler.handleError(e, mActivity);
 		}

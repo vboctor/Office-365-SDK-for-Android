@@ -211,8 +211,18 @@ public class MailClient {
 		return childFolders;
 	}
 
-	public List<IMessage> getMessages(String folderId) { 
+	public List<IMessage> getMessages(String folderId, int from, int max) {
+
+		Query<IMessage, IMessageCollection> query = Me.getFolders().get(folderId).getMessages().createQuery();
+		query.setMaxResults(max);
+		query.setFirstResult(from);
 		
+		List<IMessage> messages  = new ArrayList<IMessage>(query.getResult());
+		return messages;
+	}
+
+	public List<IMessage> getMessages(String folderId) {
+
 		// TODO:Overload with a query parameter?
 		List<IMessage> messages = null;
 		IFolder folder = Me.getFolders().get(folderId);

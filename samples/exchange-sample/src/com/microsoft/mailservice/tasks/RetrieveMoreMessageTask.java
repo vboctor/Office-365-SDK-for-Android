@@ -14,18 +14,18 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 
-import com.microsoft.exchange.services.odata.model.Me;
 import com.microsoft.exchange.services.odata.model.types.IMessage;
-import com.microsoft.exchange.services.odata.model.types.IMessageCollection;
 import com.microsoft.mailservice.Constants;
 import com.microsoft.mailservice.ErrorHandler;
+import com.microsoft.mailservice.ExchangeAPIApplication;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
-import com.msopentech.odatajclient.proxy.api.Query;
+import com.microsoft.office365.api.MailClient;
 
 public class RetrieveMoreMessageTask extends AsyncTask<String, Void, List<IMessage>> {
 
 	Activity mActivity;
 	MessageItemAdapter mAdapter;
+	ExchangeAPIApplication mApplication;
 
 	/** The m dialog. */
 	private ProgressDialog mDialog;
@@ -36,7 +36,7 @@ public class RetrieveMoreMessageTask extends AsyncTask<String, Void, List<IMessa
 	public RetrieveMoreMessageTask(Activity activity, MessageItemAdapter adapter) {
 		mActivity = activity;
 		mAdapter = adapter;
-
+		mApplication = (ExchangeAPIApplication) mActivity.getApplication();
 		mContext = activity;
 		mDialog = new ProgressDialog(mContext);
 	}
@@ -69,11 +69,14 @@ public class RetrieveMoreMessageTask extends AsyncTask<String, Void, List<IMessa
 		List<IMessage> messages = new ArrayList<IMessage>();
 
 		try {
+
 			String folderId = args[1];
-			Query<IMessage, IMessageCollection> query = Me.getFolders().get(folderId).getMessages().createQuery();
-			query.setMaxResults(Constants.TOP_VALUE);
-			query.setFirstResult(Integer.parseInt(args[0]));
-			messages = new ArrayList<IMessage>(query.getResult());
+			int first = Integer.parseInt(args[0]);
+			MailClient mailClient = mApplication.getClient()
+												.getMailClient(Constants.RESOURCE_ID,
+															   Constants.ODATA_ENDPOINT);
+	
+			messages = mailClient.getMessages(folderId, first, Constants.TOP_VALUE);
 		} catch (Exception e) {
 			ErrorHandler.handleError(e, mActivity);
 		}
