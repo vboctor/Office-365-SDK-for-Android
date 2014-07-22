@@ -5,6 +5,7 @@
  ******************************************************************************/
 package com.microsoft.mailservice;
 
+import com.microsoft.office365.api.ContactClient;
 import com.microsoft.office365.api.OfficeClient;
 import com.microsoft.office365.http.OAuthCredentials;
 
@@ -25,6 +26,8 @@ public class ExchangeAPIApplication extends Application {
 	private OfficeClient mOfficeClient;
 	private AppPreferences mPreferences;
 	private OAuthCredentials mCredentials;
+	
+	private ContactClient mContactClient;
 
 	/*
 	 * (non-Javadoc)
@@ -51,7 +54,16 @@ public class ExchangeAPIApplication extends Application {
 		}
 		return mOfficeClient;
 	}
-
+	
+	public ContactClient getContactClient()
+	{
+		return new ContactClient.Builder()
+								.setCredentials(mCredentials)
+								.setOdataEndpoint(Constants.ODATA_ENDPOINT)
+								.setResourceId(Constants.RESOURCE_ID)
+								.build();
+	}
+	
 	public AppPreferences getAppPreferences() {
 		return mPreferences;
 	}
