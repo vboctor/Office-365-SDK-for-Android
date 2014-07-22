@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.microsoft.exchange.services.odata.model.types.IFolder;
-import com.microsoft.mailservice.Constants;
 import com.microsoft.mailservice.ErrorHandler;
 import com.microsoft.mailservice.ExchangeAPIApplication;
 import com.microsoft.mailservice.MainActivity;
@@ -111,10 +110,7 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, Lis
 		Map<String, List<IFolder>> folders = new HashMap<String, List<IFolder>>();
 		try {
 
-			MailClient mailClient = mApplication.getClient()
-												.getMailClient(Constants.RESOURCE_ID, 
-															   Constants.ODATA_ENDPOINT);
-
+			MailClient mailClient = mApplication.getMailClient();											
 			List<IFolder> auxFolders = mailClient.getChildFolders();
 			IFolder inbox = null, draft = null, sentItems = null, deletedItems = null;
 

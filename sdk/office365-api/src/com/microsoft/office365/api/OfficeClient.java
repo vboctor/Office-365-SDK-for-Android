@@ -7,7 +7,6 @@ import com.microsoft.office365.lists.SharepointListsClient;
 public class OfficeClient {
 
 	protected OAuthCredentials mCredentials;
-	private MailClient mMailClient;
 	private FileClient mFileClient;
 
 	private SharepointListsClient mSharepointClient;
@@ -26,8 +25,10 @@ public class OfficeClient {
 		return mFileClient;
 	}
 
+	/*
 	public MailClient getMailClient(String resourceId, String odataEndpoint) {
 		mMailClient = new MailClient(mCredentials, resourceId, odataEndpoint);
 		return mMailClient;
 	}
+	*/
 }

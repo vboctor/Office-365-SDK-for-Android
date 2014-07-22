@@ -12,32 +12,16 @@ import com.microsoft.exchange.services.odata.model.types.IItemAttachment;
 import com.microsoft.exchange.services.odata.model.types.IMessage;
 import com.microsoft.exchange.services.odata.model.types.IMessageCollection;
 import com.microsoft.exchange.services.odata.model.types.Recipient;
-import com.microsoft.office.core.Configuration;
-import com.microsoft.office.core.auth.method.IAuthenticator;
-import com.microsoft.office.core.net.NetworkException;
 import com.microsoft.office365.http.OAuthCredentials;
 import com.msopentech.odatajclient.proxy.api.Query;
-import com.msopentech.org.apache.http.client.HttpClient;
-import com.msopentech.org.apache.http.client.methods.HttpUriRequest;
 
-public class MailClient {
+public class MailClient extends AbstractOfficeClient {
 
-	// TODO: wrap endpoint configuration???
-	public MailClient(final OAuthCredentials credentials, String resourceId, String odataEndpoint) {
+	Builder mBuilder;
 
-		Configuration.setServerBaseUrl(resourceId + odataEndpoint);
-		Configuration.setAuthenticator(new IAuthenticator() {
-
-			@Override
-			public void prepareClient(HttpClient client) throws NetworkException {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void prepareRequest(HttpUriRequest request) {
-				request.addHeader("Authorization", "Bearer " + credentials.getToken());
-			}
-		});
+	protected MailClient(MailClient.Builder builder) {
+		super(builder);
+		mBuilder = builder;
 	}
 
 	public IMessage newMessage() {
@@ -122,20 +106,6 @@ public class MailClient {
 
 	}
 
-	// public IMessage insertAttachment(IMessage message, IAttachment
-	// attachment) {
-	//
-	// if (message == null) {
-	// throw new IllegalArgumentException("message cannot be null");
-	// }
-	//
-	// if (attachment == null) {
-	// throw new IllegalArgumentException("attachment cannot be null");
-	// }
-	//
-	// return null;
-	// }
-
 	public IFileAttachment createFileAttachment(IMessage message) {
 
 		if (message == null) {
@@ -211,26 +181,67 @@ public class MailClient {
 		return childFolders;
 	}
 
-	public List<IMessage> getMessages(String folderId, int from, int max) {
+	public List<IMessage> getMessages(String folderId, int from) {
 
 		Query<IMessage, IMessageCollection> query = Me.getFolders().get(folderId).getMessages().createQuery();
-		query.setMaxResults(max);
+		query.setMaxResults(mBuilder.getMaxRsults());
 		query.setFirstResult(from);
-		
-		List<IMessage> messages  = new ArrayList<IMessage>(query.getResult());
+
+		List<IMessage> messages = new ArrayList<IMessage>(query.getResult());
 		return messages;
 	}
 
 	public List<IMessage> getMessages(String folderId) {
 
-		// TODO:Overload with a query parameter?
 		List<IMessage> messages = null;
 		IFolder folder = Me.getFolders().get(folderId);
 		if (folder != null) {
 			Query<IMessage, IMessageCollection> query = folder.getMessages().createQuery();
-			query.setMaxResults(10); // TODO:
+			query.setMaxResults(mBuilder.getMaxRsults());
 			messages = new ArrayList<IMessage>(query.getResult());
 		}
 		return messages;
+	}
+
+	public static final class Builder extends AbstractOfficeClient.Builder {
+
+		private int mMaxResults;
+
+		public Builder() {
+			super();
+		}
+
+		public Builder(OAuthCredentials credentials, String resourceId, String odataEndpoint) {
+			super(credentials, resourceId, odataEndpoint);
+		}
+
+		@Override
+		public MailClient build() {
+			return new MailClient(this);
+		}
+
+		@Override
+		public Builder setCredentials(OAuthCredentials credentials) {
+			return (Builder) super.setCredentials(credentials);
+		}
+
+		@Override
+		public Builder setOdataEndpoint(String odataEndpoint) {
+			return (Builder) super.setOdataEndpoint(odataEndpoint);
+		}
+
+		@Override
+		public Builder setResourceId(String resourceId) {
+			return (Builder) super.setResourceId(resourceId);
+		}
+
+		public Builder setMaxResults(int maxResults) {
+			mMaxResults = maxResults;
+			return this;
+		}
+
+		public int getMaxRsults() {
+			return mMaxResults;
+		}
 	}
 }

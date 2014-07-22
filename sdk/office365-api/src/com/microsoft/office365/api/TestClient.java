@@ -18,7 +18,11 @@ public class TestClient {
 		OAuthCredentials credentials = new OAuthCredentials("foobar");
 		
 		mOfficeClient = new OfficeClient(new OAuthCredentials("fooToken"));
-		mMailClient = mOfficeClient.getMailClient("some value", "some value");
+		
+		mMailClient = new MailClient.Builder()
+									.setCredentials(credentials)
+							        .setOdataEndpoint("foo")
+							        .setResourceId("bar").build();
 		
 		Builder builder = new ContactClient.Builder()
 											.setCredentials(credentials)

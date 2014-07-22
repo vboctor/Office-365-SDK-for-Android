@@ -14,7 +14,6 @@ import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.microsoft.exchange.services.odata.model.types.IMessage;
-import com.microsoft.mailservice.Constants;
 import com.microsoft.mailservice.ErrorHandler;
 import com.microsoft.mailservice.ExchangeAPIApplication;
 import com.microsoft.mailservice.adapters.MessageItemAdapter;
@@ -78,9 +77,7 @@ public class RefreshMessageTask extends AsyncTask<String, Void, List<IMessage>> 
 		String folderId = args[0];
 
 		try {
-			MailClient mailClient = mApplication.getClient()
-												.getMailClient(Constants.RESOURCE_ID,
-														Constants.ODATA_ENDPOINT);
+			MailClient mailClient = mApplication.getMailClient();
 			messages = mailClient.getMessages(folderId);
 		} catch (Exception e) {
 			ErrorHandler.handleError(e, mActivity);

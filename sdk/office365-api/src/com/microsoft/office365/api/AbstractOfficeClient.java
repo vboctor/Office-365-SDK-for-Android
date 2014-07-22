@@ -11,7 +11,7 @@ public abstract class AbstractOfficeClient {
 
 	private final String odataEndpoint;
 	private final String resourceId;
-
+	
 	protected AbstractOfficeClient(Builder builder) {
 
 		odataEndpoint = builder.getOdataEndpoint();

@@ -14,7 +14,6 @@ import android.os.AsyncTask;
 import android.widget.ListView;
 
 import com.microsoft.exchange.services.odata.model.types.IMessage;
-import com.microsoft.mailservice.Constants;
 import com.microsoft.mailservice.ErrorHandler;
 import com.microsoft.mailservice.ExchangeAPIApplication;
 import com.microsoft.mailservice.MainActivity;
@@ -93,9 +92,7 @@ public class RetrieveMessagesTask extends AsyncTask<String, Void, List<IMessage>
 		List<IMessage> messages = null;
 		mFolderId = args[0];
 		try {
-			MailClient mailClient = mApplication.getClient()
-												.getMailClient(Constants.RESOURCE_ID,
-															   Constants.ODATA_ENDPOINT);
+			MailClient mailClient = mApplication.getMailClient();
 			messages = mailClient.getMessages(mFolderId);
 			return messages;
 		} catch (Exception e) {

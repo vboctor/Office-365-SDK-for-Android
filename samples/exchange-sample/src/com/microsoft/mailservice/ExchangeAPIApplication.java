@@ -5,10 +5,6 @@
  ******************************************************************************/
 package com.microsoft.mailservice;
 
-import com.microsoft.office365.api.ContactClient;
-import com.microsoft.office365.api.OfficeClient;
-import com.microsoft.office365.http.OAuthCredentials;
-
 import android.app.Activity;
 import android.app.Application;
 import android.preference.PreferenceManager;
@@ -17,17 +13,18 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
+import com.microsoft.office365.api.ContactClient;
+import com.microsoft.office365.api.MailClient;
+import com.microsoft.office365.http.OAuthCredentials;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class ExchangeAPIApplication.
  */
 public class ExchangeAPIApplication extends Application {
 
-	private OfficeClient mOfficeClient;
 	private AppPreferences mPreferences;
 	private OAuthCredentials mCredentials;
-	
-	private ContactClient mContactClient;
 
 	/*
 	 * (non-Javadoc)
@@ -48,13 +45,6 @@ public class ExchangeAPIApplication extends Application {
 		mCredentials = credentials;
 	}
 		
-	public synchronized OfficeClient getClient() {
-		if (mOfficeClient == null) {
-			mOfficeClient = new OfficeClient(mCredentials);
-		}
-		return mOfficeClient;
-	}
-	
 	public ContactClient getContactClient()
 	{
 		return new ContactClient.Builder()
@@ -62,6 +52,16 @@ public class ExchangeAPIApplication extends Application {
 								.setOdataEndpoint(Constants.ODATA_ENDPOINT)
 								.setResourceId(Constants.RESOURCE_ID)
 								.build();
+	}
+	
+	public MailClient getMailClient()
+	{
+		return new MailClient.Builder()
+							 .setCredentials(mCredentials)
+							 .setOdataEndpoint(Constants.ODATA_ENDPOINT)
+						  	 .setResourceId(Constants.RESOURCE_ID)
+							 .setMaxResults(Constants.TOP_VALUE)
+							 .build();
 	}
 	
 	public AppPreferences getAppPreferences() {
