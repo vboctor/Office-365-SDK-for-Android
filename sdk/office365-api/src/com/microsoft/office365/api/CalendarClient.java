@@ -4,9 +4,18 @@ import com.microsoft.exchange.services.odata.model.Events;
 import com.microsoft.exchange.services.odata.model.ICalendars;
 import com.microsoft.exchange.services.odata.model.IEvents;
 import com.microsoft.exchange.services.odata.model.Me;
-import com.microsoft.exchange.services.odata.model.types.*;
+import com.microsoft.exchange.services.odata.model.types.ICalendar;
+import com.microsoft.exchange.services.odata.model.types.IEvent;
 
-public class CalendarClient {
+public class CalendarClient extends BaseOfficeClient {
+	
+	Builder mBuilder;
+
+	protected CalendarClient(Builder builder) {
+		super(builder);
+		
+		mBuilder = builder;
+	}
 
 	public IEvent newEvent(ICalendar calendar) {
 

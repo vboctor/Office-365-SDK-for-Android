@@ -10,9 +10,9 @@ import com.microsoft.exchange.services.odata.model.types.IContactCollection;
 import com.microsoft.office365.http.OAuthCredentials;
 import com.msopentech.odatajclient.proxy.api.Query;
 
-public class ContactClient extends AbstractOfficeClient {
+public class ContactClient extends BaseOfficeClient {
 
-	protected ContactClient(AbstractOfficeClient.Builder builder) {
+	protected ContactClient(BaseOfficeClient.Builder builder) {
 		super(builder);
 	}
 
@@ -31,7 +31,7 @@ public class ContactClient extends AbstractOfficeClient {
 		return contacts;
 	}
 
-	public static final class Builder extends AbstractOfficeClient.Builder {
+	public static final class Builder extends BaseOfficeClient.Builder {
 
 		public Builder() {
 			super();

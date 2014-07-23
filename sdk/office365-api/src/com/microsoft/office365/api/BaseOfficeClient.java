@@ -7,12 +7,12 @@ import com.microsoft.office365.http.OAuthCredentials;
 import com.msopentech.org.apache.http.client.HttpClient;
 import com.msopentech.org.apache.http.client.methods.HttpUriRequest;
 
-public abstract class AbstractOfficeClient {
+public abstract class BaseOfficeClient {
 
 	private final String odataEndpoint;
 	private final String resourceId;
 	
-	protected AbstractOfficeClient(Builder builder) {
+	protected BaseOfficeClient(Builder builder) {
 
 		odataEndpoint = builder.getOdataEndpoint();
 		resourceId = builder.getResourceId();
@@ -57,7 +57,7 @@ public abstract class AbstractOfficeClient {
 		public Builder() {
 		}
 
-		public abstract AbstractOfficeClient build();
+		public abstract BaseOfficeClient build();
 
 		public Builder setResourceId(String resourceId) {
 			mResourceId = resourceId;

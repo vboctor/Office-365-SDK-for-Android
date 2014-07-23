@@ -15,7 +15,7 @@ import com.microsoft.exchange.services.odata.model.types.Recipient;
 import com.microsoft.office365.http.OAuthCredentials;
 import com.msopentech.odatajclient.proxy.api.Query;
 
-public class MailClient extends AbstractOfficeClient {
+public class MailClient extends BaseOfficeClient {
 
 	Builder mBuilder;
 
@@ -203,7 +203,7 @@ public class MailClient extends AbstractOfficeClient {
 		return messages;
 	}
 
-	public static final class Builder extends AbstractOfficeClient.Builder {
+	public static final class Builder extends BaseOfficeClient.Builder {
 
 		private int mMaxResults;
 
