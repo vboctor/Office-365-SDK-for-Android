@@ -30,7 +30,7 @@ public class MailClient extends BaseOfficeClient {
 	/**
 	 * New message.
 	 *
-	 * @return the i message
+	 * @return the message
 	 */
 	public IMessage newMessage() {
 		IMessage message = Messages.newMessage();
@@ -41,7 +41,7 @@ public class MailClient extends BaseOfficeClient {
 	 * New message.
 	 *
 	 * @param defaultFolder the default folder
-	 * @return the i message
+	 * @return the message
 	 */
 	public IMessage newMessage(DefaultFolder defaultFolder) {
 		IMessage message = Messages.newMessage(defaultFolder);
@@ -78,7 +78,7 @@ public class MailClient extends BaseOfficeClient {
 	 * Creates the reply.
 	 *
 	 * @param message the message
-	 * @return the i message
+	 * @return the message
 	 */
 	public IMessage createReply(IMessage message) {
 
@@ -94,7 +94,7 @@ public class MailClient extends BaseOfficeClient {
 	 * Creates the reply all.
 	 *
 	 * @param message the message
-	 * @return the i message
+	 * @return the message
 	 */
 	public IMessage createReplyAll(IMessage message) {
 		return null;

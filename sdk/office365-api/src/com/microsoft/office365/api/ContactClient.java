@@ -10,7 +10,6 @@ import com.microsoft.exchange.services.odata.model.types.IContactCollection;
 import com.microsoft.office365.http.OAuthCredentials;
 import com.msopentech.odatajclient.proxy.api.Query;
 
-// TODO: Auto-generated Javadocd
 /**
  * The Class ContactClient.
  */
@@ -23,7 +22,7 @@ public class ContactClient extends BaseOfficeClient {
 	/**
 	 * New contact.
 	 *
-	 * @return the i contact
+	 * @return the contact
 	 */
 	public IContact newContact(){
 		return Me.getContacts().newContact();
