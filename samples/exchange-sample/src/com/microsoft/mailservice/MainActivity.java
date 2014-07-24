@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+
 import com.microsoft.exchange.services.odata.model.types.IFolder;
 import com.microsoft.exchange.services.odata.model.types.IMessage;
 import com.microsoft.mailservice.adapters.FolderItemAdapter;
@@ -110,7 +111,33 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 	}
 
 	protected void onAuthenticationSuccessfull() {
-		setListFolderMenu();
+		mListPrimaryFolderView = (ListView) findViewById(R.id.list_primary_foders);
+		mListSecondaryFolderView = (ListView) findViewById(R.id.list_secondary_foders);
+
+		if (mFolders == null) {
+			new RetrieveFoldersTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		} else {
+			mListPrimaryFolderView.setAdapter(new FolderItemAdapter(this, mFolders.get("Primary")));
+			mListSecondaryFolderView.setAdapter(new FolderItemAdapter(this, mFolders.get("Secondary")));
+		}
+
+		mListPrimaryFolderView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				mLastSelectedFolder = (IFolder) mListPrimaryFolderView.getItemAtPosition(position);
+				retrieveMesages(mLastSelectedFolder.getId());
+			}
+		});
+
+		mListSecondaryFolderView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				mLastSelectedFolder = (IFolder) mListSecondaryFolderView.getItemAtPosition(position);
+				retrieveMesages(mLastSelectedFolder.getId());
+			}
+		});
 	}
 
 	private void initialize() {
@@ -278,9 +305,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 	public void retrieveMesages(String folder) {
 
-		if (!mMessages.containsKey(folder))
-			getMessagesListActivity(folder);
-		else {
+		if (!mMessages.containsKey(folder)) {
+			new RetrieveMessagesTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, folder);
+		} else {
 			mMailListView.setAdapter(new MessageItemAdapter(this, mMessages.get(folder)));
 		}
 
@@ -314,44 +341,5 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 		};
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-	}
-
-	private void getFolderListActivity() {
-		new RetrieveFoldersTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-	}
-
-	private void setListFolderMenu() {
-
-		mListPrimaryFolderView = (ListView) findViewById(R.id.list_primary_foders);
-		mListSecondaryFolderView = (ListView) findViewById(R.id.list_secondary_foders);
-
-		if (mFolders == null) {
-			getFolderListActivity();
-		} else {
-			mListPrimaryFolderView.setAdapter(new FolderItemAdapter(this, mFolders.get("Primary")));
-			mListSecondaryFolderView.setAdapter(new FolderItemAdapter(this, mFolders.get("Secondary")));
-		}
-
-		mListPrimaryFolderView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-				mLastSelectedFolder = (IFolder) mListPrimaryFolderView.getItemAtPosition(position);
-				retrieveMesages(mLastSelectedFolder.getId());
-			}
-		});
-
-		mListSecondaryFolderView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-				mLastSelectedFolder = (IFolder) mListSecondaryFolderView.getItemAtPosition(position);
-				retrieveMesages(mLastSelectedFolder.getId());
-			}
-		});
-	}
-
-	public void getMessagesListActivity(final String folder) {
-		new RetrieveMessagesTask(MainActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, folder);
 	}
 }

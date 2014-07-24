@@ -110,7 +110,8 @@ public class RetrieveFoldersTask extends AsyncTask<String, Void, Map<String, Lis
 		Map<String, List<IFolder>> folders = new HashMap<String, List<IFolder>>();
 		try {
 
-			MailClient mailClient = mApplication.getMailClient();											
+			MailClient mailClient = mApplication.getMailClient();	
+			
 			List<IFolder> auxFolders = mailClient.getChildFolders();
 			IFolder inbox = null, draft = null, sentItems = null, deletedItems = null;
 

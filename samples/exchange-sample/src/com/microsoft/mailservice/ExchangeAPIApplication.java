@@ -13,6 +13,7 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
+import com.microsoft.office365.api.CalendarClient;
 import com.microsoft.office365.api.ContactClient;
 import com.microsoft.office365.api.MailClient;
 import com.microsoft.office365.http.OAuthCredentials;
@@ -44,6 +45,14 @@ public class ExchangeAPIApplication extends Application {
 	public void setOauthCredentials(OAuthCredentials credentials){
 		mCredentials = credentials;
 	}
+	
+	public CalendarClient getCalendarClient(){
+		
+		return new CalendarClient.Builder()						
+								   .setCredentials(mCredentials)
+								   .setOdataEndpoint(Constants.ODATA_ENDPOINT)
+								   .setResourceId(Constants.RESOURCE_ID)
+								   .build();	}
 		
 	public ContactClient getContactClient()
 	{
