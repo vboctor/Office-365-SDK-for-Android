@@ -20,6 +20,9 @@ public class TestClient {
 	 */
 	public TestClient() {
 
+		MailClient mMailClient;
+		ContactClient mContactClient;
+		
 		OAuthCredentials credentials = new OAuthCredentials("foobar");
 		
 		mMailClient = new MailClient.Builder()

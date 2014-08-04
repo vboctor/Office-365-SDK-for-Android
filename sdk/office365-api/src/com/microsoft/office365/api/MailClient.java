@@ -85,8 +85,8 @@ public class MailClient extends BaseOfficeClient {
 		if (message == null) {
 			throw new IllegalArgumentException("message cannot be null");
 		}
-		message.createReply();
-		return message;
+		IMessage replyMessage = message.createReply();
+		return replyMessage;
 	}
 
 	// TODO:Is this one necessary or createReply is enough??
@@ -211,12 +211,13 @@ public class MailClient extends BaseOfficeClient {
 	 * @param message the message
 	 * @param destinationFolder the destination folder
 	 */
-	public void move(IMessage message, String destinationFolder) {
+	public IMessage move(IMessage message, String destinationFolder) {
 		IFolder folder = Me.getFolders().get(destinationFolder);
 
 		if (folder != null) {
-			message.move(folder.getId());
+			return message.move(folder.getId());
 		}
+		return null;
 	}
 
 	/**
@@ -225,7 +226,7 @@ public class MailClient extends BaseOfficeClient {
 	 * @param message the message
 	 * @param destinationFolder the destination folder
 	 */
-	public void move(IMessage message, IFolder destinationFolder) {
+	public IMessage move(IMessage message, IFolder destinationFolder) {
 
 		if (message == null) {
 			throw new IllegalArgumentException("message cannot be null");
@@ -235,7 +236,7 @@ public class MailClient extends BaseOfficeClient {
 			throw new IllegalArgumentException("destinationFolder cannot be null");
 		}
 
-		message.move(destinationFolder.getId());
+		return message.move(destinationFolder.getId());
 	}
 
 	/**
