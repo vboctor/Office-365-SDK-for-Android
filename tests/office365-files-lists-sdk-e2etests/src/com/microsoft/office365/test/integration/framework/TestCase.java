@@ -33,15 +33,24 @@ public abstract class TestCase {
 
 	private boolean mEnabled;
 
+	private boolean mSelected;
+	
 	private TestStatus mStatus;
 
 	private StringBuilder mTestLog;
+	
+	private boolean mCanRunAuto;
 
 	public TestCase(String name) {
+		this(name, true);
+	}
+	
+	public TestCase(String name, boolean canRunAuto){
 		mEnabled = false;
 		mStatus = TestStatus.NotRun;
 		mTestLog = new StringBuilder();
 		mName = name;
+		mCanRunAuto = canRunAuto;
 	}
 
 	public TestCase() {
@@ -62,7 +71,7 @@ public abstract class TestCase {
 	}
 
 	public TestStatus getStatus() {
-		return mStatus;
+		return mEnabled ? mStatus : TestStatus.Disabled;
 	}
 
 	public void setStatus(TestStatus status) {
@@ -77,6 +86,14 @@ public abstract class TestCase {
 		mEnabled = enabled;
 	}
 
+	public boolean isSelected() {
+		return mSelected;
+	}
+
+	public void setSelected(boolean selected) {
+		mSelected = selected;
+	}
+	
 	public void run(TestExecutionCallback callback) {
 		try {
 			if (callback != null)
@@ -147,5 +164,13 @@ public abstract class TestCase {
 
 	public Class<?> getExpectedExceptionClass() {
 		return mExpectedExceptionClass;
+	}
+	
+	public boolean CanRunAutomatically(){
+		return mCanRunAuto;
+	}
+	
+	public void setRunsAutomatically(boolean canRun){
+		mCanRunAuto = canRun;
 	}
 }

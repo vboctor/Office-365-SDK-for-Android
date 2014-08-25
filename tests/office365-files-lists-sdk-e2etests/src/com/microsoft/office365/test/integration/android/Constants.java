@@ -23,6 +23,7 @@ public class Constants {
 	public static final String PREFERENCE_SHAREPOINT_URL = "prefSharepointUrl";
 	public static final String PREFERENCE_SITE_URL = "prefSiteRelativeUrl";
 	public static final String PREFERENCE_LIST_NAME = "prefListName";
+	public static final String PREFERENCE_DOCUMENT_LIST_NAME = "prefDocumentListName";
 	public static final String PREFERENCE_LOG_POST_URL = "pref_log_post_url";
 	public static final String TAG = "Sharepoint-SDK Integration-Test";
 	public static final String PREFERENCE_AUTHENTICATION_METHOD = "prefAuthenticationMethod";

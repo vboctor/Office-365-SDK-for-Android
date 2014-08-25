@@ -74,7 +74,12 @@ public class AndroidTestPlatformContext implements TestPlatformContext {
 	public String getTestListName() {
 		return PreferenceManager.getDefaultSharedPreferences(mActivity).getString(Constants.PREFERENCE_LIST_NAME, "");
 	}
-
+	
+	@Override
+	public String getTestDocumentListName() {
+		return PreferenceManager.getDefaultSharedPreferences(mActivity).getString(Constants.PREFERENCE_DOCUMENT_LIST_NAME, "");
+	}
+	
 	@Override
 	public String getSiteRelativeUrl() {
 		return PreferenceManager.getDefaultSharedPreferences(mActivity).getString(Constants.PREFERENCE_SITE_URL, "");
