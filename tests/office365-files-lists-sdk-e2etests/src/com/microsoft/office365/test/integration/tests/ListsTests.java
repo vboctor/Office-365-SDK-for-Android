@@ -40,16 +40,16 @@ public class ListsTests extends TestGroup {
 	public ListsTests() {
 		super("Sharepoint Lists tests");
 
-		this.addTest(createWebTitleTest("Get Web Title"));
-		this.addTest(createGetListsTest("Get site lists"));
-		this.addTest(createGetListTest("Get single list"));
-		this.addTest(createRoundtripListItemTest("Insert, update, delete list item"));
-		this.addTest(createColumnsForDefaultViewTest("Columns for default view"));
-		this.addTest(createListFieldsTest("All list fields"));
+		this.addTest(createWebTitleTest("Get Web Title", true));
+		this.addTest(createGetListsTest("Get site lists", true));
+		this.addTest(createGetListTest("Get single list", true));
+		this.addTest(createRoundtripListItemTest("Insert, update, delete list item", true));
+		this.addTest(createColumnsForDefaultViewTest("Columns for default view", true));
+		this.addTest(createListFieldsTest("All list fields", true));
 
 	}
 
-	private TestCase createListFieldsTest(String name) {
+	private TestCase createListFieldsTest(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -77,11 +77,11 @@ public class ListsTests extends TestGroup {
 		};
 
 		test.setName(name);
-
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase createColumnsForDefaultViewTest(String name) {
+	private TestCase createColumnsForDefaultViewTest(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -109,11 +109,11 @@ public class ListsTests extends TestGroup {
 		};
 
 		test.setName(name);
-
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase createRoundtripListItemTest(String name) {
+	private TestCase createRoundtripListItemTest(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -173,11 +173,11 @@ public class ListsTests extends TestGroup {
 		};
 
 		test.setName(name);
-
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase createGetListTest(String name) {
+	private TestCase createGetListTest(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -206,11 +206,11 @@ public class ListsTests extends TestGroup {
 		};
 
 		test.setName(name);
-
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase createGetListsTest(String name) {
+	private TestCase createGetListsTest(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -240,11 +240,11 @@ public class ListsTests extends TestGroup {
 		};
 
 		test.setName(name);
-
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase createWebTitleTest(String name) {
+	private TestCase createWebTitleTest(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -271,7 +271,7 @@ public class ListsTests extends TestGroup {
 		};
 
 		test.setName(name);
-
+		test.setEnabled(enabled);
 		return test;
 	}
 }

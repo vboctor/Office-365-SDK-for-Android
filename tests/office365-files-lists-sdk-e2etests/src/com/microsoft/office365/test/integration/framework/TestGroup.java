@@ -2,19 +2,19 @@
 Copyright (c) Microsoft Open Technologies, Inc.
 All Rights Reserved
 Apache 2.0 License
- 
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
- 
+
      http://www.apache.org/licenses/LICENSE-2.0
- 
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- 
+
 See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
  */
 package com.microsoft.office365.test.integration.framework;
@@ -29,7 +29,7 @@ public abstract class TestGroup {
 	TestStatus mStatus;
 	ConcurrentLinkedQueue<TestCase> mTestRunQueue;
 	boolean mNewTestRun;
-	
+
 	public TestGroup(String name) {
 		mName = name;
 		mStatus = TestStatus.NotRun;
@@ -50,13 +50,15 @@ public abstract class TestGroup {
 		mTestCases.add(testCase);
 	}
 
-	
-	public void runTests(TestExecutionCallback callback) {
+
+	public void runTests(TestExecutionCallback callback, boolean isAutomatedRun) {
 		List<TestCase> testsToRun = new ArrayList<TestCase>();
-		
+
 		for (int i = 0; i < mTestCases.size(); i++) {
-			if (mTestCases.get(i).isEnabled()) {
-				testsToRun.add(mTestCases.get(i));
+			TestCase t = mTestCases.get(i);
+			if (t.isSelected() && t.isEnabled()) {
+				if((isAutomatedRun && t.CanRunAutomatically()) || !isAutomatedRun)
+					testsToRun.add(mTestCases.get(i));
 			}
 		}
 
@@ -64,8 +66,8 @@ public abstract class TestGroup {
 			runTests(testsToRun, callback);
 		}
 	}
-	
-	
+
+
 	public void runTests(List<TestCase> testsToRun, final TestExecutionCallback callback) {
 		try {
 			onPreExecute();
@@ -75,18 +77,18 @@ public abstract class TestGroup {
 				callback.onTestGroupComplete(this, null);
 			return;
 		}
-		
+
 		final TestRunStatus testRunStatus = new TestRunStatus();
 
 		mNewTestRun = true;
-		
+
 		int oldQueueSize = mTestRunQueue.size();
 		mTestRunQueue.clear();
 		mTestRunQueue.addAll(testsToRun);
 		cleanTestsState();
 		testRunStatus.results.clear();
 		mStatus = TestStatus.NotRun;
-		
+
 		if (oldQueueSize == 0) {
 			executeNextTest(callback, testRunStatus);
 		}
@@ -99,7 +101,7 @@ public abstract class TestGroup {
 			test.clearLog();
 		}
 	}
-	
+
 	private void executeNextTest(final TestExecutionCallback callback, final TestRunStatus testRunStatus) {
 		mNewTestRun = false;
 		final TestGroup group = this;
@@ -134,28 +136,28 @@ public abstract class TestGroup {
 									result.setStatus(TestStatus.Failed);
 								}
 							}
-		
+
 							test.setStatus(result.getStatus());
 							testRunStatus.results.add(result);
-		
+
 							if (callback != null)
 								callback.onTestComplete(test, result);
 						}
-						
+
 						executeNextTest(callback, testRunStatus);
 					}
 				});
-				
-				
+
+
 			} else {
 				// end run
-				
+
 				try {
 					onPostExecute();
 				} catch (Exception e) {
 					mStatus = TestStatus.Failed;
 				}
-				
+
 				// if at least one test failed, the test group
 				// failed
 				if (mStatus != TestStatus.Failed) {
@@ -171,8 +173,8 @@ public abstract class TestGroup {
 				if (callback != null)
 					callback.onTestGroupComplete(group, testRunStatus.results);
 			}
-			
-			
+
+
 		} catch (Exception e) {
 			if (callback != null)
 				callback.onTestGroupComplete(this, testRunStatus.results);

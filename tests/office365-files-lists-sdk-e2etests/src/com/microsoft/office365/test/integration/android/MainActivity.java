@@ -2,19 +2,19 @@
 Copyright (c) Microsoft Open Technologies, Inc.
 All Rights Reserved
 Apache 2.0 License
- 
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
- 
+
      http://www.apache.org/licenses/LICENSE-2.0
- 
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- 
+
 See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
  */
 package com.microsoft.office365.test.integration.android;
@@ -45,12 +45,15 @@ import com.microsoft.office365.test.integration.framework.TestCase;
 import com.microsoft.office365.test.integration.framework.TestExecutionCallback;
 import com.microsoft.office365.test.integration.framework.TestGroup;
 import com.microsoft.office365.test.integration.framework.TestResult;
+import com.microsoft.office365.test.integration.framework.TestResultsPostManager;
+import com.microsoft.office365.test.integration.tests.AllTests;
 import com.microsoft.office365.test.integration.tests.FilesTests;
 import com.microsoft.office365.test.integration.tests.ListsTests;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
-
+	private String mPostUrl = "";
+	private boolean mIsAutomatedRun = false;
 	private StringBuilder mLog;
 
 	private ListView mTestCaseList;
@@ -95,6 +98,8 @@ public class MainActivity extends Activity {
 		});
 
 		refreshTestGroupsAndLog();
+
+		checkForCIServer();
 	}
 
 	private void selectTestGroup(int pos) {
@@ -110,6 +115,7 @@ public class MainActivity extends Activity {
 
 		ArrayAdapter<TestGroup> adapter = (ArrayAdapter<TestGroup>) mTestGroupSpinner.getAdapter();
 		adapter.clear();
+		adapter.add(new AllTests());
 		adapter.add(new ListsTests());
 		adapter.add(new FilesTests());
 		mTestGroupSpinner.setSelection(0);
@@ -184,7 +190,8 @@ public class MainActivity extends Activity {
 		List<TestCase> testCases = tg.getTestCases();
 
 		for (TestCase testCase : testCases) {
-			testCase.setEnabled(check);
+			if(testCase.isEnabled())
+				testCase.setSelected(check);
 		}
 
 		fillTestList(testCases);
@@ -213,8 +220,12 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onTestGroupComplete(TestGroup group, List<TestResult> results) {
-				log("TEST GROUP COMPLETED", group.getName() + " - " + group.getStatus().toString());
+				log("TEST GROUP COMPLETED", group.getName() + " - " + group.getStatus().toString());				
 				logSeparator();
+
+				if(mIsAutomatedRun){
+					postResults(results);
+				}					
 			}
 
 			@Override
@@ -249,7 +260,7 @@ public class MainActivity extends Activity {
 						+ " - Ex: " + exMessage);
 				logSeparator();
 			}
-		});
+		}, mIsAutomatedRun);
 
 	}
 
@@ -270,6 +281,27 @@ public class MainActivity extends Activity {
 
 		mLog.append(message);
 		mLog.append('\n');
+	}
+
+	private void postResults(List<TestResult> results){
+		TestResultsPostManager manager = new TestResultsPostManager(mPostUrl);
+		manager.InformResults(results);
+	}
+
+	private void checkForCIServer(){
+		Bundle extras = this.getIntent ( ).getExtras ( );
+		if ( extras != null){
+			if( extras.containsKey( "runForCI" ) && extras.getString("runForCI", "false").equalsIgnoreCase("true"))
+			{
+				if(extras.getString("postUrl", null) != null)
+				{
+					mIsAutomatedRun = true;
+					mPostUrl = extras.getString("postUrl");
+					changeCheckAllTests(true);
+					runTests();
+				}
+			}
+		}
 	}
 
 	/**
@@ -300,12 +332,12 @@ public class MainActivity extends Activity {
 		builder.setTitle(title);
 		builder.create().show();
 	}
-	
+
 	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	super.onActivityResult(requestCode, resultCode, data);
-  
-    	AndroidTestPlatformContext.context.onActivityResult(requestCode, resultCode, data);
-    }
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		AndroidTestPlatformContext.context.onActivityResult(requestCode, resultCode, data);
+	}
 
 }
