@@ -21,6 +21,21 @@
 # Java class files
 *.class
 
+# Android Studio
+.idea/
+.gradle
+gradle
+/*/local.properties
+/*/out
+/*/*/build
+build
+/*/*/production
+*.iml
+*.iws
+*.ipr
+*~
+*.swp
+
 # generated files
 bin/
 gen/
