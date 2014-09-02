@@ -15,28 +15,31 @@ import com.microsoft.office365.test.integration.framework.TestStatus;
 public class FilesTests extends TestGroup {
 	public FilesTests() {
 		super("Sharepoint Files tests");
-
-		this.addTest(canGetFilesFromDefaultLibrary("Check existing file"));
-		this.addTest(canGetFilesFromSpecificLibrary("Check from a specific library"));
-		this.addTest(canGetFilePropertiesFromGivenLibAndPath("Get props from lib and path"));
-		this.addTest(canGetSpecificProperty("Get specific property from path"));
-		this.addTest(canGetSpecificPropertyFromLib("Get specific property from lib and path"));
-		this.addTest(canGetFileFromDefaultLib("Can get file from default lib"));
-		this.addTest(canGetFileFromLibAndPath("Can get file from lib and path"));
-		this.addTest(canCreateFolderInDefaultDocLib("Can create folder in default doc lib"));
-		this.addTest(canCreateFolderInLibAndFolder("Can create folder inside lib"));
-		this.addTest(canCreateFilesInDefaultDocLib("Can create file in default doc lib"));
-		this.addTest(canCreateFilesInLibAndPath("Can create file in specific lib"));
-		this.addTest(canCreateFilesWithContentInDefaultLib("Can create files with content default doc lib"));
-		this.addTest(canCreateFilesWithContentInLibAndPath("Can create files with content in lib and path"));
-		this.addTest(canDeleteFileInDefaultLib("Can delete file in default lib"));
-		this.addTest(canDeleteFileInLibAndFolder("Can delete file in lib and folder"));
-		this.addTest(canGetChildrenFolderFromPath("Can get children from path"));
-		this.addTest(canMoveFile("Can move file"));
-		this.addTest(canCopyFile("Can copy file"));
+		// Disabled tests will work in future api versions. Default libraries are not fully supported yet
+		this.addTest(canAccessFilesDefaultLibrary("Can access default files library", false));
+		this.addTest(canGetFilesFromDefaultLibrary("Check existing file in default library", false));
+		this.addTest(canGetFilesFromSpecificLibrary("Check from a specific library", true));
+		this.addTest(canGetFilePropertiesFromGivenLibAndPath("Get props from lib and path", true));
+		this.addTest(canGetSpecificProperty("Get specific property from path in default library", false));
+		this.addTest(canGetSpecificPropertyFromLib("Get specific property from lib and path", true));
+		this.addTest(canGetFileFromDefaultLib("Can get file from default lib", false));
+		this.addTest(canGetFileFromLibAndPath("Can get file from lib and path", true));
+		this.addTest(canCreateFolderInDefaultDocLib("Can create folder in default doc lib", false));
+		this.addTest(canCreateFolderInLibAndFolder("Can create folder inside lib", true));
+		this.addTest(canCreateFilesInDefaultDocLib("Can create file in default doc lib", false));
+		this.addTest(canCreateFilesInLibAndPath("Can create file in specific lib", true));
+		this.addTest(canCreateFilesWithContentInDefaultLib("Can create files with content default doc lib", false));
+		this.addTest(canCreateFilesWithContentInLibAndPath("Can create files with content in lib and path", true));
+		this.addTest(canDeleteFileInDefaultLib("Can delete file in default lib", false));
+		this.addTest(canDeleteFileInLibAndFolder("Can delete file in lib and folder", true));
+		this.addTest(canGetChildrenFolderFromPath("Can get children from path", true));
+		this.addTest(canMoveFile("Can move file in default lib", false));
+		this.addTest(canMoveFileInLib("Can move file in lib", true));
+		this.addTest(canCopyFile("Can copy file in default lib", false));
+		this.addTest(canCopyFileInLib("Can copy file in lib", true));
 	}
-	
-	private TestCase canCopyFile(String name) {
+
+	private TestCase canCopyFile(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -60,6 +63,10 @@ public class FilesTests extends TestGroup {
 
 					client.getFileSystemItem(destinationPath).get();
 
+					// Delete test folder and file
+					client.delete(targetFolder.getName());
+					client.delete(fileName);
+					
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -67,10 +74,51 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
+		return test;
+	}
+	
+	private TestCase canCopyFileInLib(String name, boolean enabled) {
+		TestCase test = new TestCase() {
+
+			@Override
+			public TestResult executeTest() {
+				try {
+					TestResult result = new TestResult();
+					result.setStatus(TestStatus.Passed);
+					result.setTestCase(this);
+
+					FileClient client = ApplicationContext.getFileClient();
+					String fileName = UUID.randomUUID().toString() + ".txt";
+					String lib = ApplicationContext.getTestDocumentListName();
+					FileSystemItem targetFolder = client.createFolder(
+							UUID.randomUUID().toString(), lib).get();
+					FileSystemItem fileToCopy = client.createFile(fileName, lib)
+							.get();
+
+					String sourcePath = fileToCopy.getName();
+					String destinationPath = targetFolder.getName() + "/"
+							+ fileToCopy.getName();
+					client.copy(sourcePath, destinationPath, true, lib).get();
+
+					client.getFileSystemItem(destinationPath, lib).get();
+
+					// Delete test folder and file
+					client.delete(targetFolder.getName(), lib);
+					client.delete(fileName, lib);
+					
+					return result;
+				} catch (Exception e) {
+					return createResultFromException(e);
+				}
+			}
+		};
+		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canMoveFile(String name) {
+	private TestCase canMoveFile(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -94,6 +142,9 @@ public class FilesTests extends TestGroup {
 
 					client.getFileSystemItem(destinationPath).get();
 
+					// Delete test folder 
+					client.delete(targetFolder.getName());
+					
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -101,10 +152,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetChildrenFolderFromPath(String name) {
+	private TestCase canMoveFileInLib(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -115,7 +167,46 @@ public class FilesTests extends TestGroup {
 					result.setTestCase(this);
 
 					FileClient client = ApplicationContext.getFileClient();
-					String lib = ApplicationContext.getTestListName();
+					String lib = ApplicationContext.getTestDocumentListName();
+					String fileName = UUID.randomUUID().toString() + ".txt";
+					FileSystemItem targetFolder = client.createFolder(
+							UUID.randomUUID().toString(), lib).get();
+					FileSystemItem fileToCopy = client.createFile(fileName, lib)
+							.get();
+
+					String sourcePath = fileToCopy.getName();
+					String destinationPath = targetFolder.getName() + "/"
+							+ fileToCopy.getName();
+					client.move(sourcePath, destinationPath, true, lib).get();
+
+					client.getFileSystemItem(destinationPath, lib).get();
+
+					// Delete test folder 
+					client.delete(targetFolder.getName(), lib);
+					
+					return result;
+				} catch (Exception e) {
+					return createResultFromException(e);
+				}
+			}
+		};
+		test.setName(name);
+		test.setEnabled(enabled);
+		return test;
+	}
+	
+	private TestCase canGetChildrenFolderFromPath(String name, boolean enabled) {
+		TestCase test = new TestCase() {
+
+			@Override
+			public TestResult executeTest() {
+				try {
+					TestResult result = new TestResult();
+					result.setStatus(TestStatus.Passed);
+					result.setTestCase(this);
+
+					FileClient client = ApplicationContext.getFileClient();
+					String lib = ApplicationContext.getTestDocumentListName();
 					List<FileSystemItem> fileInfo = client.getFileSystemItems(
 							"", lib).get();
 					if (fileInfo == null) {
@@ -129,10 +220,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canDeleteFileInLibAndFolder(String name) {
+	private TestCase canDeleteFileInLibAndFolder(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -144,14 +236,14 @@ public class FilesTests extends TestGroup {
 
 					FileClient client = ApplicationContext.getFileClient();
 					String someFile = UUID.randomUUID().toString() + ".foo";
-					String lib = ApplicationContext.getTestListName();
+					String lib = ApplicationContext.getTestDocumentListName();
 					FileSystemItem fileInfo = client.createFile(someFile, lib)
 							.get();
 					if (fileInfo == null) {
 						throw new Exception(
 								"Cannot create the file we want to erase");
 					}
-					client.delete(fileInfo.getName(), lib);
+					client.delete(fileInfo.getName(), lib).get();
 
 					return result;
 				} catch (Exception e) {
@@ -160,10 +252,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canDeleteFileInDefaultLib(String name) {
+	private TestCase canDeleteFileInDefaultLib(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -181,8 +274,8 @@ public class FilesTests extends TestGroup {
 								"Cannot create the file we want to erase");
 					}
 
-					client.delete(fileInfo.getName());
-
+					client.delete(fileInfo.getName()).get();
+				
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -190,10 +283,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canCreateFilesWithContentInDefaultLib(String name) {
+	private TestCase canCreateFilesWithContentInDefaultLib(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -210,8 +304,11 @@ public class FilesTests extends TestGroup {
 					FileSystemItem fileInfo = client.createFile(someFile, true,
 							content).get();
 					if (fileInfo == null) {
-						throw new Exception("Expected folder information");
+						throw new Exception("Expected file information");
 					}
+					
+					// Delete test folder
+					client.delete(someFile);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -219,10 +316,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canCreateFilesWithContentInLibAndPath(String name) {
+	private TestCase canCreateFilesWithContentInLibAndPath(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -233,9 +331,9 @@ public class FilesTests extends TestGroup {
 					result.setTestCase(this);
 
 					FileClient client = ApplicationContext.getFileClient();
-					String lib = ApplicationContext.getTestListName();
+					String lib = ApplicationContext.getTestDocumentListName();
 					String folderName = UUID.randomUUID().toString();
-					client.createFolder(folderName).get();
+					client.createFolder(folderName, lib).get();
 					String someFile = folderName + "\\"
 							+ UUID.randomUUID().toString() + ".fo1";
 					byte[] content = "some content"
@@ -250,6 +348,9 @@ public class FilesTests extends TestGroup {
 					if (stored == null) {
 						throw new Exception("Expected folder information");
 					}
+					
+					//Delete test file
+					client.delete(folderName, lib);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -257,10 +358,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canCreateFilesInLibAndPath(String name) {
+	private TestCase canCreateFilesInLibAndPath(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -272,12 +374,15 @@ public class FilesTests extends TestGroup {
 
 					FileClient client = ApplicationContext.getFileClient();
 					String someFile = UUID.randomUUID().toString() + ".foo";
-					String path = ApplicationContext.getTestListName();
+					String path = ApplicationContext.getTestDocumentListName();
 					FileSystemItem fileInfo = client.createFile(someFile, path)
 							.get();
 					if (fileInfo == null) {
 						throw new Exception("Expected folder information");
 					}
+					
+					// Delete test file
+					client.delete(someFile, path);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -285,10 +390,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canCreateFilesInDefaultDocLib(String name) {
+	private TestCase canCreateFilesInDefaultDocLib(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -311,10 +417,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canCreateFolderInLibAndFolder(String name) {
+	private TestCase canCreateFolderInLibAndFolder(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -323,16 +430,19 @@ public class FilesTests extends TestGroup {
 					TestResult result = new TestResult();
 					result.setStatus(TestStatus.Passed);
 					result.setTestCase(this);
-
+					
 					FileClient client = ApplicationContext.getFileClient();
 					String someFolder = UUID.randomUUID().toString();
-					String docLib = ApplicationContext.getTestListName();
+					String docLib = ApplicationContext.getTestDocumentListName();
 					FileSystemItem folderInfo = client.createFolder(someFolder,
 							docLib).get();
 					if (folderInfo == null) {
 						throw new Exception("Expected folder information");
 					}
-
+					
+					// Delete test folder
+					client.delete(someFolder,docLib).get();
+					
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -340,10 +450,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canCreateFolderInDefaultDocLib(String name) {
+	private TestCase canCreateFolderInDefaultDocLib(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -361,6 +472,8 @@ public class FilesTests extends TestGroup {
 						throw new Exception("Expected folder information");
 					}
 
+					// Delete test folder
+					client.delete(someFolder);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -368,10 +481,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetSpecificProperty(String name) {
+	private TestCase canGetSpecificProperty(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -401,10 +515,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetSpecificPropertyFromLib(String name) {
+	private TestCase canGetSpecificPropertyFromLib(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -415,7 +530,7 @@ public class FilesTests extends TestGroup {
 					result.setTestCase(this);
 
 					FileClient client = ApplicationContext.getFileClient();
-					String library = ApplicationContext.getTestListName();
+					String library = ApplicationContext.getTestDocumentListName();
 					String folder = UUID.randomUUID().toString();
 					client.createFolder(folder, library).get();
 
@@ -425,7 +540,9 @@ public class FilesTests extends TestGroup {
 					if (property == null) {
 						throw new Exception("Expected at least one file");
 					}
-
+					
+					// Delete test folder
+					client.delete(folder, library);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -433,10 +550,38 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetFilesFromDefaultLibrary(String name) {
+	private TestCase canAccessFilesDefaultLibrary(String name, boolean enabled) {
+		TestCase test = new TestCase() {
+
+			@Override
+			public TestResult executeTest() {
+				try {
+					TestResult result = new TestResult();
+					result.setStatus(TestStatus.Passed);
+					result.setTestCase(this);
+
+					FileClient client = ApplicationContext.getFileClient();
+
+					List<FileSystemItem> files = client.getFileSystemItems()
+							.get();
+
+					return result;
+				} catch (Exception e) {
+					return createResultFromException(e);
+				}
+			}
+		};
+
+		test.setName(name);
+		test.setEnabled(enabled);
+		return test;
+	}
+
+	private TestCase canGetFilesFromDefaultLibrary(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -456,6 +601,8 @@ public class FilesTests extends TestGroup {
 						throw new Exception("Expected at least one file");
 					}
 
+					// Delete test file
+					client.delete(fileName);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -464,10 +611,11 @@ public class FilesTests extends TestGroup {
 		};
 
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetFilesFromSpecificLibrary(String name) {
+	private TestCase canGetFilesFromSpecificLibrary(String name, boolean enabled) {
 
 		TestCase test = new TestCase() {
 
@@ -479,10 +627,10 @@ public class FilesTests extends TestGroup {
 					result.setTestCase(this);
 
 					FileClient client = ApplicationContext.getFileClient();
-					String someLibrary = ApplicationContext.getTestListName();
+					String someLibrary = ApplicationContext.getTestDocumentListName();
 
-					client.createFile(UUID.randomUUID().toString() + ".txt",
-							someLibrary).get();
+					String fileName = UUID.randomUUID().toString() + ".txt";
+					client.createFile(fileName,	someLibrary).get();
 
 					List<FileSystemItem> files = client.getFileSystemItems(
 							null, someLibrary).get();
@@ -490,6 +638,8 @@ public class FilesTests extends TestGroup {
 						throw new Exception("Expected at least one file");
 					}
 
+					// Delete test file
+					client.delete(fileName, someLibrary);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -498,10 +648,11 @@ public class FilesTests extends TestGroup {
 
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetFilePropertiesFromGivenLibAndPath(String name) {
+	private TestCase canGetFilePropertiesFromGivenLibAndPath(String name, boolean enabled) {
 
 		TestCase test = new TestCase() {
 
@@ -514,7 +665,7 @@ public class FilesTests extends TestGroup {
 
 					FileClient client = ApplicationContext.getFileClient();
 					String folderName = UUID.randomUUID().toString();
-					String docLib = ApplicationContext.getTestListName();
+					String docLib = ApplicationContext.getTestDocumentListName();
 					client.createFolder(folderName, docLib).get();
 
 					List<FileSystemItem> files = client.getFileSystemItems(
@@ -523,6 +674,8 @@ public class FilesTests extends TestGroup {
 						throw new Exception("Expected folder information");
 					}
 
+					// Delete test folder
+					client.delete(folderName, docLib);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -530,10 +683,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetFileFromDefaultLib(String name) {
+	private TestCase canGetFileFromDefaultLib(String name, boolean enabled) {
 
 		TestCase test = new TestCase() {
 
@@ -552,6 +706,8 @@ public class FilesTests extends TestGroup {
 						throw new Exception("Expected at least one file");
 					}
 
+					// Delete test file
+					client.delete(fileName);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -559,10 +715,11 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 
-	private TestCase canGetFileFromLibAndPath(String name) {
+	private TestCase canGetFileFromLibAndPath(String name, boolean enabled) {
 		TestCase test = new TestCase() {
 
 			@Override
@@ -571,7 +728,7 @@ public class FilesTests extends TestGroup {
 					TestResult result = new TestResult();
 					result.setStatus(TestStatus.Passed);
 					result.setTestCase(this);
-					String docLib = "TestDocLib";
+					String docLib = ApplicationContext.getTestDocumentListName();
 					FileClient client = ApplicationContext.getFileClient();
 					String folder = UUID.randomUUID().toString();
 					client.createFolder(folder, docLib).get();
@@ -584,6 +741,8 @@ public class FilesTests extends TestGroup {
 						throw new Exception("Expected at least one file");
 					}
 
+					// Delete test folder
+					client.delete(folder, docLib);
 					return result;
 				} catch (Exception e) {
 					return createResultFromException(e);
@@ -591,6 +750,7 @@ public class FilesTests extends TestGroup {
 			}
 		};
 		test.setName(name);
+		test.setEnabled(enabled);
 		return test;
 	}
 }

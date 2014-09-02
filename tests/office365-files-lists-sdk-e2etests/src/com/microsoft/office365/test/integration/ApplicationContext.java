@@ -42,6 +42,10 @@ public class ApplicationContext {
     public static String getTestListName() {
         return mTestPlatformContext.getTestListName();
     }
+    
+    public static String getTestDocumentListName() {
+        return mTestPlatformContext.getTestDocumentListName();
+    }
 
 	public static FileClient getFileClient() {
 		return mTestPlatformContext.getFileClient();

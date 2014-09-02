@@ -21,7 +21,13 @@
         android:summary="Enter the name of the list"
         android:title="List name" >
     </EditTextPreference>
-
+	<EditTextPreference
+        android:name="documentListName"
+        android:defaultValue=""
+        android:key="prefDocumentListName"
+        android:summary="Enter the name of the document list"
+        android:title="Document List name" >
+    </EditTextPreference>
     <ListPreference
         android:defaultValue="COOKIES"
         android:entries="@array/authOptions"

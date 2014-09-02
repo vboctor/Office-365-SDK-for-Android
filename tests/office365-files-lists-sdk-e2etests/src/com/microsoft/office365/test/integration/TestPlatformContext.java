@@ -17,6 +17,8 @@ public interface TestPlatformContext {
 	String getRedirectUrl();
 	
 	String getTestListName();
+	
+	String getTestDocumentListName();
 
 	String getSiteRelativeUrl();
 
