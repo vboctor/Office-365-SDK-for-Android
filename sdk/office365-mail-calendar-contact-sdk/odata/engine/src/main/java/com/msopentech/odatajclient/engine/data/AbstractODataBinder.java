@@ -228,7 +228,8 @@ public abstract class AbstractODataBinder implements ODataBinder {
 
         final URI base = defaultBaseURI == null ? resource.getBaseURI() : defaultBaseURI;
 
-        final URI next = resource.getNext();
+        //final URI next = resource.getNext();
+        final URI next = null;
 
         final ODataEntitySet entitySet = next == null
                 ? ODataObjectFactory.newEntitySet()

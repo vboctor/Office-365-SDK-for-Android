@@ -40,7 +40,7 @@ public abstract class AbstractJSONFeed extends AbstractPayloadObject implements 
     @JsonProperty(value = "odata.count", required = false)
     protected Integer count;
 
-    @JsonProperty(value = "odata.nextLink", required = false)
+    @JsonProperty(value = "@odata.nextLink", required = false)
     protected String next;
 
     public AbstractJSONFeed() {
