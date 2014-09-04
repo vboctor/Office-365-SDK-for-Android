@@ -150,6 +150,21 @@ The application requires and Exchange Online account, subscribe to a mail accoun
 
 Click on menu at the top-left of the app and select *Preferences*. You will see the second screen that has the list of settings that need to be configured.
 
+## Building Mail-Calendar-Contact SDK from Sources ##
+
+Mail-Calendar-Contact SDK is using code generation to create object model for Office365 service based on metadata. 
+It connects to the [endpoint](https://github.com/OfficeDev/Office-365-SDK-for-Android/blob/master/sdk/office365-mail-calendar-contact-sdk/parent/pom.xml#L106) that should be provided in pom.xml. 
+
+Accessing metadata requires authentication so [login](https://github.com/OfficeDev/Office-365-SDK-for-Android/blob/master/sdk/office365-mail-calendar-contact-sdk/parent/pom.xml#L107) and [password](https://github.com/OfficeDev/Office-365-SDK-for-Android/blob/master/sdk/office365-mail-calendar-contact-sdk/parent/pom.xml#L108) should also be provided to build the SDK.
+
+```xml
+    <serviceRootURL>https://outlook.office365.com/ews/odata</serviceRootURL>
+    <serviceUsername>Enter your username here</serviceUsername>
+    <servicePassword>Enter your password here</servicePassword>
+```
+All this configuration is made in the parent pom (see "/parent" folder).
+If service endpoint and authentication credentials are provided execute ```mvn clean install``` in the root folder of the SDK to build it.
+
 
 ## Running Mail-Calendar-Contact e2e Tests ##
 
